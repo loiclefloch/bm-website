@@ -26,13 +26,13 @@ var gulp = require('gulp'),
       scssSource: 'styles/*',
       font: 'fonts/*',
       bundle: 'app.js',
-      distJs: 'dist/js',
-      distCss: 'dist/css',
-      distFont: 'dist/fonts'
+      distJs: 'public/dist/js',
+      distCss: 'public/dist/css',
+      distFont: 'public/dist/fonts'
     };
 
 gulp.task('clean', function(cb) {
-  return del(['dist'], cb);
+  return del(['public/dist'], cb);
 });
 
 gulp.task('browserSync', function() {

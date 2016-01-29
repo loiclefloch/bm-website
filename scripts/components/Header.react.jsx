@@ -36,7 +36,6 @@ var Header = React.createClass({
         </ul>
 
         <ul className="nav navbar-nav navbar-right">
-          <li>{this.props.username}</li>
           <li><a href="#">Settings</a></li>
           <li><a href='#' onClick={this.logout}>Logout</a></li>
         </ul>

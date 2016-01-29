@@ -6,7 +6,8 @@ module.exports = {
 
   APIEndpoints: {
     LOGIN: APIRoot + "/oauth/v2/token",
-    BOOKMARKS: APIRoot + "/api/bookmarks"
+    BOOKMARKS: APIRoot + "/api/bookmarks",
+    SEARCH_BOOKMARKS: APIRoot + "/api/search/bookmarks",
   },
 
   Auth: {
@@ -32,6 +33,7 @@ module.exports = {
 
     LOAD_BOOKMARKS: null,
     RECEIVE_BOOKMARKS: null,
+    RECEIVE_SEARCH_BOOKMARKS: null,
 
     LOAD_BOOKMARK: null,
     RECEIVE_BOOKMARK: null,

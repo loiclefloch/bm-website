@@ -28,13 +28,20 @@ module.exports = {
     });
   },
 
+  receiveSearchBookmarks: function(json) {
+    AppDispatcher.handleServerAction({
+      type: ActionTypes.RECEIVE_SEARCH_BOOKMARKS,
+      json: json
+    });
+  },
+
   receiveBookmark: function(json) {
     AppDispatcher.handleServerAction({
       type: ActionTypes.RECEIVE_BOOKMARK,
       json: json
     });
   },
-  
+
   receiveCreatedBookmark: function(json, errors) {
     if (errors == null) {
       type = ActionTypes.RECEIVE_CREATED_BOOKMARK;
@@ -56,6 +63,6 @@ module.exports = {
       errors: errors
     });
   }
-  
+
 };
 
