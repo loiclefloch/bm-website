@@ -10,16 +10,22 @@ var BookmarksPage = require('./components/bookmarks/BookmarksPage.react.jsx');
 var BookmarkPage = require('./components/bookmarks/BookmarkPage.react.jsx');
 var BookmarkNew = require('./components/bookmarks/BookmarkNew.react.jsx');
 
+var PageNotFound = require('./components/notFoundPage/NotFoundPage.react.jsx');
+var SettingsPage = require('./components/settings/SettingsPage.react.jsx');
 
 module.exports = (
   <Route name="app" path="/" handler={App}>
     <DefaultRoute handler={BookmarksPage}/>
     <Route name="login" path="/login" handler={LoginPage}/>
     <Route name="bookmarks" path="/bookmarks" handler={BookmarksPage}/>
-    
+
     <Route name="bookmark" path="/bookmarks/:bookmarkId" handler={BookmarkPage}/>
     <Route name="new-bookmark" path="/bookmark/new" handler={BookmarkNew}/>
-    
+
+    <Route name="settings-page" path="/settings" handler={SettingsPage}/>
+
+    <Route name="page-not-found" path="/404" handler={PageNotFound}/>
+
   </Route>
 );
 

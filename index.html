@@ -6,6 +6,7 @@
     <title>Bookmark Manager</title>
     <!-- Material Design fonts -->
     <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <link href="public/css/bootstrap-material-design.css" rel="stylesheet">
     <link href="public/css/fonts.css" rel="stylesheet">
 
@@ -17,42 +18,9 @@
     <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="bower_components/bootbox.js/bootbox.js"></script>
     <script src="bower_components/bootstrap-material-design/dist/js/material.min.js"></script>
+    <script src="bower_components/remarkable-bootstrap-notify/dist/bootstrap-notify.min.js"></script>
+    <script src="public/js/ui/bm.js"></script>
+    <script src="public/js/lib.js"></script>
     <script src="public/dist/js/app.js"></script>
-
-    <script>
-      // Contains the last position before clicking on an anchor to allow the
-      // user to get back. TODO: implement the back button.
-      var lastPosition = null;
-      /*
-       ** click on a link on a bookmark content
-       */
-    $(document).on('click', '.bookmark__content a', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      var link = $(this).attr("href");
-      // Anchor handling
-      if (link.length > 1 && link[0] == '#')
-        {
-          var elemToGo = $(link);
-          if (elemToGo.length == 0) {
-            // Handle github anchor.
-            var name = 'user-content-' + link.replace('#', '');
-            elemToGo = $("a[name=" + name + "]");
-          }
-
-          if (elemToGo.length != 0) {
-            lastPosition = $(document).scrollTop();
-            $('html, body').animate({
-              scrollTop: elemToGo.offset().top - 30
-            }, 'slow');
-          }
-        }
-        else if (link.length > 1 && link[0] != '#') { // Another link, handle link with just '#'
-          // open the link in a new tab.
-          window.open(link, '_blank');
-        }
-        return false;
-    });
-    </script>
   </body>
 </html>

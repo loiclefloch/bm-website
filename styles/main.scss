@@ -235,6 +235,9 @@ body {
   border-top: 1px solid #d2d2d2!important;
 }
 
+/* ----- Import components styles */
+
 @import 'header';
 @import 'bookmarks';
 @import 'bookmark';
+@import 'loading';

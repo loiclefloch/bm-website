@@ -4,13 +4,17 @@ var SessionStore = require('../../stores/SessionStore.react.jsx');
 var BookmarkActionCreators = require('../../actions/BookmarkActionCreators.react.jsx');
 var RouteActionCreators = require('../../actions/RouteActionCreators.react.jsx');
 var BookmarkStore = require('../../stores/BookmarkStore.react.jsx');
+var Events = require('../../utils/Events.js');
 var ErrorNotice = require('../common/ErrorNotice.react.jsx');
+var showdown = require('showdown');
+var Loading = require('../common/Loading.react.jsx');
 
 var BookmarkNew = React.createClass({
 
   getInitialState: function () {
     return {
-      errors: []
+      errors: [],
+      loading: false
     };
   },
 
@@ -18,11 +22,13 @@ var BookmarkNew = React.createClass({
     if (!SessionStore.isLoggedIn()) {
       RouteActionCreators.redirect('login');
     }
-    BookmarkStore.addChangeListener(this._onChange);
+    BookmarkStore.addListener(Events.CHANGE, this._onChange);
+    BookmarkStore.addListener(Events.LOADING, this._onLoadingEnd);
   },
 
   componentWillUnmount: function () {
-    BookmarkStore.removeChangeListener(this._onChange);
+    BookmarkStore.removeListener(Events.CHANGE, this._onChange);
+    BookmarkStore.removeListener(Events.LOADING, this._onLoadingEnd);
   },
 
   _onChange: function () {
@@ -32,88 +38,70 @@ var BookmarkNew = React.createClass({
     return true
   },
 
+  displayLoading: function () {
+    this.setState({
+      loading: true
+    });
+  },
+
+  _onNotesChange: function () {
+    var notes = this.refs.notes.getDOMNode().value;
+    console.log(notes);
+    var converter = new showdown.Converter();
+    this.props.preview_html = converter.makeHtml(notes);
+    this.forceUpdate();
+  },
+
+  _onLoadingEnd: function() {
+    this.setState({
+      loading: false
+    });
+  },
+
   _onSubmit: function (e) {
     e.preventDefault();
-    console.log(this.refs);
+    this.displayLoading();
     var name = this.refs.name.getDOMNode().value;
-    var hour = this.refs.hour.getDOMNode().value;
-    var minute = this.refs.minute.getDOMNode().value;
-    var days = [
-      this.refs.day1.getDOMNode().checked,
-      this.refs.day2.getDOMNode().checked,
-      this.refs.day3.getDOMNode().checked,
-      this.refs.day4.getDOMNode().checked,
-      this.refs.day5.getDOMNode().checked,
-      this.refs.day6.getDOMNode().checked,
-      this.refs.day7.getDOMNode().checked
-    ];
-    BookmarkActionCreators.createBookmark(name, hour, minute, days);
+    var url = this.refs.url.getDOMNode().value;
+    var notes = this.refs.notes.getDOMNode().value;
+    var tags = [];
+    BookmarkActionCreators.createBookmark(name, url, tags, notes);
   },
 
   render: function () {
     var errors = (this.state.errors.length > 0) ? <ErrorNotice errors={this.state.errors}/> : <div></div>;
     return (
       <div>
+        <Loading display={this.state.loading}/>
         {errors}
         <div className="page-header">
           <h1>Create bookmark</h1>
         </div>
 
         <div className="row">
-          <form onSubmit={this._onSubmit} className="new-bookmark form row">
+          <form onSubmit={this._onSubmit} className="new_bookmark form row">
 
             <div className="col-xs-12 row">
 
-              <div className="new-bookmark__name form-group col-xs-12 col-md-4">
-                <input type="text" className="form-control" placeholder="Title" name="name" ref="name"/>
+              <div className="new_bookmark__url form-group col-sm-12 col-md-6">
+                <input type="text" className="form-control" placeholder="Url" name="url" ref="url"/>
               </div>
 
-              <div className="form-group col-xs-12 col-md-8">
-                  <input type="text" className="form-control new-bookmark__hour" placeholder="Hour" name="hour" ref="hour"/>
-                  <input type="text" className="form-control new-bookmark__minute" placeholder="Minute" name="minute" ref="minute"/>
+              <div className="new_bookmark__name form-group col-sm-12 col-md-6">
+                <input type="text" className="form-control" placeholder="Name" name="name" ref="name"/>
               </div>
 
+              <div className="new_bookmark__notes form-group col-sm-12 col-md-6">
+                <textarea className="form-control" onChange={this._onNotesChange}
+                          placeholder="Notes" name="notes" ref="notes"/>
+              </div>
+
+              <div className="new_bookmark__preview col-sm-hidden col-md-6">
+                <div dangerouslySetInnerHTML={{__html: this.props.preview_html}}></div>
+              </div>
             </div>
 
-            <div className="new-bookmark__days col-xs-8">
-              <div className="input-group-addon">
-                <label>
-                  <input type="checkbox" name="day1" ref="day1"/> Monday
-                </label>
-              </div>
-              <div className="input-group-addon">
-                <label>
-                  <input type="checkbox" name="day2" ref="day2"/> Tuesday
-                </label>
-              </div>
-              <div className="input-group-addon">
-                <label>
-                  <input type="checkbox" name="day3" ref="day3"/> Wednesday
-                </label>
-              </div>
-              <div className="input-group-addon">
-                <label>
-                  <input type="checkbox" name="day4" ref="day4"/> Thursday
-                </label>
-              </div>
-              <div className="input-group-addon">
-                <label>
-                  <input type="checkbox" name="day5" ref="day5"/> Friday
-                </label>
-              </div>
-              <div className="input-group-addon">
-                <label>
-                  <input type="checkbox" name="day6" ref="day6"/> Saturday
-                </label>
-              </div>
-              <div className="input-group-addon">
-                <label>
-                  <input type="checkbox" name="day7" ref="day7"/> Sunday
-                </label>
-              </div>
-
-            </div>
-            <div className="new-bookmark__submit col-xs-12 col-md-6 col-md-offset-3 top-buffer-30">
+            <div className="new_bookmark__submit col-xs-12 col-md-6 col-md-offset-3 top-buffer-30 text-center">
               <button type="submit" className="btn btn-primary">Create</button>
             </div>
           </form>

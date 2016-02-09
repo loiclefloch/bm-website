@@ -4,30 +4,18 @@ var Constants = require('../constants/Constants.js');
 var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
 var WebAPIUtils = require('../utils/WebAPIUtils.js');
-
+var Events = require('../utils/Events.js');
 var ActionTypes = ApiConstants.ActionTypes;
-var CHANGE_EVENT = 'change';
+var Entity = require('../utils/Entity.js');
 
-var PAGING_OBJECT = {
-  limit: Constants.Bookmark.DEFAULT_LIMIT,
-  page: 1,
-  total: 0,
-  offset: 0,
-  last_page: 0,
-  results: 0
-};
-
-var SEARCH_DEFAULT = {
-  'name': ''
-}
-
-var _search = SEARCH_DEFAULT;
 var _bookmarks = [];
 var _searchBookmarks = [];
 var _errors = [];
-var _paging = PAGING_OBJECT;
-var _searchPaging = PAGING_OBJECT;
-var _bookmark = { name: "", url: 0, tags: [], notes: "", content: "" };
+
+var _search = Entity.SEARCH_DEFAULT;
+var _paging = Entity.PAGING;
+var _searchPaging = Entity.PAGING;
+var _bookmark = Entity.BOOKMARK;
 
 /**
  * Stores are like a mix between a model and a controller,
@@ -37,119 +25,141 @@ var _bookmark = { name: "", url: 0, tags: [], notes: "", content: "" };
  */
 var BookmarkStore = assign({}, EventEmitter.prototype, {
 
-  emitChange: function() {
-    this.emit(CHANGE_EVENT);
+  addListener: function (event, callback) {
+    this.on(event, callback);
   },
 
-  addChangeListener: function(callback) {
-    this.on(CHANGE_EVENT, callback);
+  emitEvent: function (event) {
+    this.emit(event);
   },
 
-  removeChangeListener: function(callback) {
-    this.removeListener(CHANGE_EVENT, callback);
-  },
-
-  getAllBookmarks: function() {
+  getAllBookmarks: function () {
     return _bookmarks;
   },
 
-  getSearchBookmarks: function() {
+  getSearchBookmarks: function () {
     return _searchBookmarks;
   },
 
-  getBookmark: function() {
+  clearBookmark: function () {
+    _bookmark = {}
+  },
+
+  getBookmark: function () {
     return _bookmark;
   },
 
-  getPaging: function() {
+  getPaging: function () {
     return _paging;
   },
 
-  getSearchPaging: function() {
+  getSearchPaging: function () {
     return _searchPaging;
   },
 
-  getErrors: function() {
+  getErrors: function () {
     return _errors;
   },
 
-  removeErrors: function() {
+  removeErrors: function () {
     _errors = [];
   },
 
-  getSearch: function() {
+  getSearch: function () {
     return _search;
   },
 
-  clearSearch: function() {
+  clearSearch: function () {
     if (!_.isEmpty(_searchBookmarks)) {
       _searchPaging = PAGING_OBJECT;
       _searchBookmarks = [];
       _search = SEARCH_DEFAULT;
-      this.emitChange();
+      this.emitEvent(Events.CHANGE);
     }
   },
 
 });
 
-BookmarkStore.dispatchToken = AppDispatcher.register(function(payload) {
+BookmarkStore.dispatchToken = AppDispatcher.register(function (payload) {
   var action = payload.action;
 
-  switch(action.type) {
+  switch (action.type) {
 
-      case ActionTypes.RECEIVE_BOOKMARKS:
-          console.log(_bookmarks);
-          _bookmarks = _.union(_bookmarks, action.json.bookmarks);
-          console.log(_bookmarks);
-          _paging = action.json.paging;
-          BookmarkStore.emitChange();
-          break;
+    case ActionTypes.RECEIVE_BOOKMARKS:
+      _bookmarks = _.unionWith(_bookmarks, action.json.bookmarks, function (a, b) {
+        return a.id == b.id;
+      });
+      _paging = action.json.paging;
+      BookmarkStore.emitEvent(Events.CHANGE);
+      BookmarkStore.emitEvent(Events.LOADING);
+      break;
 
-      case ActionTypes.RECEIVE_SEARCH_BOOKMARKS:
-          _searchBookmarks = action.json.bookmarks;
-          _searchPaging = action.json.paging;
-          BookmarkStore.emitChange();
-          break;
+    case ActionTypes.RECEIVE_SEARCH_BOOKMARKS:
+      _searchBookmarks = action.json.bookmarks;
+      _searchPaging = action.json.paging;
+      BookmarkStore.emitEvent(Events.CHANGE);
+      BookmarkStore.emitEvent(Events.LOADING);
+      break;
 
-      case ActionTypes.RECEIVE_CREATED_BOOKMARK:
-          if (action.json) {
-            _bookmarks.unshift(action.json.bookmark);
-            _errors = [];
-          }
-          if (action.errors) {
-            _errors = action.errors;
-          }
-          BookmarkStore.emitChange();
-          break;
+    case ActionTypes.RECEIVE_CREATED_BOOKMARK:
+      if (action.json) {
+        _bookmarks.unshift(action.json);
+        _errors = [];
+        BookmarkStore.emitEvent(Events.CREATE);
+      }
+      if (action.errors) {
+        _errors = action.errors;
+      }
+      BookmarkStore.emitEvent(Events.CHANGE);
+      BookmarkStore.emitEvent(Events.LOADING);
+      break;
 
-      case ActionTypes.RECEIVE_CREATED_BOOKMARK_ERROR:
-          if (action.json) {
-            _errors = [];
-          }
-          if (action.errors) {
-            _errors = action.errors;
-          }
-          BookmarkStore.emitChange();
-          break;
+    case ActionTypes.RECEIVE_REMOVED_BOOKMARK:
+      if (action.json) {
+        _bookmarks = _.remove(_bookmarks, function(n) {
+          return n.id == action.json.id;
+        });
+        _errors = [];
+        BookmarkStore.emitEvent(Events.REMOVE);
+      }
+      if (action.errors) {
+        _errors = action.errors;
+      }
+      BookmarkStore.emitEvent(Events.CHANGE);
+      BookmarkStore.emitEvent(Events.LOADING);
+      break;
 
-      case ActionTypes.RECEIVE_BOOKMARK:
-          if (action.json) {
-            _bookmark = action.json;
-            _errors = [];
-          }
-          if (action.errors) {
-            _errors = action.errors;
-          }
-          BookmarkStore.emitChange();
-          break;
+    case ActionTypes.RECEIVE_CREATED_BOOKMARK_ERROR:
+      if (action.json) {
+        _errors = [];
+      }
+      if (action.errors) {
+        _errors = action.errors;
+      }
+      BookmarkStore.emitEvent(Events.CHANGE);
+      BookmarkStore.emitEvent(Events.LOADING);
+      break;
 
-      case ActionTypes.ERROR_RESPONSE:
-          var json = JSON.parse(action.json);
-          _errors = [
-            json.error
-          ];
-          BookmarkStore.emitChange();
-          break;
+    case ActionTypes.RECEIVE_BOOKMARK:
+      if (action.json) {
+        _bookmark = action.json;
+        _errors = [];
+      }
+      if (action.errors) {
+        _errors = action.errors;
+      }
+      BookmarkStore.emitEvent(Events.CHANGE);
+      BookmarkStore.emitEvent(Events.LOADING);
+      break;
+
+    case ActionTypes.ERROR_RESPONSE:
+      var json = JSON.parse(action.json);
+      _errors = [
+        json.error
+      ];
+      BookmarkStore.emitEvent(Events.CHANGE);
+      BookmarkStore.emitEvent(Events.LOADING);
+      break;
 
   }
 
@@ -157,4 +167,3 @@ BookmarkStore.dispatchToken = AppDispatcher.register(function(payload) {
 });
 
 module.exports = BookmarkStore;
-

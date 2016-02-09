@@ -1,0 +1,24 @@
+.loading {
+
+  .loading__screenloading {
+    position: fixed;
+    background: black;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: .5;
+    z-index: 10000; /* YOLO */
+
+    .loading__gif {
+      position: absolute;
+      left: 48%;
+      top: 40%;
+
+      img {
+        height: 100px;
+      }
+    }
+
+  }
+}

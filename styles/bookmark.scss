@@ -2,26 +2,43 @@
 
 #bookmark {
   .bookmark__tag_list {
-    .bookmark__tag {
-      text-align: right;
-      -webkit-transition: background 150ms linear;
-      -moz-transition: background 150ms linear;
-      transition: background 150ms linear;
-      background-color: $main-color;
-      border-radius: 20px;
-      color: #fff;
-      cursor: pointer;
-      display: inline-block;
-      font-weight: 600;
-      line-height: 1;
-      //margin-right: 3px;
-      margin-top: 3px;
-      padding: 3px 8px;
+    //.bookmark__tag {
+    //  text-align: right;
+    //  -webkit-transition: background 150ms linear;
+    //  -moz-transition: background 150ms linear;
+    //  transition: background 150ms linear;
+    //  background-color: $main-color;
+    //  border-radius: 20px;
+    //  color: #fff;
+    //  cursor: pointer;
+    //  display: inline-block;
+    //  font-weight: 600;
+    //  line-height: 1;
+    //  //margin-right: 3px;
+    //  margin-top: 3px;
+    //  padding: 3px 8px;
+    //
+    //  &:hover {
+    //    background: #465b6b;
+    //  }
+    //}
 
-      &:hover {
-        background: #465b6b;
-      }
+
+  }
+
+  .bookmark__icon {
+    float: left;
+    margin-right: 10px;
+    img {
+      width: 20px;
+      height: 20px;
     }
+  }
+
+  .bookmark__no_icon {
+    float: left;
+    width: 20px;
+    height: 20px;
   }
 
   $font-readable: "bm-content-serif-font",Georgia,Cambria,"Times New Roman",Times,serif;
@@ -31,11 +48,15 @@
     max-width: 800px; // 700 + 50px padding
     padding: 50px; // padding to let white border
     background: white;
+    color: $text-color;
 
     p {
       text-align:justify;
-
       margin-top:29px;
+    }
+
+    code {
+      cursor: pointer;
     }
 
     h2 {
@@ -62,11 +83,12 @@
       margin-top: 30px;
     }
 
-    p, li, h1, h2, h3, h4, h5, h6, td {
+    p, li, h1, h2, h3, h4, h5, h6, td, div {
       font-family: $font-readable;
+      color: $text-color;
     }
 
-    p, li {
+    p, li, div {
       font-size: 21px;
       line-height: 1.60;
       font-weight: 400;
@@ -91,5 +113,25 @@
     h2 {
       font-weight: 700;
     }
+
+    iframe, img {
+      max-width: 100%;
+    }
+
   }
+}
+
+.toc {
+  .toc__level_h1 {
+  }
+
+  .toc__level_h2 {
+    padding-left: 15px;
+  }
+}
+
+.bookmark__float_menu {
+  position: fixed;
+  left: 20px;
+  top: 200px;
 }

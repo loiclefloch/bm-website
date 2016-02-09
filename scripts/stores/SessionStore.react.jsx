@@ -2,28 +2,26 @@ var AppDispatcher = require('../dispatcher/AppDispatcher.js');
 var ApiConstants = require('../constants/ApiConstants.js');
 var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
+var RouteActionCreators = require('../actions/RouteActionCreators.react.jsx');
+
+var Events = require('../utils/Events.js');
 
 var ActionTypes = ApiConstants.ActionTypes;
-var CHANGE_EVENT = 'change';
 
 // Load an access token from the session storage, you might want to implement
 // a 'remember me' using localSgorage
-var _accessToken = sessionStorage.getItem('access_token');
-var _username = sessionStorage.getItem('username');
+var _accessToken = localStorage.getItem('access_token');
+var _username = localStorage.getItem('username');
 var _errors = [];
 
 var SessionStore = assign({}, EventEmitter.prototype, {
-  
-  emitChange: function() {
-    this.emit(CHANGE_EVENT);
+
+  addListener: function (event, callback) {
+    this.on(event, callback);
   },
 
-  addChangeListener: function(callback) {
-    this.on(CHANGE_EVENT, callback);
-  },
-
-  removeChangeListener: function(callback) {
-    this.removeListener(CHANGE_EVENT, callback);
+  emitEvent: function (event) {
+    this.emit(event);
   },
 
   isLoggedIn: function() {
@@ -52,26 +50,23 @@ SessionStore.dispatchToken = AppDispatcher.register(function(payload) {
     case ActionTypes.LOGIN_RESPONSE:
       if (action.json && action.json.access_token) {
         _accessToken = action.json.access_token;
-        _username = action.json.username;
-        console.log("LOGIN RESPONSE");
-
-        console.log(action.json);
         // Token will always live in the session, so that the API can grab it with no hassle
-        sessionStorage.setItem('access_token', _accessToken);
-        sessionStorage.setItem('username', _username);
+        localStorage.setItem('access_token', _accessToken);
       }
       if (action.errors) {
         _errors = action.errors;
       }
-      SessionStore.emitChange();
+      SessionStore.emitEvent(Events.CHANGE);
+      SessionStore.emitEvent(Events.LOADING);
       break;
 
     case ActionTypes.LOGOUT:
       _accessToken = null;
       _username = null;
-      sessionStorage.removeItem('access_token');
-      sessionStorage.removeItem('username');
-      SessionStore.emitChange();
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('username');
+      SessionStore.emitEvent(Events.CHANGE);
+      RouteActionCreators.redirect('login');
       break;
 
     default:

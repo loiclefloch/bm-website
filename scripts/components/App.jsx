@@ -3,6 +3,7 @@ var RouteHandler = require('react-router').RouteHandler;
 var Header = require('../components/Header.react.jsx');
 var SessionStore = require('../stores/SessionStore.react.jsx');
 var RouteStore = require('../stores/RouteStore.react.jsx');
+var Events = require('../utils/Events.js');
 
 function getStateFromStores() {
   return {
@@ -24,11 +25,11 @@ var App = React.createClass({
   },
   
   componentDidMount: function() {
-    SessionStore.addChangeListener(this._onChange);
+    SessionStore.addListener(Events.CHANGE, this._onChange);
   },
 
   componentWillUnmount: function() {
-    SessionStore.removeChangeListener(this._onChange);
+    SessionStore.removeListener(Events.CHANGE, this._onChange);
   },
 
   /**

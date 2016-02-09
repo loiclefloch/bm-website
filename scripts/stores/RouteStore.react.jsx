@@ -14,33 +14,28 @@ var router = Router.create({
 });
 
 var ActionTypes = ApiConstants.ActionTypes;
-var CHANGE_EVENT = 'change';
 
 var RouteStore = assign({}, EventEmitter.prototype, {
-  
-  emitChange: function() {
-    this.emit(CHANGE_EVENT);
+
+  addListener: function (event, callback) {
+    this.on(event, callback);
   },
 
-  addChangeListener: function(callback) {
-    this.on(CHANGE_EVENT, callback);
+  emitEvent: function (event) {
+    this.emit(event);
   },
 
-  removeChangeListener: function() {
-    this.removeListener(CHANGE_EVENT, callback);
-  },
-
-  getRouter: function() {
+  getRouter: function () {
     return router;
   },
 
-  redirectHome: function() {
+  redirectHome: function () {
     router.transitionTo('app');
-  },
+  }
 
 });
 
-RouteStore.dispatchToken = AppDispatcher.register(function(payload) {
+RouteStore.dispatchToken = AppDispatcher.register(function (payload) {
 
   AppDispatcher.waitFor([
     SessionStore.dispatchToken,
@@ -48,8 +43,8 @@ RouteStore.dispatchToken = AppDispatcher.register(function(payload) {
   ]);
 
   var action = payload.action;
-  
-  switch(action.type) {
+
+  switch (action.type) {
 
     case ActionTypes.REDIRECT:
       router.transitionTo(action.route);
@@ -63,7 +58,7 @@ RouteStore.dispatchToken = AppDispatcher.register(function(payload) {
 
     // Redirect to the list of bookmarks after create a bookmark.
     case ActionTypes.RECEIVE_CREATED_BOOKMARK:
-      router.transitionTo('app');
+      router.transitionTo('bookmarks');
       break;
 
     case ActionTypes.RECEIVE_REMOVED_BOOKMARK:
@@ -72,7 +67,7 @@ RouteStore.dispatchToken = AppDispatcher.register(function(payload) {
 
     default:
   }
-  
+
   return true;
 });
 
