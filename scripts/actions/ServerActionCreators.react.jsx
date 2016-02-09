@@ -5,7 +5,7 @@ var ActionTypes = ApiConstants.ActionTypes;
 
 module.exports = {
 
-  receiveError: function(json) {
+  receiveError: function (json) {
     AppDispatcher.handleServerAction({
       type: ActionTypes.ERROR_RESPONSE,
       json: json,
@@ -13,7 +13,7 @@ module.exports = {
     });
   },
 
-  receiveLogin: function(json, errors) {
+  receiveLogin: function (json, errors) {
     AppDispatcher.handleServerAction({
       type: ActionTypes.LOGIN_RESPONSE,
       json: json,
@@ -21,28 +21,28 @@ module.exports = {
     });
   },
 
-  receiveBookmarks: function(json) {
+  receiveBookmarks: function (json) {
     AppDispatcher.handleServerAction({
       type: ActionTypes.RECEIVE_BOOKMARKS,
       json: json
     });
   },
 
-  receiveSearchBookmarks: function(json) {
+  receiveSearchBookmarks: function (json) {
     AppDispatcher.handleServerAction({
       type: ActionTypes.RECEIVE_SEARCH_BOOKMARKS,
       json: json
     });
   },
 
-  receiveBookmark: function(json) {
+  receiveBookmark: function (json) {
     AppDispatcher.handleServerAction({
       type: ActionTypes.RECEIVE_BOOKMARK,
       json: json
     });
   },
 
-  receiveCreatedBookmark: function(json, errors) {
+  receiveCreatedBookmark: function (json, errors) {
     if (errors == null) {
       type = ActionTypes.RECEIVE_CREATED_BOOKMARK;
     }
@@ -56,9 +56,17 @@ module.exports = {
     });
   },
 
-  receiveRemovedBookmark: function(json, errors) {
+  receiveRemovedBookmark: function (json, errors) {
     AppDispatcher.handleServerAction({
-      type:  ActionTypes.RECEIVE_REMOVED_BOOKMARK,
+      type: ActionTypes.RECEIVE_REMOVED_BOOKMARK,
+      json: json,
+      errors: errors
+    });
+  },
+
+  receiveExport: function (json, errors) {
+    AppDispatcher.handleServerAction({
+      type: ActionTypes.RECEIVE_EXPORT_DATA,
       json: json,
       errors: errors
     });

@@ -8,6 +8,7 @@ module.exports = {
     LOGIN: APIRoot + "/oauth/v2/token",
     BOOKMARKS: APIRoot + "/api/bookmarks",
     SEARCH_BOOKMARKS: APIRoot + "/api/search/bookmarks",
+    DATA: APIRoot + "/api/data"
   },
 
   Auth: {
@@ -41,7 +42,10 @@ module.exports = {
 
     RECEIVE_CREATED_BOOKMARK: null,
     RECEIVE_CREATED_BOOKMARK_ERROR: null,
-    RECEIVE_REMOVED_BOOKMARK: null
+    RECEIVE_REMOVED_BOOKMARK: null,
+
+    EXPORT_DATA: null,
+    RECEIVE_EXPORT_DATA: null
   })
 
 };

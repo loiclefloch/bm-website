@@ -180,6 +180,26 @@ module.exports = {
           ServerActionCreators.receiveRemovedBookmark(json);
         });
       });
+  },
+
+  /**
+   * The request will create the json file to export.
+   * It returns the url to download the file.
+   */
+  exportData: function () {
+
+    request.get(APIEndpoints.DATA + '/export')
+        .set('Accept', 'application/json')
+        .set('Authorization', _getAuthorizationHeader())
+        .end(function (error, res) {
+          handleResponse(error, res, function (json) {
+            ServerActionCreators.receiveExport(json);
+
+            // Open the url to download the file
+            window.open(json.url);
+          });
+        });
+
   }
 
 };
