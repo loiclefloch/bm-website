@@ -1,13 +1,19 @@
 var React = require('react');
-var WebAPIUtils = require('../../utils/WebAPIUtils.js');
-var SessionStore = require('../../stores/SessionStore.react.jsx');
-var BookmarkActionCreators = require('../../actions/BookmarkActionCreators.react.jsx');
-var RouteActionCreators = require('../../actions/RouteActionCreators.react.jsx');
-var BookmarkStore = require('../../stores/BookmarkStore.react.jsx');
-var Events = require('../../utils/Events.js');
-var ErrorNotice = require('../common/ErrorNotice.react.jsx');
+
+var WebAPIUtils = require('../../../utils/WebAPIUtils.js');
+
+var SessionStore = require('../../../stores/SessionStore.react.jsx');
+var BookmarkStore = require('../../../stores/BookmarkStore.react.jsx');
+
+var BookmarkActionCreators = require('../../../actions/BookmarkActionCreators.react.jsx');
+var RouteActionCreators = require('../../../actions/RouteActionCreators.react.jsx');
+
+var Events = require('../../../utils/Events.js');
+
 var showdown = require('showdown');
-var Loading = require('../common/Loading.react.jsx');
+
+var Loading = require('../../Common/Loading.react.jsx');
+var ErrorBlock = require('../../Common/ErrorBlock.react.jsx');
 
 var BookmarkNew = React.createClass({
 
@@ -45,10 +51,11 @@ var BookmarkNew = React.createClass({
   },
 
   _onNotesChange: function () {
-    var notes = this.refs.notes.getDOMNode().value;
+    var notes = this.refs.notes.value;
     console.log(notes);
     var converter = new showdown.Converter();
-    this.props.preview_html = converter.makeHtml(notes);
+    this.state.preview_html = converter.makeHtml(notes);
+    console.log(this.state.preview_html);
     this.forceUpdate();
   },
 
@@ -61,19 +68,19 @@ var BookmarkNew = React.createClass({
   _onSubmit: function (e) {
     e.preventDefault();
     this.displayLoading();
-    var name = this.refs.name.getDOMNode().value;
-    var url = this.refs.url.getDOMNode().value;
-    var notes = this.refs.notes.getDOMNode().value;
+    var name = this.refs.name.value;
+    var url = this.refs.url.value;
+    var notes = this.refs.notes.value;
     var tags = [];
     BookmarkActionCreators.createBookmark(name, url, tags, notes);
   },
 
   render: function () {
-    var errors = (this.state.errors.length > 0) ? <ErrorNotice errors={this.state.errors}/> : <div></div>;
     return (
       <div>
         <Loading display={this.state.loading}/>
-        {errors}
+        <ErrorBlock errors={this.state.errors} />
+
         <div className="page-header">
           <h1>Create bookmark</h1>
         </div>
@@ -97,7 +104,7 @@ var BookmarkNew = React.createClass({
               </div>
 
               <div className="new_bookmark__preview col-sm-hidden col-md-6">
-                <div dangerouslySetInnerHTML={{__html: this.props.preview_html}}></div>
+                <div dangerouslySetInnerHTML={{__html: this.state.preview_html}}></div>
               </div>
             </div>
 

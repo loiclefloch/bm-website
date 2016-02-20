@@ -56,7 +56,7 @@ RouteStore.dispatchToken = AppDispatcher.register(function (payload) {
       }
       break;
 
-    // Redirect to the list of bookmarks after create a bookmark.
+    // Redirect to the list of Page after create a bookmark.
     case ActionTypes.RECEIVE_CREATED_BOOKMARK:
       router.transitionTo('bookmarks');
       break;

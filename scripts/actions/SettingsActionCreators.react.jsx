@@ -6,12 +6,20 @@ var ActionTypes = ApiConstants.ActionTypes;
 
 module.exports = {
 
-  exportData: function() {
+  exportData: function () {
     AppDispatcher.handleViewAction({
       type: ActionTypes.EXPORT_DATA
     });
     WebAPIUtils.exportData();
+  },
+
+  importData: function (file) {
+    AppDispatcher.handleViewAction({
+      type: ActionTypes.IMPORT_DATA
+    });
+    WebAPIUtils.importData(file);
   }
+
 
 };
 

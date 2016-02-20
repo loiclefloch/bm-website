@@ -23,6 +23,15 @@
     //  }
     //}
 
+    .bookmark__tag {
+      font-weight: 600;
+      line-height: 1;
+      margin-right: 3px;
+      padding: 3px 8px;
+      -webkit-transition: background 150ms linear;
+     -moz-transition: background 150ms linear;
+      transition: background 150ms linear;
+    }
 
   }
 

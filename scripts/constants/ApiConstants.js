@@ -45,7 +45,10 @@ module.exports = {
     RECEIVE_REMOVED_BOOKMARK: null,
 
     EXPORT_DATA: null,
-    RECEIVE_EXPORT_DATA: null
+    RECEIVE_EXPORT_DATA: null,
+
+    IMPORT_DATA: null,
+    RECEIVE_IMPORT_DATA: null
   })
 
 };

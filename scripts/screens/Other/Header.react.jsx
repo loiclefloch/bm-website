@@ -1,16 +1,16 @@
 var React = require('react');
 var Router = require('react-router');
+
 var Link = Router.Link;
-var ReactPropTypes = React.PropTypes;
-var SessionActionCreators = require('../actions/SessionActionCreators.react.jsx');
-var RouteStore = require('../stores/RouteStore.react.jsx');
+var SessionActionCreators = require('../../actions/SessionActionCreators.react.jsx');
+var RouteStore = require('../../stores/RouteStore.react.jsx');
 
 var Header = React.createClass({
 
   getInitialState: function () {
     return {
-      username: ReactPropTypes.string,
-      isLoggedIn: ReactPropTypes.bool
+      username: React.PropTypes.string,
+      isLoggedIn: React.PropTypes.bool
     }
   },
 
@@ -27,12 +27,19 @@ var Header = React.createClass({
     var nav = this.props.isLoggedIn ? (
       <div className="collapse navbar-collapse">
         <ul className="nav navbar-nav">
+
           <li className={ currentRoute == 'bookmarks' ? 'active' : '' }>
             <Link to="bookmarks">Bookmarks</Link>
           </li>
+
           <li className={ currentRoute == 'new-bookmark' ? 'active' : '' }>
             <Link to="new-bookmark">New bookmark</Link>
           </li>
+
+          <li className={ currentRoute == 'tag-list' ? 'active' : '' }>
+            <Link to="tag-list">Tags</Link>
+          </li>
+
         </ul>
 
         <ul className="nav navbar-nav navbar-right">

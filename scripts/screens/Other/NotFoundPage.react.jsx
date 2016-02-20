@@ -1,9 +1,11 @@
 var React = require('react');
+
 var SessionActionCreators = require('../../actions/SessionActionCreators.react.jsx');
 var SessionStore = require('../../stores/SessionStore.react.jsx');
-var ErrorNotice = require('../../components/common/ErrorNotice.react.jsx');
 
-var LoginPage = React.createClass({
+var ErrorNotice = require('../Common/ErrorNotice.react.jsx');
+
+var NotFoundPage = React.createClass({
 
   getInitialState: function () {
     return {};
@@ -28,5 +30,5 @@ var LoginPage = React.createClass({
   }
 });
 
-module.exports = LoginPage;
+module.exports = NotFoundPage;
 

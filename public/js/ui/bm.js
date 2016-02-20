@@ -53,22 +53,5 @@ $(document).on('click', '.bookmark__content a, .toc a', function(e) {
 
 
 $(document).on('click', '.bookmark__content code', function(e) {
-  $(this).selectText();
-  try {
-    var successful = document.execCommand('copy');
-    var msg = successful ? 'successful' : 'unsuccessful';
-    console.log('Copying text command was ' + msg);
-    if (successful) {
-      $.notify(
-        {
-          message: "Code copied to clipboard"
-        },
-        {
-          delay: 2000
-        }
-      );
-    }
-  } catch (err) {
-    console.log('Oops, unable to copy');
-  }
+  BM.copyTextOnElement($(this), 'Code copied to clipboard');
 });

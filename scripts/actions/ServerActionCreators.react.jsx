@@ -43,10 +43,8 @@ module.exports = {
   },
 
   receiveCreatedBookmark: function (json, errors) {
-    if (errors == null) {
-      type = ActionTypes.RECEIVE_CREATED_BOOKMARK;
-    }
-    else {
+    var type = ActionTypes.RECEIVE_CREATED_BOOKMARK;
+    if (errors != null) {
       type = ActionTypes.RECEIVE_CREATED_BOOKMARK_ERROR
     }
     AppDispatcher.handleServerAction({
@@ -67,6 +65,14 @@ module.exports = {
   receiveExport: function (json, errors) {
     AppDispatcher.handleServerAction({
       type: ActionTypes.RECEIVE_EXPORT_DATA,
+      json: json,
+      errors: errors
+    });
+  },
+
+  receiveImport: function (json, errors) {
+    AppDispatcher.handleServerAction({
+      type: ActionTypes.RECEIVE_IMPORT_DATA,
       json: json,
       errors: errors
     });

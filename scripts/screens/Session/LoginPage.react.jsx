@@ -2,8 +2,11 @@ var React = require('react');
 var SessionActionCreators = require('../../actions/SessionActionCreators.react.jsx');
 var SessionStore = require('../../stores/SessionStore.react.jsx');
 var Events = require('../../utils/Events.js');
-var ErrorNotice = require('../../components/common/ErrorNotice.react.jsx');
-var Loading = require('../common/Loading.react.jsx');
+
+var ErrorNotice = require('../Common/ErrorNotice.react.jsx');
+var Loading = require('../Common/Loading.react.jsx');
+
+
 var LoginPage = React.createClass({
 
   getInitialState: function () {
@@ -28,8 +31,8 @@ var LoginPage = React.createClass({
     e.preventDefault();
     this.displayLoading();
     this.setState({errors: []});
-    var username = this.refs.username.getDOMNode().value;
-    var password = this.refs.password.getDOMNode().value;
+    var username = this.refs.username.value;
+    var password = this.refs.password.value;
     SessionActionCreators.login(username, password);
   },
 

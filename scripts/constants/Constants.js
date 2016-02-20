@@ -4,4 +4,4 @@ module.exports = {
     DEFAULT_LIMIT: 20
   }
 
-}
+};

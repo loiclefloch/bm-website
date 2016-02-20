@@ -4,11 +4,13 @@ var Constants = require('../constants/Constants.js');
 var request = require('superagent');
 var RouteActionCreators = require('../actions/RouteActionCreators.react.jsx');
 var SessionStore = require('../stores/SessionStore.react.jsx');
+var ServerStore = require('../stores/ServerStore.react.jsx');
+
 var _ = require('lodash');
 
-function _getErrors(res) {
+function _getErrors(text) {
   var errorMsgs = ["Something went wrong, please try again"];
-  if ((json = JSON.parse(res.text))) {
+  if ((json = JSON.parse(text))) {
     if (!_.isEmpty(json['errors'])) {
       errorMsgs = json['errors'];
     } else if (!_.isEmpty(json['error'])) {
@@ -34,10 +36,8 @@ function _getAuthorizationHeader() {
 var APIEndpoints = ApiConstants.APIEndpoints;
 
 function handleResponse(error, res, success, failure) {
-  if (error) {
-    failure(error);
-  }
-  else if (res.statusCode >= 200 && res.statusCode < 300) {
+
+  if (res.statusCode >= 200 && res.statusCode < 300) {
 
     if (!_.isEmpty(res.text)) {
       success(JSON.parse(res.text));
@@ -48,17 +48,31 @@ function handleResponse(error, res, success, failure) {
   }
   else {
     if (res.statusCode == 404) {
+      console.error('[API] Not found');
       RouteActionCreators.redirect('page-not-found');
     }
     else if (res.statusCode == 401) {
       BM.loading.hide();
+      console.log('[API] 401');
       RouteActionCreators.redirect('login');
     }
     else if (res.statusCode == 500) {
-      failure("Internal server error");
+      console.log(res);
+      console.error('[API] Error 500', res.text);
+      ServerStore.setServerError(res); // send wall request
+      RouteActionCreators.redirect('server-error');
     }
     else {
-      var errors = _getErrors(res);
+      console.log('get api errors');
+      var errors = _getErrors(res.text);
+      console.error('[API]', errors);
+      console.log('js error', error);
+
+      //if (error) {
+      //    var errors = _getErrors(error);
+      //  failure(errors);
+      //}
+
       failure(errors);
     }
   }
@@ -78,6 +92,7 @@ module.exports = {
           password: password
         })
       .end(function (error, res) {
+        // do not call handleResponse due to different handling of 401.
         if (error) {
           errors = _getErrors(error);
         }
@@ -85,7 +100,7 @@ module.exports = {
           var json = JSON.parse(res.text);
           var errors = [json.error_description];
           if (!errors) {
-            errors = _getErrors(res);
+            errors = _getErrors(res.text);
           }
           ServerActionCreators.receiveLogin(null, errors);
         } else {
@@ -110,9 +125,13 @@ module.exports = {
       .set('Accept', 'application/json')
       .set('Authorization', _getAuthorizationHeader())
       .end(function (error, res) {
-        handleResponse(error, res, function (json) {
-          ServerActionCreators.receiveBookmarks(json);
-        });
+        handleResponse(error, res,
+          function Success(json) {
+            ServerActionCreators.receiveBookmarks(json);
+          },
+          function Failure(errors) {
+            ServerActionCreators.receiveBookmarks(null, errors);
+          });
       });
   },
 
@@ -130,9 +149,13 @@ module.exports = {
       .set('Accept', 'application/json')
       .set('Authorization', _getAuthorizationHeader())
       .end(function (error, res) {
-        handleResponse(error, res, function (json) {
-          ServerActionCreators.receiveSearchBookmarks(json);
-        });
+        handleResponse(error, res,
+          function Success(json) {
+            ServerActionCreators.receiveSearchBookmarks(json);
+          },
+          function Failure(errors) {
+            ServerActionCreators.receiveSearchBookmarks(null, errors);
+          });
       });
   },
 
@@ -142,9 +165,13 @@ module.exports = {
       .set('Accept', 'application/json')
       .set('Authorization', _getAuthorizationHeader())
       .end(function (error, res) {
-        handleResponse(error, res, function (json) {
-          ServerActionCreators.receiveBookmark(json);
-        });
+        handleResponse(error, res,
+          function Success(json) {
+            ServerActionCreators.receiveBookmark(json);
+          },
+          function Failure(errors) {
+            ServerActionCreators.receiveBookmark(null, errors);
+          });
       });
   },
 
@@ -161,10 +188,11 @@ module.exports = {
         })
       .end(function (error, res) {
         if (res) {
-          handleResponse(error, res, function (json) {
+          handleResponse(error, res,
+            function Success(json) {
               ServerActionCreators.receiveCreatedBookmark(json, null);
             },
-            function (errors) {
+            function Failure(errors) {
               ServerActionCreators.receiveCreatedBookmark(null, errors);
             });
         }
@@ -176,9 +204,13 @@ module.exports = {
       .set('Accept', 'application/json')
       .set('Authorization', _getAuthorizationHeader())
       .end(function (error, res) {
-        handleResponse(error, res, function (json) {
-          ServerActionCreators.receiveRemovedBookmark(json);
-        });
+        handleResponse(error, res,
+          function Success(json) {
+            ServerActionCreators.receiveRemovedBookmark(json);
+          },
+          function Failure(errors) {
+            ServerActionCreators.receiveRemovedBookmark(null, errors);
+          });
       });
   },
 
@@ -189,16 +221,39 @@ module.exports = {
   exportData: function () {
 
     request.get(APIEndpoints.DATA + '/export')
-        .set('Accept', 'application/json')
-        .set('Authorization', _getAuthorizationHeader())
-        .end(function (error, res) {
-          handleResponse(error, res, function (json) {
+      .set('Accept', 'application/json')
+      .set('Authorization', _getAuthorizationHeader())
+      .end(function (error, res) {
+        handleResponse(error, res,
+          function Success(json) {
             ServerActionCreators.receiveExport(json);
-
             // Open the url to download the file
             window.open(json.url);
+          },
+          function Failure(errors) {
+            ServerActionCreators.receiveExport(null, errors);
           });
-        });
+      });
+
+  },
+
+  importData: function (file) {
+
+    request.post(APIEndpoints.DATA + '/import/test') // TODO: remove /test when testing done.
+      .set('Accept', 'application/json')
+      .set('Authorization', _getAuthorizationHeader())
+      .attach(file.name, file)
+      .end(function (error, res) {
+        handleResponse(error, res,
+          function Success(json) {
+            console.log('Import ok !', json);
+            ServerActionCreators.receiveImport(json);
+          },
+          function Failure(errors) {
+            console.log('ERROR on APIUtils', errors);
+            ServerActionCreators.receiveImport(null, errors);
+          });
+      });
 
   }
 
