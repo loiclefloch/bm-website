@@ -12,30 +12,26 @@ var RouteActionCreators = require('../../../actions/RouteActionCreators.react.js
 
 var BookmarkUtils = require('../../../utils/BookmarkUtils.js');
 
-var Loading = require('../../Common/Loading.react.jsx');
 var ErrorNotice = require('../../Common/ErrorNotice.react.jsx');
 var LoadMore = require('./components/LoadMore.react.jsx');
 var SearchBox = require('./components/SearchBox.react.jsx');
 var BookmarksTable = require('./components/BookmarksTable.react.jsx');
 
+var LoadingMixin = require('../../Common/Mixins/LoadingMixin.react.jsx');
+var ErrorMixin = require('../../Common/Mixins/ErrorMixin.react.jsx');
+
 var BookmarkListPage = React.createClass({
+
+  mixins: [LoadingMixin, ErrorMixin],
 
   getInitialState: function () {
     var bookmarks = BookmarkStore.getAllBookmarks();
-    var loading = true;
-    // Do not display the loading if we have already load the Page.
-    // For example, when we came back to this page from the bookmark page.
-    if (!_.isEmpty(bookmarks)) {
-      loading = false;
-    }
     return {
       bookmarks: bookmarks,
       searchBookmarks: BookmarkStore.getSearchBookmarks(),
-      errors: [],
       search: BookmarkStore.getSearch(),
       paging: BookmarkStore.getPaging(),
-      searchPaging: BookmarkStore.getSearchPaging(),
-      loading: loading
+      searchPaging: BookmarkStore.getSearchPaging()
     };
   },
 
@@ -44,8 +40,14 @@ var BookmarkListPage = React.createClass({
       RouteActionCreators.redirect('login');
     }
 
+    // Do not display the loading if we have already load the Page.
+    // For example, when we came back to this page from the bookmark page.
+    if (_.isEmpty(this.state.bookmarks)) {
+      this.displayLoading();
+    }
+
     BookmarkStore.addListener(Events.CHANGE, this._onChange);
-    BookmarkStore.addListener(Events.LOADING, this._onLoadingEnd);
+    BookmarkStore.addListener(Events.LOADING, this.hideLoading);
 
     // do not call if we came back on the page. We need to call if there is only 1 bookmarks
     // because when we create a new bookmark, we are redirect to this page, but the bookmark list is not loaded
@@ -60,7 +62,7 @@ var BookmarkListPage = React.createClass({
   componentWillUnmount: function () {
     BookmarkStore.removeErrors();
     BookmarkStore.removeListener(Events.CHANGE, this._onChange);
-    BookmarkStore.removeListener(Events.LOADING, this._onLoadingEnd);
+    BookmarkStore.removeListener(Events.LOADING, this.hideLoading);
   },
 
   handleSearchInput: function (search) {
@@ -92,27 +94,12 @@ var BookmarkListPage = React.createClass({
       bookmarks: BookmarkStore.getAllBookmarks(),
       searchBookmarks: BookmarkStore.getSearchBookmarks(),
       search: BookmarkStore.getSearch(),
-      errors: [],
       paging: BookmarkStore.getPaging(),
       searchPaging: BookmarkStore.getSearchPaging()
     });
   },
 
-  _onLoadingEnd: function () {
-    console.log('hide  loading');
-    this.setState({
-      loading: false
-    });
-  },
-
-  displayLoading: function () {
-    this.setState({
-      loading: true
-    });
-  },
-
   render: function () {
-    var errors = (this.state.errors.length > 0) ? <ErrorNotice errors={this.state.errors}/> : <div></div>;
 
     var bookmarkTable = (<div className="bookmarks__loading"></div>);
     var loadMore = "";
@@ -154,8 +141,9 @@ var BookmarkListPage = React.createClass({
 
     return (
       <div id="bookmark-list">
-        {errors}
-        <Loading display={this.state.loading}/>
+        {this.state.loadingView}
+        {this.state.errorView}
+
         {/*
          <Fab />
          */}

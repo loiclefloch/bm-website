@@ -18,53 +18,45 @@ var Loading = require('../../Common/Loading.react.jsx');
 var BookmarksTable  = require('../../Bookmark/List/components/BookmarksTable.react.jsx');
 var NoBookmarkForTag = require('./components/NoBookmarkForTag.react.jsx');
 
+var LoadingMixin = require('../../Common/Mixins/LoadingMixin.react.jsx');
+var ErrorMixin = require('../../Common/Mixins/ErrorMixin.react.jsx');
+
 var TagPage = React.createClass({
 
-  mixins: [State],
+  mixins: [State, LoadingMixin, ErrorMixin],
 
   getInitialState: function () {
     return {
-      tag: TagStore.getTag(),
-      errors: [],
-      loading: true
+      tag: TagStore.getTag()
     };
   },
 
   componentDidMount: function () {
+
+    this.displayLoading();
 
     if (!SessionStore.isLoggedIn()) {
       RouteActionCreators.redirect('login');
     }
 
     TagStore.addListener(Events.CHANGE, this._onChange);
-    TagStore.addListener(Events.LOADING, this._onLoadingEnd);
+    TagStore.addListener(Events.LOADING, this.hideLoading);
 
     TagActionCreators.loadTag(this.getParams().tagId);
   },
 
   componentWillUnmount: function () {
     TagStore.removeListener(Events.CHANGE, this._onChange);
-    TagStore.removeListener(Events.LOADING, this._onLoadingEnd);
+    TagStore.removeListener(Events.LOADING, this.hideLoading);
     TagStore.clearTag();
-  },
-
-  displayLoading: function () {
-    this.setState({
-      loading: true
-    });
   },
 
   _onChange: function () {
     this.setState({
-      tag: TagStore.getTag(),
-      errors: TagStore.getErrors()
+      tag: TagStore.getTag()
     });
-  },
 
-  _onLoadingEnd: function () {
-    this.setState({
-      loading: false
-    });
+    this.handleError(TagStore.getErrors());
   },
 
   _deleteTag: function (e) {
@@ -88,7 +80,7 @@ var TagPage = React.createClass({
     if (!_.isEmpty(tag.bookmarks)) {
       bookmarkTable = (<BookmarksTable bookmarks={tag.bookmarks}/>);
     }
-    else if (this.loading) {
+    else if (this.state.isLoading) {
       bookmarkTable = (<NoBookmarkForTag />);
     }
 
@@ -100,7 +92,8 @@ var TagPage = React.createClass({
 
     return (
       <div id="tag">
-        <Loading display={this.state.loading}/>
+        {this.state.loadingView}
+        {this.state.errorView}
 
         <div>
           <div className="tag__page_header">

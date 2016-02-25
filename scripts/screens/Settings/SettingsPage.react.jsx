@@ -6,35 +6,27 @@ var ServerStore = require('../../stores/ServerStore.react.jsx');
 var Events = require('../../utils/Events.js');
 var Dropzone = require('react-dropzone');
 
-var Loading = require('../Common/Loading.react.jsx');
-var ErrorBlock = require('../Common/ErrorBlock.react.jsx');
+var ErrorMixin = require('../Common/Mixins/ErrorMixin.react.jsx');
 var FontAwesome = require('react-fontawesome');
+
+var LoadingMixin = require('../Common/Mixins/LoadingMixin.react.jsx');
 
 var SettingsPage = React.createClass({
 
-  getInitialState: function () {
-    return {
-      loading: false,
-      errors: ServerStore.getErrors()
-    };
-  },
+  mixins: [LoadingMixin, ErrorMixin],
 
   componentDidMount: function () {
+    this.handleError(ServerStore.getErrors());
+
     ServerStore.addListener(Events.CHANGE, this._onChange);
-    ServerStore.addListener(Events.LOADING, this._onLoadingEnd);
+    ServerStore.addListener(Events.LOADING, this.hideLoading);
 
     $.material.init();
   },
 
   componentWillUnmount: function () {
     ServerStore.removeListener(Events.CHANGE, this._onChange);
-    ServerStore.removeListener(Events.LOADING, this._onLoadingEnd);
-  },
-
-  displayLoading: function () {
-    this.setState({
-      loading: true
-    });
+    ServerStore.removeListener(Events.LOADING, this.hideLoading);
   },
 
   handleEditUserSubmit: function (username, pwd) {
@@ -42,21 +34,12 @@ var SettingsPage = React.createClass({
   },
 
   _onChange: function () {
-    console.log('on change errors are: ', ServerStore.getErrors());
-    this.setState({
-      errors: ServerStore.getErrors()
-    })
+    this.handleError(ServerStore.getErrors());
   },
 
   _export: function () {
     this.displayLoading();
     SettingsActionCreators.exportData();
-  },
-
-  _onLoadingEnd: function () {
-    this.setState({
-      loading: false
-    });
   },
 
   onDrop: function (files) {
@@ -84,10 +67,11 @@ var SettingsPage = React.createClass({
       username: SessionStore.getUsername()
     };
 
+
     return (
       <div>
-        <Loading display={this.state.loading}/>
-        <ErrorBlock errors={this.state.errors}/>
+        {this.state.loadingView}
+        {this.state.errorView}
 
         <h1 className="text-center">Settings</h1>
 

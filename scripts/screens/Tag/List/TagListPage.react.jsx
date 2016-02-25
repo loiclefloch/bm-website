@@ -11,7 +11,6 @@ var Events = require('../../../utils/Events.js');
 var TagActionCreators = require('../../../actions/TagActionCreators.react.jsx');
 var RouteActionCreators = require('../../../actions/RouteActionCreators.react.jsx');
 
-var Loading = require('../../Common/Loading.react.jsx');
 var ErrorNotice = require('../../Common/ErrorNotice.react.jsx');
 
 var LoadMore = require('./components/LoadMore.react.jsx');
@@ -19,26 +18,23 @@ var SearchBox = require('./components/SearchBox.react.jsx');
 var TagsTable = require('./components/TagsTable.react.jsx');
 var NoTag = require('./components/NoTag.react.jsx');
 
+var LoadingMixin = require('../../Common/Mixins/LoadingMixin.react.jsx');
+var ErrorMixin = require('../../Common/Mixins/ErrorMixin.react.jsx');
+
 var TagListPage = React.createClass({
+
+  mixins: [LoadingMixin, ErrorMixin],
 
   getInitialState: function () {
 
     var tags = TagStore.getAllTags();
-    var loading = true;
-    // Do not display the loading if we have already load the Page.
-    // For example, when we came back to this page from the tag page.
-    if (!_.isEmpty(tags)) {
-      loading = false;
-    }
 
     return {
       tags: tags,
       searchTags: TagStore.getSearchTags(),
-      errors: [],
       search: TagStore.getSearch(),
       paging: TagStore.getPaging(),
-      searchPaging: TagStore.getSearchPaging(),
-      loading: loading
+      searchPaging: TagStore.getSearchPaging()
     };
 
   },
@@ -48,8 +44,15 @@ var TagListPage = React.createClass({
       RouteActionCreators.redirect('login');
     }
 
-    TagStore.addListener(Events.CHANGE, this._onChange);
-    TagStore.addListener(Events.LOADING, this._onLoadingEnd);
+    // Do not display the loading if we have already load the Page.
+    // For example, when we came back to this page from the tag page.
+    if (_.isEmpty(this.state.tags)) {
+      this.displayLoading();
+    }
+
+
+      TagStore.addListener(Events.CHANGE, this._onChange);
+    TagStore.addListener(Events.LOADING, this.hideLoading);
 
     if (_.isEmpty(this.state.tags)) { // do not call if we came back on the page
       TagActionCreators.loadTags();
@@ -61,7 +64,7 @@ var TagListPage = React.createClass({
   componentWillUnmount: function () {
     TagStore.removeErrors();
     TagStore.removeListener(Events.CHANGE, this._onChange);
-    TagStore.removeListener(Events.LOADING, this._onLoadingEnd);
+    TagStore.removeListener(Events.LOADING, this.hideLoading);
   },
 
   handleSearchInput: function (search) {
@@ -95,28 +98,12 @@ var TagListPage = React.createClass({
       tags: TagStore.getAllTags(),
       searchTags: TagStore.getSearchTags(),
       search: TagStore.getSearch(),
-      errors: [],
       paging: TagStore.getPaging(),
       searchPaging: TagStore.getSearchPaging()
     });
   },
 
-  _onLoadingEnd: function () {
-    console.log('hide  loading');
-    this.setState({
-      loading: false
-    });
-  },
-
-  displayLoading: function () {
-    this.setState({
-      loading: true
-    });
-  },
-
   render: function () {
-    var errors = (this.state.errors.length > 0) ? <ErrorNotice errors={this.state.errors}/> : <div></div>;
-
     var tagTable = (<div className="tags__loading"></div>);
     var loadMore = "";
     var tags = [];
@@ -158,8 +145,8 @@ var TagListPage = React.createClass({
 
     return (
       <div id="bookmark-list">
-        {errors}
-        <Loading display={this.state.loading}/>
+        {this.state.errorView}
+        {this.state.loadingView}
         {/*
          <Fab />
          */}

@@ -16,60 +16,51 @@ var _ = require('lodash');
 
 var BookmarkUtils = require('../../../utils/BookmarkUtils.js');
 
-var Loading = require('../../Common/Loading.react.jsx');
+//var Loading = require('../../Common/Loading.react.jsx');
 var HtmlBlock = require('../../Common/HtmlBlock.react.jsx');
 var BookmarkFloatMenu = require('./components/BookmarkFloatMenu.react.jsx');
 var TagList = require('./components/TagList.react.jsx');
 var BookmarkContent = require('./components/BookmarkContent.react.jsx');
 var TableOfContentPopin = require('./components/TableOfContentPopin.react.jsx');
 
+var LoadingMixin = require('../../Common/Mixins/LoadingMixin.react.jsx');
+var ErrorMixin = require('../../Common/Mixins/ErrorMixin.react.jsx');
+
 var BookmarkPage = React.createClass({
 
-  mixins: [State],
+  mixins: [State, LoadingMixin, ErrorMixin],
 
   getInitialState: function () {
     return {
       bookmark: BookmarkStore.getBookmark(),
-      errors: [],
-      loading: true
     };
   },
 
   componentDidMount: function () {
+    this.displayLoading();
 
     if (!SessionStore.isLoggedIn()) {
       RouteActionCreators.redirect('login');
     }
 
     BookmarkStore.addListener(Events.CHANGE, this._onChange);
-    BookmarkStore.addListener(Events.LOADING, this._onLoadingEnd);
+    BookmarkStore.addListener(Events.LOADING, this.hideLoading);
 
     BookmarkActionCreators.loadBookmark(this.getParams().bookmarkId);
   },
 
   componentWillUnmount: function () {
     BookmarkStore.removeListener(Events.CHANGE, this._onChange);
-    BookmarkStore.removeListener(Events.LOADING, this._onLoadingEnd);
+    BookmarkStore.removeListener(Events.LOADING, this.hideLoading);
     BookmarkStore.clearBookmark();
-  },
-
-  displayLoading: function () {
-    this.setState({
-      loading: true
-    });
   },
 
   _onChange: function () {
     this.setState({
-      bookmark: BookmarkStore.getBookmark(),
-      errors: BookmarkStore.getErrors()
+      bookmark: BookmarkStore.getBookmark()
     });
-  },
 
-  _onLoadingEnd: function () {
-    this.setState({
-      loading: false
-    });
+    this.handleError(BookmarkStore.getErrors());
   },
 
   _deleteBookmark: function (e) {
@@ -95,7 +86,7 @@ var BookmarkPage = React.createClass({
 
     return (
       <div id="bookmark" className="row">
-        <Loading display={this.state.loading}/>
+        {this.state.loadingView}
 
         <BookmarkFloatMenu bookmark={bookmark}/>
 

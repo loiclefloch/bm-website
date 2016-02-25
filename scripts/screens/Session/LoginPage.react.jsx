@@ -4,57 +4,48 @@ var SessionStore = require('../../stores/SessionStore.react.jsx');
 var Events = require('../../utils/Events.js');
 
 var ErrorNotice = require('../Common/ErrorNotice.react.jsx');
-var Loading = require('../Common/Loading.react.jsx');
 
+var LoadingMixin = require('../../Common/Mixins/LoadingMixin.react.jsx');
+var ErrorMixin = require('../../Common/Mixins/ErrorMixin.react.jsx');
 
 var LoginPage = React.createClass({
 
+  mixins: [LoadingMixin, ErrorMixin],
+
   getInitialState: function () {
-    return {errors: [], loading: false};
+    return {
+    };
   },
 
   componentDidMount: function () {
     SessionStore.addListener(Events.CHANGE, this._onChange);
-    SessionStore.addListener(Events.LOADING, this._onLoadingEnd);
+    SessionStore.addListener(Events.LOADING, this.hideLoading);
   },
 
   componentWillUnmount: function () {
     SessionStore.removeListener(Events.CHANGE, this._onChange);
-    SessionStore.removeListener(Events.LOADING, this.displayLoading);
+    SessionStore.removeListener(Events.LOADING, this.hideLoading);
   },
 
   _onChange: function () {
-    this.setState({errors: SessionStore.getErrors()});
+    this.handleError(SessionStore.getErrors());
   },
 
   _onSubmit: function (e) {
     e.preventDefault();
     this.displayLoading();
-    this.setState({errors: []});
+    this.hideError();
     var username = this.refs.username.value;
     var password = this.refs.password.value;
     SessionActionCreators.login(username, password);
   },
 
-  _onLoadingEnd: function() {
-    this.setState({
-      loading: false
-    });
-  },
-
-  displayLoading: function() {
-    this.setState({
-      loading: true
-    });
-  },
-
   render: function () {
-    var errors = (this.state.errors.length > 0) ? <ErrorNotice errors={this.state.errors}/> : <div></div>;
     var username = SessionStore.getUsername();
     return (
       <div>
-        <Loading display={this.state.loading}/>
-        {errors}
+        {this.state.loadingView}
+        {this.state.errorView}
         <div className="row">
           <div className="card card--login small-10 medium-6 large-4 columns small-centered">
             <form onSubmit={this._onSubmit} className="form col-sm-12 col-md-6 col-md-offset-3">

@@ -15,6 +15,7 @@ var SearchBox = React.createClass({
     this.props.search.name = value;
     this.props.onSearchSubmit(this.props.search);
   },
+
   handleChange: function () {
     var value = this.refs.filterTextInput.value;
     this.props.search.name = value;
@@ -28,13 +29,18 @@ var SearchBox = React.createClass({
       TagStore.clearSearch();
     }
   },
+
   render: function () {
 
     return (
       <form onSubmit={this.handleSubmit} className="form-horizontal">
 
         <div className="form-group label-floating">
-          <label className="control-label">Search</label>
+
+          <label className="control-label">
+            Search
+          </label>
+
           <input
             type="text"
             placeholder=""
@@ -45,6 +51,7 @@ var SearchBox = React.createClass({
           <span className="material-input"/>
 
         </div>
+
       </form>
     );
   }
