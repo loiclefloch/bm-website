@@ -31,6 +31,14 @@
       -webkit-transition: background 150ms linear;
      -moz-transition: background 150ms linear;
       transition: background 150ms linear;
+
+      a {
+        color:white;
+
+        &:hover {
+          text-decoration: none;
+        }
+      }
     }
 
   }

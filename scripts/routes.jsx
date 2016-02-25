@@ -11,6 +11,7 @@ var BookmarkPage = require('./screens/Bookmark/Page/BookmarkPage.react.jsx');
 var BookmarkNew = require('./screens/Bookmark/New/BookmarkNew.react.jsx');
 
 var TagListPage = require('./screens/Tag/List/TagListPage.react.jsx');
+var TagPage = require('./screens/Tag/Page/TagPage.react.jsx');
 
 var NotFoundPage = require('./screens/Other/NotFoundPage.react.jsx');
 var ServerErrorPage = require('./screens/Other/ServerErrorPage.react.jsx');
@@ -28,8 +29,9 @@ module.exports = (
     <Route name="new-bookmark" path="/bookmark/new" handler={BookmarkNew}/>
 
     <Route name="tag-list" path="/tags" handler={TagListPage}/>
+    <Route name="tag" path="/tags/:tagId" handler={TagPage}/>
 
-    <Route name="settings-page" path="/settings" handler={SettingsPage}/>
+    <Route name="settings" path="/settings" handler={SettingsPage}/>
 
     <Route name="page-not-found" path="/404" handler={NotFoundPage}/>
 

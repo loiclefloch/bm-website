@@ -1,3 +1,4 @@
+@import 'colors';
 
 .settings__import_row {
   div {
@@ -8,9 +9,11 @@
 }
 
 .settings__import_row, .settings__export_row {
-  i {
-    height: 200px;
-    width: auto;
-    display: block;
+  button {
+    color: $text-color!important;
+
+    &:hover {
+      color: $main-color!important;
+    }
   }
 }

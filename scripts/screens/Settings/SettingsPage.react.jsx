@@ -8,6 +8,7 @@ var Dropzone = require('react-dropzone');
 
 var Loading = require('../Common/Loading.react.jsx');
 var ErrorBlock = require('../Common/ErrorBlock.react.jsx');
+var FontAwesome = require('react-fontawesome');
 
 var SettingsPage = React.createClass({
 
@@ -86,7 +87,7 @@ var SettingsPage = React.createClass({
     return (
       <div>
         <Loading display={this.state.loading}/>
-        <ErrorBlock errors={this.state.errors} />
+        <ErrorBlock errors={this.state.errors}/>
 
         <h1 className="text-center">Settings</h1>
 
@@ -95,14 +96,30 @@ var SettingsPage = React.createClass({
           <div className="row">
 
             <div className="col-hidden-xs col-sm-6 text-center settings__export_row">
-              <button type="button" className="btn btn-primary" onClick={this._export}>Export data</button>
-              <i className="fa fa-cloud-download"/>
+              <button type="button" className="btn btn-primary" onClick={this._export}>
+                Export data
+                <br/>
+                <FontAwesome
+                  name='cloud-download'
+                  size='5x'
+                  //spin
+                  style={{ textShadow: '0 1px 0 rgba(0, 0, 0, 0.1)' }}
+                />
+              </button>
             </div>
 
             <div className="col-hidden-xs col-sm-6 text-center settings__import_row">
               <Dropzone onDrop={this.onDrop} multiple={false}>
-                <button type="button" className="btn btn-primary">Import data</button>
-                <i className="fa fa-cloud-upload"/>
+                <button type="button" className="btn btn-primary">
+                  Import data
+                  <br/>
+                  <FontAwesome
+                    name='cloud-upload'
+                    size='5x'
+                    //spin
+                    style={{ textShadow: '0 1px 0 rgba(0, 0, 0, 0.1)' }}
+                  />
+                </button>
               </Dropzone>
             </div>
 

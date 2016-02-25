@@ -37,7 +37,7 @@ var ServerErrorPage = React.createClass({
 
     var errorData = this.state.error;
 
-    if (_.isUndefined(errorData.body)) { // testing
+    if (_.isUndefined(errorData.body)) { // testing data
 
       var errorData = {
         body: {
@@ -127,28 +127,32 @@ var ServerErrorPage = React.createClass({
 
           <div className="row" className="top-buffer-50 text-center">
 
-            <div className="col-xs-6">
+            <div className="col-xs-6 server_error_page__github">
               <a href={Config.github_api_repository_link + "/issues"} target="_blank">
                 Github
+                <br/>
                 <FontAwesome
                   className='server_error_page__github_icon'
                   name='github'
-                  size='2x'
+                  size='5x'
                   //spin
                   style={{ textShadow: '0 1px 0 rgba(0, 0, 0, 0.1)' }}
                 />
               </a>
             </div>
 
-            <div className="col-xs-6">
-              Email
-              <FontAwesome
-                className='server_error_page__email_icon'
-                name='envelope'
-                size='2x'
-                //spin
-                style={{ textShadow: '0 1px 0 rgba(0, 0, 0, 0.1)' }}
-              />
+            <div className="col-xs-6 server_error_page__email">
+              <a href={Config.contact_email}>
+                Email
+                <br/>
+                <FontAwesome
+                  className='server_error_page__email_icon'
+                  name='envelope'
+                  size='5x'
+                  //spin
+                  style={{ textShadow: '0 1px 0 rgba(0, 0, 0, 0.1)' }}
+                />
+              </a>
             </div>
           </div>
         </div>

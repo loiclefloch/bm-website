@@ -4,6 +4,7 @@ var Router = require('react-router');
 var Link = Router.Link;
 var SessionActionCreators = require('../../actions/SessionActionCreators.react.jsx');
 var RouteStore = require('../../stores/RouteStore.react.jsx');
+var FontAwesome = require('react-fontawesome');
 
 var Header = React.createClass({
 
@@ -32,19 +33,28 @@ var Header = React.createClass({
             <Link to="bookmarks">Bookmarks</Link>
           </li>
 
-          <li className={ currentRoute == 'new-bookmark' ? 'active' : '' }>
-            <Link to="new-bookmark">New bookmark</Link>
-          </li>
-
           <li className={ currentRoute == 'tag-list' ? 'active' : '' }>
             <Link to="tag-list">Tags</Link>
+          </li>
+
+          <li className={ currentRoute == 'new-bookmark' ? 'active' : '' }>
+            <Link to="new-bookmark">New bookmark</Link>
           </li>
 
         </ul>
 
         <ul className="nav navbar-nav navbar-right">
-          <li>
-            <Link to="settings-page">Settings</Link>
+          <li className={ currentRoute == 'settings' ? 'active' : ''}>
+            <Link to="settings">
+              <FontAwesome
+                className=''
+                name='gear'
+                //spin
+                style={{ textShadow: '0 1px 0 rgba(0, 0, 0, 0.1)' }}
+              />
+              &nbsp;
+              Settings
+            </Link>
           </li>
           <li><a href='#' onClick={this.logout}>Logout</a></li>
         </ul>
