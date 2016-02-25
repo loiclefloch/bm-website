@@ -21,11 +21,7 @@ var BookmarkFloatMenu = React.createClass({
     var menuList = [];
 
     menuList.push(<li onClick={this.editNotes} key="edit_note">Notes</li>);
-
-    // Only display if there is a table of content.
-    if ($('h1').size() > 1 || $('h2').size() > 2) {
-      menuList.push(<li onClick={this.displayTableOfContent} key="toc">Table Of Content</li>);
-    }
+    menuList.push(<li onClick={this.displayTableOfContent} key="toc">Table Of Content</li>);
     menuList.push(<li onClick={this.goTop} key="go_top">Go top</li>);
 
     return (

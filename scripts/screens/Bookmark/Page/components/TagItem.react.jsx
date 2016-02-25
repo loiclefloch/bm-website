@@ -1,5 +1,8 @@
 var React = require('react');
 
+var Router = require('react-router');
+var Link = Router.Link;
+
 var TagItem = React.createClass({
 
   propTypes: {
@@ -14,7 +17,9 @@ var TagItem = React.createClass({
 
     return (
       <div className="bookmark__tag label" style={style} key={'tag_' + tag.id}>
-        {tag.name}
+        <Link to="tag" params={ {tagId: tag.id} }>
+          {tag.name}
+        </Link>
       </div>
     );
   }

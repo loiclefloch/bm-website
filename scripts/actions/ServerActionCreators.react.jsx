@@ -21,6 +21,12 @@ module.exports = {
     });
   },
 
+  /*
+   * ==================================================================================================
+   *      BOOKMARK
+   * ==================================================================================================
+   */
+  
   receiveBookmarks: function (json) {
     AppDispatcher.handleServerAction({
       type: ActionTypes.RECEIVE_BOOKMARKS,
@@ -57,6 +63,53 @@ module.exports = {
   receiveRemovedBookmark: function (json, errors) {
     AppDispatcher.handleServerAction({
       type: ActionTypes.RECEIVE_REMOVED_BOOKMARK,
+      json: json,
+      errors: errors
+    });
+  },
+
+  /*
+   * ==================================================================================================
+   *      TAG
+   * ==================================================================================================
+   */
+
+  receiveTags: function (json) {
+    AppDispatcher.handleServerAction({
+      type: ActionTypes.RECEIVE_TAGS,
+      json: json
+    });
+  },
+
+  receiveSearchTags: function (json) {
+    AppDispatcher.handleServerAction({
+      type: ActionTypes.RECEIVE_SEARCH_TAGS,
+      json: json
+    });
+  },
+
+  receiveTag: function (json) {
+    AppDispatcher.handleServerAction({
+      type: ActionTypes.RECEIVE_TAG,
+      json: json
+    });
+  },
+
+  receiveCreatedTag: function (json, errors) {
+    var type = ActionTypes.RECEIVE_CREATED_TAG;
+    if (errors != null) {
+      type = ActionTypes.RECEIVE_CREATED_TAG_ERROR
+    }
+    AppDispatcher.handleServerAction({
+      type: type,
+      json: json,
+      errors: errors
+    });
+  },
+
+  receiveRemovedTag: function (json, errors) {
+    AppDispatcher.handleServerAction({
+      type: ActionTypes.RECEIVE_REMOVED_TAG,
       json: json,
       errors: errors
     });

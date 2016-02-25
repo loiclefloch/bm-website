@@ -47,7 +47,10 @@ var BookmarkListPage = React.createClass({
     BookmarkStore.addListener(Events.CHANGE, this._onChange);
     BookmarkStore.addListener(Events.LOADING, this._onLoadingEnd);
 
-    if (_.isEmpty(this.state.bookmarks)) { // do not call if we came back on the page
+    // do not call if we came back on the page. We need to call if there is only 1 bookmarks
+    // because when we create a new bookmark, we are redirect to this page, but the bookmark list is not loaded
+    // if we haven't go here before
+    if (_.isEmpty(this.state.bookmarks) || this.state.bookmarks.length == 1) {
       BookmarkActionCreators.loadBookmarks();
     }
 
@@ -178,8 +181,7 @@ var BookmarkListPage = React.createClass({
         <div className="top-buffer-50"></div>
 
       </div>
-    )
-      ;
+    );
   }
 });
 

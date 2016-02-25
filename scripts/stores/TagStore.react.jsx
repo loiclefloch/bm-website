@@ -8,14 +8,14 @@ var Events = require('../utils/Events.js');
 var ActionTypes = ApiConstants.ActionTypes;
 var Entity = require('../utils/Entity.js');
 
-var _bookmarks = [];
-var _searchBookmarks = [];
+var _tags = [];
 var _errors = [];
+var _searchTags = [];
 
-var _search = Entity.SEARCH_BOOKMARK;
-var _paging = Entity.PAGING_BOOKMARK;
-var _searchPaging = Entity.PAGING_BOOKMARK;
-var _bookmark = Entity.BOOKMARK;
+var _search = Entity.SEARCH_TAG;
+var _tag = Entity.TAG;
+var _paging = Entity.PAGING_TAG;
+var _searchPaging = Entity.PAGING_TAG;
 
 /**
  * Stores are like a mix between a model and a controller,
@@ -23,7 +23,7 @@ var _bookmark = Entity.BOOKMARK;
  * feeding the records to the views, while retrieving the data
  * from the server
  */
-var BookmarkStore = assign({}, EventEmitter.prototype, {
+var TagStore = assign({}, EventEmitter.prototype, {
 
   addListener: function (event, callback) {
     this.on(event, callback);
@@ -33,20 +33,20 @@ var BookmarkStore = assign({}, EventEmitter.prototype, {
     this.emit(event);
   },
 
-  getAllBookmarks: function () {
-    return _bookmarks;
+  getAllTags: function () {
+    return _tags;
   },
 
-  getSearchBookmarks: function () {
-    return _searchBookmarks;
+  getSearchTags: function () {
+    return _searchTags;
   },
 
-  clearBookmark: function () {
-    _bookmark = {}
+  clearTag: function () {
+    _tag = {}
   },
 
-  getBookmark: function () {
-    return _bookmark;
+  getTag: function () {
+    return _tag;
   },
 
   getPaging: function () {
@@ -70,9 +70,9 @@ var BookmarkStore = assign({}, EventEmitter.prototype, {
   },
 
   clearSearch: function () {
-    if (!_.isEmpty(_searchBookmarks)) {
+    if (!_.isEmpty(_searchTags)) {
       _searchPaging = PAGING_OBJECT;
-      _searchBookmarks = [];
+      _searchTags = [];
       _search = SEARCH_DEFAULT;
       this.emitEvent(Events.CHANGE);
     }
@@ -80,76 +80,80 @@ var BookmarkStore = assign({}, EventEmitter.prototype, {
 
 });
 
-BookmarkStore.dispatchToken = AppDispatcher.register(function (payload) {
+TagStore.dispatchToken = AppDispatcher.register(function (payload) {
   var action = payload.action;
 
   switch (action.type) {
 
-    case ActionTypes.RECEIVE_BOOKMARKS:
-      _bookmarks = _.unionWith(_bookmarks, action.json.bookmarks, function (a, b) {
+    case ActionTypes.RECEIVE_TAGS:
+      _tags = _.unionWith(_tags, action.json.tags, function (a, b) {
         return a.id == b.id;
       });
-      _paging = action.json.paging;
-      BookmarkStore.emitEvent(Events.CHANGE);
-      BookmarkStore.emitEvent(Events.LOADING);
+      if (action.json.paging) {
+        _paging = action.json.paging;
+      }
+      TagStore.emitEvent(Events.CHANGE);
+      TagStore.emitEvent(Events.LOADING);
       break;
 
-    case ActionTypes.RECEIVE_SEARCH_BOOKMARKS:
-      _searchBookmarks = action.json.bookmarks;
+    case ActionTypes.RECEIVE_SEARCH_TAGS:
+      _searchTags = action.json.tags;
       _searchPaging = action.json.paging;
-      BookmarkStore.emitEvent(Events.CHANGE);
-      BookmarkStore.emitEvent(Events.LOADING);
+      TagStore.emitEvent(Events.CHANGE);
+      TagStore.emitEvent(Events.LOADING);
       break;
 
-    case ActionTypes.RECEIVE_CREATED_BOOKMARK:
+    case ActionTypes.RECEIVE_CREATED_TAG:
       if (action.json) {
-        _bookmarks.unshift(action.json);
+        _tags.unshift(action.json);
         _errors = [];
-        BookmarkStore.emitEvent(Events.CREATE);
+        TagStore.emitEvent(Events.CREATE);
       }
       if (action.errors) {
         _errors = action.errors;
       }
-      BookmarkStore.emitEvent(Events.CHANGE);
-      BookmarkStore.emitEvent(Events.LOADING);
+      TagStore.emitEvent(Events.CHANGE);
+      TagStore.emitEvent(Events.LOADING);
       break;
 
-    case ActionTypes.RECEIVE_REMOVED_BOOKMARK:
+    case ActionTypes.RECEIVE_REMOVED_TAG:
       if (action.json) {
-        _bookmarks = _.remove(_bookmarks, function(n) {
+        _tags = _.remove(_tags, function(n) {
           return n.id == action.json.id;
         });
         _errors = [];
-        BookmarkStore.emitEvent(Events.REMOVE);
+        TagStore.emitEvent(Events.REMOVE);
       }
       if (action.errors) {
         _errors = action.errors;
       }
-      BookmarkStore.emitEvent(Events.CHANGE);
-      BookmarkStore.emitEvent(Events.LOADING);
+      TagStore.emitEvent(Events.CHANGE);
+      TagStore.emitEvent(Events.LOADING);
       break;
 
-    case ActionTypes.RECEIVE_CREATED_BOOKMARK_ERROR:
+    case ActionTypes.RECEIVE_CREATED_TAG_ERROR:
       if (action.json) {
         _errors = [];
       }
       if (action.errors) {
         _errors = action.errors;
       }
-      BookmarkStore.emitEvent(Events.CHANGE);
-      BookmarkStore.emitEvent(Events.LOADING);
+      TagStore.emitEvent(Events.CHANGE);
+      TagStore.emitEvent(Events.LOADING);
       break;
 
-    case ActionTypes.RECEIVE_BOOKMARK:
+    case ActionTypes.RECEIVE_TAG:
       if (action.json) {
-        _bookmark = action.json;
+        _tag = action.json.tag;
+        // Attach bookmarks with the tag to the tag to make things easier
+        _tag['bookmarks'] = action.json.bookmarks;
         _errors = [];
       }
       if (action.errors) {
         _errors = action.errors;
       }
-      BookmarkStore.emitEvent(Events.CHANGE);
-      BookmarkStore.emitEvent(Events.LOADING);
+      TagStore.emitEvent(Events.CHANGE);
+      TagStore.emitEvent(Events.LOADING);
       break;
 
     case ActionTypes.ERROR_RESPONSE:
@@ -157,8 +161,8 @@ BookmarkStore.dispatchToken = AppDispatcher.register(function (payload) {
       _errors = [
         json.error
       ];
-      BookmarkStore.emitEvent(Events.CHANGE);
-      BookmarkStore.emitEvent(Events.LOADING);
+      TagStore.emitEvent(Events.CHANGE);
+      TagStore.emitEvent(Events.LOADING);
       break;
 
   }
@@ -166,4 +170,4 @@ BookmarkStore.dispatchToken = AppDispatcher.register(function (payload) {
   return true;
 });
 
-module.exports = BookmarkStore;
+module.exports = TagStore;

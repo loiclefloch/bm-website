@@ -11,7 +11,8 @@ var Entity = {
     title: "",
     description: ""
   },
-  PAGING: {
+
+  PAGING_BOOKMARK: {
     limit: Constants.Bookmark.DEFAULT_LIMIT,
     page: 1,
     total: 0,
@@ -20,8 +21,27 @@ var Entity = {
     results: 0
   },
 
-  SEARCH_DEFAULT: {
+  PAGING_TAG: {
+    limit: Constants.Tag.DEFAULT_LIMIT,
+    page: 1,
+    total: 0,
+    offset: 0,
+    last_page: 0,
+    results: 0
+  },
+
+  SEARCH_BOOKMARK: {
     'name': ''
+  },
+
+  SEARCH_TAG: {
+    'name': ''
+  },
+
+  TAG: {
+    name: "",
+    color: Constants.Tag.DEFAULT_COLOR,
+    bookmarks: []
   }
 
 };

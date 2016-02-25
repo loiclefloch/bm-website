@@ -5,7 +5,7 @@ var TagItem = require('./TagItem.react.jsx');
 var TagList = React.createClass({
 
   propTypes: {
-    tags: React.PropTypes.any.isRequired
+    tags: React.PropTypes.array
   },
 
   render: function () {
@@ -18,7 +18,7 @@ var TagList = React.createClass({
 
     var tags = [];
     this.props.tags.forEach(function (tag) {
-      tags.push(<TagItem tag={tag}/>);
+      tags.push(<TagItem tag={tag} key={tag.id}/>);
     }.bind(this));
 
     return (

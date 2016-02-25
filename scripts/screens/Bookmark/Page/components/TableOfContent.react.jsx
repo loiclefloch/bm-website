@@ -11,12 +11,12 @@ var TableOfContent = React.createClass({
 
   propTypes: {
     html: React.PropTypes.string.isRequired,
-    items: React.PropTypes.string.isRequired
+    items: React.PropTypes.array.isRequired
   },
 
   render: function () {
     var html = this.props.html;
-    var items = this.props.items;
+    var items = this.props.items.join(',');
 
     var toc = [];
     var i = 0;

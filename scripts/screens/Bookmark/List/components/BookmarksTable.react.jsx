@@ -3,6 +3,11 @@ var React = require('react');
 var BookmarkItem = require('./BookmarkItem.react.jsx');
 
 var BookmarksTable = React.createClass({
+
+  propTypes: {
+    bookmarks: React.PropTypes.array.isRequired
+  },
+
   render: function () {
     // Contains the Page rows.
     var rows = [];

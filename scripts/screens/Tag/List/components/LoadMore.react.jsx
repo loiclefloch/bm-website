@@ -3,7 +3,7 @@ var React = require('react');
 var LoadMore = React.createClass({
 
   propTypes: {
-    paging: React.PropTypes.object.isRequired,
+    paging: React.PropTypes.any.isRequired,
     loadMore: React.PropTypes.func.isRequired
   },
 

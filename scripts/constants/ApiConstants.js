@@ -7,6 +7,7 @@ module.exports = {
   APIEndpoints: {
     LOGIN: APIRoot + "/oauth/v2/token",
     BOOKMARKS: APIRoot + "/api/bookmarks",
+    TAGS: APIRoot + "/api/tags",
     SEARCH_BOOKMARKS: APIRoot + "/api/search/bookmarks",
     DATA: APIRoot + "/api/data"
   },
@@ -43,6 +44,18 @@ module.exports = {
     RECEIVE_CREATED_BOOKMARK: null,
     RECEIVE_CREATED_BOOKMARK_ERROR: null,
     RECEIVE_REMOVED_BOOKMARK: null,
+
+    LOAD_TAGS: null,
+    RECEIVE_TAGS: null,
+    RECEIVE_SEARCH_TAGS: null,
+
+    LOAD_TAG: null,
+    RECEIVE_TAG: null,
+    CREATE_TAG: null,
+
+    RECEIVE_CREATED_TAG: null,
+    RECEIVE_CREATED_TAG_ERROR: null,
+    RECEIVE_REMOVED_TAG: null,
 
     EXPORT_DATA: null,
     RECEIVE_EXPORT_DATA: null,

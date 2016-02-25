@@ -105,7 +105,9 @@ var BookmarkPage = React.createClass({
           </div>
 
           <div className="bookmark__action_bar row">
-            <a href="#" onClick={this._deleteBookmark}>Delete</a>
+            <a href="#" onClick={this._deleteBookmark}>
+              <i className="fa fa-trash"/>
+            </a>
           </div>
         </div>
 

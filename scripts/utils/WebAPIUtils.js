@@ -111,6 +111,12 @@ module.exports = {
       });
   },
 
+  /*
+   * ==================================================================================================
+   *      BOOKMARK
+   * ==================================================================================================
+   */
+
   loadBookmarks: function (page, limit) {
 
     if (_.isUndefined(limit)) {
@@ -210,6 +216,115 @@ module.exports = {
           },
           function Failure(errors) {
             ServerActionCreators.receiveRemovedBookmark(null, errors);
+          });
+      });
+  },
+
+  /*
+   * ==================================================================================================
+   *      TAG
+   * ==================================================================================================
+   */
+
+  loadTags: function (page, limit) {
+
+    if (_.isUndefined(limit)) {
+      limit = Constants.Tag.DEFAULT_LIMIT
+    }
+
+    if (_.isUndefined(page)) {
+      page = 1
+    }
+    request.get(APIEndpoints.TAGS)
+      .query({'page': page, 'limit': limit})
+      .set('Accept', 'application/json')
+      .set('Authorization', _getAuthorizationHeader())
+      .end(function (error, res) {
+        handleResponse(error, res,
+          function Success(json) {
+            ServerActionCreators.receiveTags(json);
+          },
+          function Failure(errors) {
+            ServerActionCreators.receiveTags(null, errors);
+          });
+      });
+  },
+
+  searchTags: function (search, page, limit) {
+
+    if (_.isUndefined(limit)) {
+      limit = Constants.Tag.DEFAULT_LIMIT
+    }
+
+    if (_.isUndefined(page)) {
+      page = 1
+    }
+    request.get(APIEndpoints.SEARCH_TAGS)
+      .query({'name': search.name})
+      .set('Accept', 'application/json')
+      .set('Authorization', _getAuthorizationHeader())
+      .end(function (error, res) {
+        handleResponse(error, res,
+          function Success(json) {
+            ServerActionCreators.receiveSearchTags(json);
+          },
+          function Failure(errors) {
+            ServerActionCreators.receiveSearchTags(null, errors);
+          });
+      });
+  },
+
+  loadTag: function (tagId) {
+
+    request.get(APIEndpoints.TAGS + '/' + tagId)
+      .set('Accept', 'application/json')
+      .set('Authorization', _getAuthorizationHeader())
+      .end(function (error, res) {
+        handleResponse(error, res,
+          function Success(json) {
+            ServerActionCreators.receiveTag(json);
+          },
+          function Failure(errors) {
+            ServerActionCreators.receiveTag(null, errors);
+          });
+      });
+  },
+
+  createTag: function (name, url, tags, notes) {
+    request.post(APIEndpoints.TAGS)
+      .set('Accept', 'application/json')
+      .set('Authorization', _getAuthorizationHeader())
+      .send(
+        {
+          name: name,
+          url: url,
+          tags: tags,
+          notes: notes
+        })
+      .end(function (error, res) {
+        if (res) {
+          handleResponse(error, res,
+            function Success(json) {
+              ServerActionCreators.receiveCreatedTag(json, null);
+            },
+            function Failure(errors) {
+              ServerActionCreators.receiveCreatedTag(null, errors);
+            });
+        }
+      });
+  },
+
+  deleteTag: function (tagId) {
+    request.delete(APIEndpoints.TAGS + '/' + tagId)
+      .set('Accept', 'application/json')
+      .set('Authorization', _getAuthorizationHeader())
+      .end(function (error, res) {
+        handleResponse(error, res,
+          function Success(json) {
+            ServerActionCreators.receiveRemovedTag(json);
+          },
+          function Failure(errors) {
+            ServerActionCreators.receiveRemovedTag(null, errors);
           });
       });
   },

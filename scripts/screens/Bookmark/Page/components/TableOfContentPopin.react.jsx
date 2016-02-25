@@ -10,7 +10,38 @@ var TableOfContentPopin = React.createClass({
 
   render: function () {
 
-    var toc = (<TableOfContent html={this.props.bookmark.content} items="h1, h2"/>);
+    if (!_.isEmpty(this.props.bookmark.content)) {
+
+      var jContent = $(this.props.bookmark.content);
+      var nbH1 = jContent.find('h1').length;
+      var nbH2 = jContent.find('h2').length;
+      var nbH3 = jContent.find('h3').length;
+
+      console.log('TOC nb', nbH1, nbH2, nbH3);
+
+      var levels = [];
+
+      if (nbH1 > 1) {
+        levels.push('h1');
+      }
+
+      if (nbH2 > 1) {
+        levels.push('h2');
+      }
+
+      if (nbH3 > 1 && nbH3 < 30) { // 30: don't want to display to many levels. Keep it simple.
+        levels.push('h3');
+      }
+
+      if (nbH1 > 1) {
+        levels.push('h1');
+      }
+
+      var toc = (<TableOfContent html={this.props.bookmark.content} items={levels}/>);
+    }
+    else {
+      toc = (<div className="toc_popin__empty_toc"></div>);
+    }
 
     return (
       <div className="modal fade" tabIndex="-1" role="dialog" id="toc_modal">

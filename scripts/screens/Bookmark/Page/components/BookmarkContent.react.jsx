@@ -8,7 +8,7 @@ var HtmlBlock = require('../../../Common/HtmlBlock.react.jsx');
 var BookmarkContent = React.createClass({
 
   propTypes: {
-    content: React.PropTypes.string.isRequired
+    content: React.PropTypes.string
   },
 
   render: function () {
