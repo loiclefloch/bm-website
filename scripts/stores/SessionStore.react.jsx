@@ -5,6 +5,7 @@ var assign = require('object-assign');
 var RouteActionCreators = require('../actions/RouteActionCreators.react.jsx');
 
 var Events = require('../utils/Events.js');
+var Constants = require('../constants/Constants');
 
 var ActionTypes = ApiConstants.ActionTypes;
 
@@ -38,6 +39,58 @@ var SessionStore = assign({}, EventEmitter.prototype, {
 
   getErrors: function() {
     return _errors;
+  },
+
+  /**
+   *
+   * @param key see Constant.Session
+   * @param value the value to save on the session
+   */
+  saveItemToSession: function (key, value) {
+    console.log('[SESSION] SAVE ', key, ' : ', value);
+    localStorage.setItem(key, value);
+  },
+
+  /**
+   *
+   * @param key see Constant.Session
+   */
+  getItemFromSession: function (key, defaultReturn) {
+    var value = localStorage.getItem(key);
+
+    // default value
+    if (_.isUndefined(value) || _.isNull(value)) {
+
+      if (!_.isUndefined(defaultReturn) && !_.isNull(defaultReturn)) {
+        value = defaultReturn;
+      }
+      else {
+        value = null;
+      }
+
+    }
+
+    console.log('[SESSION] GET ', key, ' : ', value);
+    return value;
+  },
+
+  getIntItemFromSession: function (key, defaultReturn) {
+    var value = localStorage.getItem(key);
+
+    // default value
+    if (_.isUndefined(value) || _.isNull(value) || _.isNaN(value)) {
+
+      if (!_.isUndefined(defaultReturn) && !_.isNull(defaultReturn)) {
+        value = defaultReturn;
+      }
+      else {
+        value = 0;
+      }
+
+    }
+
+    console.log('[SESSION] GET ', key, ' : ', value);
+    return parseInt(value);
   }
 
 });

@@ -25,7 +25,10 @@ var ErrorMixin = {
     }
 
     this._errors = errors;
-    this._options = options;
+
+    if (_.isObject(options)) {
+      this._options = options;
+    }
 
     this.updateErrorState();
   },

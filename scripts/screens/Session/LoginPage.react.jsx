@@ -5,8 +5,8 @@ var Events = require('../../utils/Events.js');
 
 var ErrorNotice = require('../Common/ErrorNotice.react.jsx');
 
-var LoadingMixin = require('../../Common/Mixins/LoadingMixin.react.jsx');
-var ErrorMixin = require('../../Common/Mixins/ErrorMixin.react.jsx');
+var LoadingMixin = require('../Common/Mixins/LoadingMixin.react.jsx');
+var ErrorMixin = require('../Common/Mixins/ErrorMixin.react.jsx');
 
 var LoginPage = React.createClass({
 

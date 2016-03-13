@@ -5,7 +5,7 @@ var Link = Router.Link;;
 
 var BookmarkUtils = require('../../../../utils/BookmarkUtils.js');
 
-var BookmarkItem = React.createClass({
+var BookmarkItemSimple = React.createClass({
 
   propTypes: {
       bookmark: React.PropTypes.any.isRequired
@@ -15,7 +15,7 @@ var BookmarkItem = React.createClass({
     var bookmark = this.props.bookmark;
 
     return (
-      <div className="bookmarks__item bookmark col-xs-12">
+      <div className="bookmarks__item bookmarks__item_list_type_simple bookmark col-xs-12">
 
         <div className="text-left">
           <h3 className="bookmarks__item_title">
@@ -39,7 +39,7 @@ var BookmarkItem = React.createClass({
               { !bookmark.icon &&
               <div className="bookmarks__item_no_icon"></div>
                 }
-              {BookmarkUtils.getPrettyUrl(bookmark.url)}
+              {BookmarkUtils.getDomainUrl(bookmark.url)}
             </div>
           </a>
         </div>
@@ -49,4 +49,4 @@ var BookmarkItem = React.createClass({
   }
 });
 
-module.exports = BookmarkItem;
+module.exports = BookmarkItemSimple;

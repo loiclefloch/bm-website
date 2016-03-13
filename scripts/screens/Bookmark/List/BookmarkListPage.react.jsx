@@ -10,12 +10,14 @@ var Events = require('../../../utils/Events.js');
 var BookmarkActionCreators = require('../../../actions/BookmarkActionCreators.react.jsx');
 var RouteActionCreators = require('../../../actions/RouteActionCreators.react.jsx');
 
+var Constants  = require('../../../constants/Constants');
 var BookmarkUtils = require('../../../utils/BookmarkUtils.js');
 
 var ErrorNotice = require('../../Common/ErrorNotice.react.jsx');
 var LoadMore = require('./components/LoadMore.react.jsx');
 var SearchBox = require('./components/SearchBox.react.jsx');
 var BookmarksTable = require('./components/BookmarksTable.react.jsx');
+var BookmarksSidebar = require('./components/BookmarkSidebar.jsx');
 
 var LoadingMixin = require('../../Common/Mixins/LoadingMixin.react.jsx');
 var ErrorMixin = require('../../Common/Mixins/ErrorMixin.react.jsx');
@@ -31,7 +33,8 @@ var BookmarkListPage = React.createClass({
       searchBookmarks: BookmarkStore.getSearchBookmarks(),
       search: BookmarkStore.getSearch(),
       paging: BookmarkStore.getPaging(),
-      searchPaging: BookmarkStore.getSearchPaging()
+      searchPaging: BookmarkStore.getSearchPaging(),
+      bookmarkListType: SessionStore.getIntItemFromSession(Constants.Session.BOOKMARK_LIST_TYPE, Constants.View.BookmarkListType.NORMAL)
     };
   },
 
@@ -89,7 +92,6 @@ var BookmarkListPage = React.createClass({
   },
 
   _onChange: function () {
-    console.log('on change');
     this.setState({
       bookmarks: BookmarkStore.getAllBookmarks(),
       searchBookmarks: BookmarkStore.getSearchBookmarks(),
@@ -97,6 +99,15 @@ var BookmarkListPage = React.createClass({
       paging: BookmarkStore.getPaging(),
       searchPaging: BookmarkStore.getSearchPaging()
     });
+  },
+
+  handleChangeListType: function (newBookmarkListType) {
+    console.log('change bookmarkListType: ', newBookmarkListType);
+    this.setState({
+      bookmarkListType: newBookmarkListType
+    });
+
+    SessionStore.saveItemToSession(Constants.Session.BOOKMARK_LIST_TYPE, newBookmarkListType);
   },
 
   render: function () {
@@ -133,7 +144,8 @@ var BookmarkListPage = React.createClass({
     }
 
     if (!_.isEmpty(bookmarks)) {
-      bookmarkTable = (<BookmarksTable bookmarks={bookmarks}/>);
+      bookmarkTable = (<BookmarksTable bookmarks={bookmarks}
+                                       bookmarkListType={this.state.bookmarkListType}/>);
     }
     else if (_.isEmpty(bookmarks) && this.state.loading == false) {
       bookmarkTable = (<NoBookmark />);
@@ -144,18 +156,18 @@ var BookmarkListPage = React.createClass({
         {this.state.loadingView}
         {this.state.errorView}
 
+        <BookmarksSidebar search={this.state.search}
+                          onSearchSubmit={this.handleSearchSubmit}
+                          onSearchInput={this.handleSearchInput}
+                          bookmarkListType={this.state.bookmarkListType}
+                          onChangeListType={this.handleChangeListType}/>
+
         {/*
          <Fab />
          */}
         <div className="row">
 
           <div className="col-sm-12 col-md-9 col-md-offset-2">
-
-            <SearchBox search={this.state.search}
-                       onSearchSubmit={this.handleSearchSubmit}
-                       onSearchInput={this.handleSearchInput}/>
-
-            <div className="top-buffer-50"></div>
 
             {bookmarkTable}
 

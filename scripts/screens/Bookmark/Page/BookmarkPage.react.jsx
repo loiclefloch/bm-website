@@ -16,6 +16,8 @@ var _ = require('lodash');
 
 var BookmarkUtils = require('../../../utils/BookmarkUtils.js');
 
+var FontAwesome = require('react-fontawesome');
+
 //var Loading = require('../../Common/Loading.react.jsx');
 var HtmlBlock = require('../../Common/HtmlBlock.react.jsx');
 var BookmarkFloatMenu = require('./components/BookmarkFloatMenu.react.jsx');
@@ -67,7 +69,7 @@ var BookmarkPage = React.createClass({
     e.preventDefault();
     var bookmark = this.state.bookmark;
     var self = this;
-    bootbox.confirm("Are you sure you want to remove the bookmark " + bookmark.name + "?", function (result) {
+    bootbox.confirm('Are you sure you want to remove the bookmark "' + BookmarkUtils.getDefaultName(bookmark) + '"?', function (result) {
       if (result == true) {
         self.displayLoading();
         WebAPIUtils.deleteBookmark(bookmark.id);
@@ -96,9 +98,14 @@ var BookmarkPage = React.createClass({
           </div>
 
           <div className="bookmark__action_bar row">
-            <a href="#" onClick={this._deleteBookmark}>
-              <i className="fa fa-trash"/>
-            </a>
+            <div type="button" className="btn btn-primary" onClick={this._deleteBookmark}>
+
+              <FontAwesome name="trash-o"
+                           size="2x"
+                           style={{ textShadow: '0 1px 0 rgba(0, 0, 0, 0.1)' }}
+              />
+
+            </div>
           </div>
         </div>
 
@@ -138,7 +145,7 @@ var BookmarkPage = React.createClass({
         </div>
 
         <div className="col-xs-12">
-          <BookmarkContent content={bookmark.content}/>
+          <BookmarkContent content={bookmark.content} type={bookmark.type}/>
         </div>
 
         <div className="col-xs-12 top-buffer-50"></div>

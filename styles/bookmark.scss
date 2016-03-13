@@ -29,11 +29,11 @@
       margin-right: 3px;
       padding: 3px 8px;
       -webkit-transition: background 150ms linear;
-     -moz-transition: background 150ms linear;
+      -moz-transition: background 150ms linear;
       transition: background 150ms linear;
 
       a {
-        color:white;
+        color: white;
 
         &:hover {
           text-decoration: none;
@@ -58,7 +58,7 @@
     height: 20px;
   }
 
-  $font-readable: "bm-content-serif-font",Georgia,Cambria,"Times New Roman",Times,serif;
+  $font-readable: "bm-content-serif-font", Georgia, Cambria, "Times New Roman", Times, serif;
 
   .bookmark__content {
     margin: 0 auto;
@@ -68,8 +68,8 @@
     color: $text-color;
 
     p {
-      text-align:justify;
-      margin-top:29px;
+      text-align: justify;
+      margin-top: 29px;
     }
 
     code {
@@ -89,14 +89,14 @@
     }
 
     h3 {
-      font-size:26px;
-      font-weight:600;
-      margin-top:60px;
+      font-size: 26px;
+      font-weight: 600;
+      margin-top: 60px;
     }
 
     h5 {
-      font-size:21px;
-      font-weight:600;
+      font-size: 21px;
+      font-weight: 600;
       margin-top: 30px;
     }
 
@@ -114,15 +114,15 @@
         font-family: $font-readable;
         text-decoration: none;
         // Underline is a custom background
-        background-image:linear-gradient(to bottom, rgba(0,0,0,0) 50%, rgba(0,0,0,0.6) 50%);
+        background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.6) 50%);
         background-repeat: repeat-x;
         background-size: 2px 2px;
-        background-position:0 22px;
+        background-position: 0 22px;
         color: black;
       }
 
       strong {
-        font-family:$font-readable;
+        font-family: $font-readable;
         font-weight: 800;
       }
     }
@@ -135,6 +135,42 @@
       max-width: 100%;
     }
 
+    // --  Specific styles for bookmark content
+
+    // slides
+    .slide {
+      display: none;
+
+    }
+
+    .slide_navigation {
+      border: 1px solid #ccc;
+
+      .slide_navigation__paging {
+        line-height: 60px;
+      }
+    }
+
+  }
+
+  .fullScreen {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    overflow-y: auto;
+    max-width: none;
+    text-align: center;
+    //background-color: #000000;
+
+    .slide_navigation {
+      background-color: white;
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 10px;
+    }
   }
 }
 

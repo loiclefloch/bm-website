@@ -61,6 +61,10 @@ var BookmarkNew = React.createClass({
     var notes = this.refs.notes.value;
     var tags = [];
 
+    // add prefix to url
+    if (url.indexOf('http') === -1)
+      url = "http://" + url;
+
     if (Constraint.isEmpty(url) || !Constraint.isUrl(url)) {
       this.handleError('Please enter an url', {
         // options

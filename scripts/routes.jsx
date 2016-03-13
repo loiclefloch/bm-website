@@ -20,6 +20,7 @@ var SettingsPage = require('./screens/Settings/SettingsPage.react.jsx');
 
 module.exports = (
   <Route name="app" path="/" handler={App}>
+
     <DefaultRoute handler={BookmarkListPage}/>
 
     <Route name="login" path="/login" handler={LoginPage}/>
@@ -35,7 +36,7 @@ module.exports = (
 
     <Route name="page-not-found" path="/404" handler={NotFoundPage}/>
 
-  <Route name="server-error" path="/500" handler={ServerErrorPage}/>
+    <Route name="server-error" path="/500" handler={ServerErrorPage}/>
 
   </Route>
 );

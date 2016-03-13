@@ -9,7 +9,8 @@ var Entity = {
     notes: "",
     content: "",
     title: "",
-    description: ""
+    description: "",
+    type: Constants.Bookmark.Type.WEBSITE
   },
 
   PAGING_BOOKMARK: {

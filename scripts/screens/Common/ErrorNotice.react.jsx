@@ -35,7 +35,7 @@ var ErrorNotice = React.createClass({
   render: function () {
 
     // handle options like timeout
-    if (!_.isNull(this.props.options.timeout)) {
+    if (_.isInteger(this.props.options.timeout) && this.props.options.timeout !== 0) {
       this.setTimeout(function () {
         this.hide();
         this.props.hide();

@@ -7,7 +7,9 @@ var SearchBox = React.createClass({
   propTypes: {
     search: React.PropTypes.shape({
       name: React.PropTypes.string
-    }).isRequired
+    }).isRequired,
+    onSearchSubmit: React.PropTypes.func.isRequired,
+    onSearchInput: React.PropTypes.func.isRequired
   },
 
   handleSubmit: function () {
