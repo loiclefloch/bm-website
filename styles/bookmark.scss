@@ -1,6 +1,17 @@
 @import 'colors';
+@import 'variables';
 
 #bookmark {
+
+  .bookmark__preview_picture {
+    text-align: left;
+
+    .bookmark__preview_picture__img {
+      max-height: 200px;
+    }
+
+  }
+
   .bookmark__tag_list {
     //.bookmark__tag {
     //  text-align: right;
@@ -58,8 +69,6 @@
     height: 20px;
   }
 
-  $font-readable: "bm-content-serif-font", Georgia, Cambria, "Times New Roman", Times, serif;
-
   .bookmark__content {
     margin: 0 auto;
     max-width: 800px; // 700 + 50px padding
@@ -114,10 +123,8 @@
         font-family: $font-readable;
         text-decoration: none;
         // Underline is a custom background
-        background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.6) 50%);
-        background-repeat: repeat-x;
         background-size: 2px 2px;
-        background-position: 0 22px;
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.6) 50%) repeat-x 0 22px;
         color: black;
       }
 
@@ -138,19 +145,61 @@
     // --  Specific styles for bookmark content
 
     // slides
+    $slide_navigation__fullscreen-width: 100px;
     .slide {
       display: none;
 
     }
 
     .slide_navigation {
+      background-color: $dark-color;
       border: 1px solid #ccc;
+      margin-top: 30px;
 
-      .slide_navigation__paging {
-        line-height: 60px;
+      .slide_navigation__nav {
+        display: inline-block;
+        padding-left: $slide_navigation__fullscreen-width;
+
+        .slide_navigation__previous, .slide_navigation__next {
+          font-size: 14pt;
+          color: white;
+          outline: none; // remove blue border when clicked
+        }
+
+        .slide_navigation__previous {
+          margin-right: 15px;
+        }
+
+        .slide_navigation__next {
+          margin-left: 15px;
+        }
+
+        .slide_navigation__paging {
+          color: white;
+          line-height: 60px;
+        }
       }
+
+      .slide_navigation__fullscreen {
+        float: right;
+        width: $slide_navigation__fullscreen-width;
+
+        button {
+          color: white;
+          outline: none; // remove blue border when clicked
+        }
+      }
+
     }
 
+  }
+
+  .bookmark__content_slide {
+    background: none;
+  }
+
+  .bookmark__content_slide.fullScreen {
+    background: $dark-color;
   }
 
   .fullScreen {

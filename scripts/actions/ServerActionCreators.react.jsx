@@ -68,6 +68,14 @@ module.exports = {
     });
   },
 
+  receiveUpdateTagsBookmark: function (json, errors) {
+    AppDispatcher.handleServerAction({
+      type: ActionTypes.RECEIVE_BOOKMARK_TAGS,
+      json: json,
+      errors: errors
+    });
+  },
+
   /*
    * ==================================================================================================
    *      TAG

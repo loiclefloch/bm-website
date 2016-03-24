@@ -51,7 +51,7 @@ var TagListPage = React.createClass({
     }
 
 
-      TagStore.addListener(Events.CHANGE, this._onChange);
+    TagStore.addListener(Events.CHANGE, this._onChange);
     TagStore.addListener(Events.LOADING, this.hideLoading);
 
     if (_.isEmpty(this.state.tags)) { // do not call if we came back on the page
@@ -92,8 +92,6 @@ var TagListPage = React.createClass({
 
 
   _onChange: function () {
-    console.log('on change');
-
     this.setState({
       tags: TagStore.getAllTags(),
       searchTags: TagStore.getSearchTags(),

@@ -1,9 +1,10 @@
 @import 'fonts';
 @import 'spinner';
+@import 'colors';
 
 body {
   font-family: 'Lato', sans-serif;
-  background-color:#f2f2f2;
+  background-color:$background-color;
 }
 
 .bold {
@@ -238,6 +239,13 @@ body {
   clear: both;
 }
 
+.not-selectable, .disable-user-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 /* ----- Import components styles */
 
 @import 'header';
@@ -246,3 +254,5 @@ body {
 @import 'loading';
 @import 'settings';
 @import 'server-error-page';
+@import 'tags';
+@import 'tag_add';

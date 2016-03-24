@@ -76,12 +76,27 @@
 
 // -- Bookmarks items
 
+// BLOCK and NORMAL type
+.bookmarks__item_list_type_simple,
+.bookmarks__item_list_type_block {
+
+  .bookmarks__item_meta {
+    font-size: 10pt;
+  }
+
+}
+
+// SIMPLE type
+.bookmarks__item_list_type_simple {
+
+}
+
 // BLOCK type
 .bookmarks__item_list_type_block {
   height: 350px;
 
   .bookmarks__item .bookmarks__item_title {
-    font-size: 14pt; // default 16pt
+    font-size: 13pt; // default 16pt
   }
 
   .bookmarks__item_description {
@@ -102,6 +117,10 @@
 
   .bookmarks__item_title {
     margin: 0;
+
+    a:hover {
+      text-decoration: none;
+    }
   }
 }
 
@@ -114,7 +133,14 @@
 
   .bookmark_sidebar__list_type .active {
     border: 1px solid #cccccc;
+    background: #cccccc;
   }
+
+  .bookmark_sidebar__list_type__icon {
+    height: 20px;
+    margin-right: 10px;
+  }
+
 }
 
 @media (max-width: $screen-sm) {

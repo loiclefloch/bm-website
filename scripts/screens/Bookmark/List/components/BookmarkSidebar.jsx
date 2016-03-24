@@ -20,8 +20,8 @@ var BookmarkSidebar = React.createClass({
     onChangeListType: React.PropTypes.func.isRequired
   },
 
-  setNormalListType: function () {
-    this.props.onChangeListType(Constants.View.BookmarkListType.NORMAL);
+  setSimpleListType: function () {
+    this.props.onChangeListType(Constants.View.BookmarkListType.SIMPLE);
   },
 
   setBlockListType: function () {
@@ -44,8 +44,8 @@ var BookmarkSidebar = React.createClass({
     var classToDisable;
 
     switch (this.props.bookmarkListType) {
-      case Constants.View.BookmarkListType.NORMAL:
-        classToDisable = '.bookmark_sidebar__list_type__normal_btn';
+      case Constants.View.BookmarkListType.SIMPLE:
+        classToDisable = '.bookmark_sidebar__list_type__simple_btn';
         break;
       case Constants.View.BookmarkListType.BLOCK:
         classToDisable = '.bookmark_sidebar__list_type__block_btn';
@@ -68,29 +68,45 @@ var BookmarkSidebar = React.createClass({
 
         <div className="top-buffer-50"></div>
 
-        <div className="bookmark_sidebar__list_type">
-          <button
-            className={"bookmark_sidebar__list_type__normal_btn pointer btn "
-          + (this.props.bookmarkListType == Constants.View.BookmarkListType.NORMAL ? "active" : "") }
-            onClick={this.setNormalListType}>
-            Liste
-          </button>
+        <div className="bookmark_sidebar__list_type row">
 
-          <button
-            className={"bookmark_sidebar__list_type__block_btn pointer btn "
-          +  (this.props.bookmarkListType == Constants.View.BookmarkListType.BLOCK ? "active" : "") }
-            onClick={this.setBlockListType}>
-            block
-          </button>
-          <button
-            className={"bookmark_sidebar__list_type__compact_btn pointer btn "
-          +  (this.props.bookmarkListType == Constants.View.BookmarkListType.COMPACT ? "active" : "") }
-            onClick={this.setCompactListType}>
-            Compact
-          </button>
+          <div className="bookmark_sidebar__list_type__simple_btn_block col-xs-4">
+            <button
+              className={"bookmark_sidebar__list_type__simple_btn pointer btn "
+              + (this.props.bookmarkListType == Constants.View.BookmarkListType.SIMPLE ? "active" : "") }
+              onClick={this.setSimpleListType}>
+
+              <img className="bookmark_sidebar__list_type__icon" src="/public/img/icon_list_simple.png"/>
+
+            </button>
+          </div>
+
+          <div className="bookmark_sidebar__list_type_block_block col-xs-4">
+            <button
+              className={"bookmark_sidebar__list_type__block_btn pointer btn "
+              +  (this.props.bookmarkListType == Constants.View.BookmarkListType.BLOCK ? "active" : "") }
+              onClick={this.setBlockListType}>
+
+              block
+            </button>
+          </div>
+
+
+          <div className="bookmark_sidebar__list_type_compact_block col-xs-4">
+            <button
+              className={"bookmark_sidebar__list_type__compact_btn pointer btn "
+              +  (this.props.bookmarkListType == Constants.View.BookmarkListType.COMPACT ? "active" : "") }
+              onClick={this.setCompactListType}>
+
+              <img className="bookmark_sidebar__list_type__icon" src="/public/img/icon_list_compact.png"/>
+
+            </button>
+          </div>
+
         </div>
       </div>
-    );
+    )
+      ;
   }
 
 });

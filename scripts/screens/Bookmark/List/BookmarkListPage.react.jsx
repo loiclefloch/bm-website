@@ -34,7 +34,7 @@ var BookmarkListPage = React.createClass({
       search: BookmarkStore.getSearch(),
       paging: BookmarkStore.getPaging(),
       searchPaging: BookmarkStore.getSearchPaging(),
-      bookmarkListType: SessionStore.getIntItemFromSession(Constants.Session.BOOKMARK_LIST_TYPE, Constants.View.BookmarkListType.NORMAL)
+      bookmarkListType: SessionStore.getIntItemFromSession(Constants.Session.BOOKMARK_LIST_TYPE, Constants.View.BookmarkListType.SIMPLE)
     };
   },
 
@@ -102,7 +102,7 @@ var BookmarkListPage = React.createClass({
   },
 
   handleChangeListType: function (newBookmarkListType) {
-    console.log('change bookmarkListType: ', newBookmarkListType);
+
     this.setState({
       bookmarkListType: newBookmarkListType
     });

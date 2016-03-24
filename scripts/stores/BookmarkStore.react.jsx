@@ -161,6 +161,17 @@ BookmarkStore.dispatchToken = AppDispatcher.register(function (payload) {
       BookmarkStore.emitEvent(Events.LOADING);
       break;
 
+    case ActionTypes.RECEIVE_BOOKMARK_TAGS:
+      if (action.json) {
+        _bookmark = action.json;
+        _errors = [];
+      }
+      if (action.errors) {
+        _errors = action.errors;
+      }
+      BookmarkStore.emitEvent(Events.TAGS_CHANGE_FOR_BOOKMARK);
+      BookmarkStore.emitEvent(Events.LOADING_TAGS_CHANGE);
+      break;
   }
 
   return true;

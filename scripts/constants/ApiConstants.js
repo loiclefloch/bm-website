@@ -44,6 +44,7 @@ module.exports = {
     RECEIVE_CREATED_BOOKMARK: null,
     RECEIVE_CREATED_BOOKMARK_ERROR: null,
     RECEIVE_REMOVED_BOOKMARK: null,
+    RECEIVE_BOOKMARK_TAGS: null,
 
     LOAD_TAGS: null,
     RECEIVE_TAGS: null,

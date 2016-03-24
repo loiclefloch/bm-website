@@ -1,0 +1,26 @@
+.tags__item {
+  margin-bottom: 20px;
+
+  .tag {
+    width: 15px;
+    height: 15px;
+
+    margin-top: 6px;
+
+    -webkit-transition: background 150ms linear;
+    -moz-transition: background 150ms linear;
+    transition: background 150ms linear;
+
+    a {
+      color: white;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+
+  .tags__item_title {
+    font-size: 14pt;
+  }
+}

@@ -220,6 +220,27 @@ module.exports = {
       });
   },
 
+    postTagsToBookmark: function (tags, bookmark) {
+    request.post(APIEndpoints.BOOKMARKS + '/' + bookmark.id + '/tags')
+      .set('Accept', 'application/json')
+      .set('Authorization', _getAuthorizationHeader())
+      .send(
+        {
+          tags: tags
+        })
+      .end(function (error, res) {
+        if (res) {
+          handleResponse(error, res,
+            function Success(json) {
+              ServerActionCreators.receiveUpdateTagsBookmark(json, null);
+            },
+            function Failure(errors) {
+              ServerActionCreators.receiveUpdateTagsBookmark(null, errors);
+            });
+        }
+      });
+  },
+
   /*
    * ==================================================================================================
    *      TAG

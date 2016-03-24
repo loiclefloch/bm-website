@@ -5,6 +5,8 @@ var Link = Router.Link;;
 
 var BookmarkUtils = require('../../../../utils/BookmarkUtils.js');
 
+var BookmarkEstimatedReadingTime = require('../../../Common/Bookmark/BookmarkEstimatedReadingTime.react.jsx')
+
 /**
  * for ViewConstants.BookmarkListType.BLOCK
  *
@@ -28,6 +30,9 @@ var BookmarkItemBlock = React.createClass({
               {BookmarkUtils.getDefaultName(bookmark)}
             </Link>
           </h3>
+        </div>
+        <div className="bookmarks__item_meta">
+          <BookmarkEstimatedReadingTime readingTime={bookmark.reading_time} />
         </div>
         <div className="bookmarks__item_body">
           <div className="bookmarks__item_description">

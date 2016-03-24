@@ -17,6 +17,7 @@ var SearchBox = React.createClass({
     this.props.search.name = value;
     this.props.onSearchSubmit(this.props.search);
   },
+
   handleChange: function () {
     var value = this.refs.filterTextInput.value;
     this.props.search.name = value;

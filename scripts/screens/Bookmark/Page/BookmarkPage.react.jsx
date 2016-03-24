@@ -21,9 +21,10 @@ var FontAwesome = require('react-fontawesome');
 //var Loading = require('../../Common/Loading.react.jsx');
 var HtmlBlock = require('../../Common/HtmlBlock.react.jsx');
 var BookmarkFloatMenu = require('./components/BookmarkFloatMenu.react.jsx');
-var TagList = require('./components/TagList.react.jsx');
+var BookmarkTagList = require('./components/BookmarkTagList.react.jsx');
 var BookmarkContent = require('./components/BookmarkContent.react.jsx');
 var TableOfContentPopin = require('./components/TableOfContentPopin.react.jsx');
+var BookmarkEstimatedReadingTime = require('../../Common/Bookmark/BookmarkEstimatedReadingTime.react.jsx')
 
 var LoadingMixin = require('../../Common/Mixins/LoadingMixin.react.jsx');
 var ErrorMixin = require('../../Common/Mixins/ErrorMixin.react.jsx');
@@ -47,6 +48,7 @@ var BookmarkPage = React.createClass({
 
     BookmarkStore.addListener(Events.CHANGE, this._onChange);
     BookmarkStore.addListener(Events.LOADING, this.hideLoading);
+    BookmarkStore.addListener(Events.TAGS_CHANGE_FOR_BOOKMARK, this._onChange);
 
     BookmarkActionCreators.loadBookmark(this.getParams().bookmarkId);
   },
@@ -54,6 +56,8 @@ var BookmarkPage = React.createClass({
   componentWillUnmount: function () {
     BookmarkStore.removeListener(Events.CHANGE, this._onChange);
     BookmarkStore.removeListener(Events.LOADING, this.hideLoading);
+    BookmarkStore.removeListener(Events.TAGS_CHANGE_FOR_BOOKMARK, this._onChange);
+
     BookmarkStore.clearBookmark();
   },
 
@@ -78,6 +82,14 @@ var BookmarkPage = React.createClass({
 
   },
 
+  handleChangeUrl: function (newParams) {
+    this.context.router.replaceWith(
+      this.context.router.getCurrentPathname(),
+      this.props.params, newParams
+    );
+
+  },
+
   render: function () {
 
     var bookmark = this.state.bookmark;
@@ -97,19 +109,27 @@ var BookmarkPage = React.createClass({
             <h1 className="bookmark__title">{BookmarkUtils.getDefaultName(bookmark)}</h1>
           </div>
 
-          <div className="bookmark__action_bar row">
-            <div type="button" className="btn btn-primary" onClick={this._deleteBookmark}>
+          <div className="bookmark__action_bar">
+
+            <BookmarkEstimatedReadingTime readingTime={bookmark.reading_time}/>
+
+            <span type="button" className="btn btn-primary" onClick={this._deleteBookmark}>
 
               <FontAwesome name="trash-o"
                            size="2x"
                            style={{ textShadow: '0 1px 0 rgba(0, 0, 0, 0.1)' }}
               />
 
-            </div>
+            </span>
           </div>
         </div>
 
         <div className="col-xs-12">
+
+          { bookmark.preview_picture &&
+          <div className="bookmark__preview_picture">
+            <img src={bookmark.preview_picture} className="bookmark__preview_picture__img"/>
+          </div>}
 
           { bookmark.description &&
           <div>
@@ -118,7 +138,7 @@ var BookmarkPage = React.createClass({
           </div>}
 
           <div className="top-buffer-30">
-            <TagList tags={bookmark.tags}/>
+            <BookmarkTagList bookmark={bookmark}/>
           </div>
 
           <div className="top-buffer-30">
@@ -145,7 +165,10 @@ var BookmarkPage = React.createClass({
         </div>
 
         <div className="col-xs-12">
-          <BookmarkContent content={bookmark.content} type={bookmark.type}/>
+          <BookmarkContent content={bookmark.content}
+                           type={bookmark.type}
+                           urlQueryParams={this.props.query}
+                           changeUrl={this.handleChangeUrl}/>
         </div>
 
         <div className="col-xs-12 top-buffer-50"></div>

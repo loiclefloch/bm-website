@@ -10,7 +10,9 @@ var Entity = {
     content: "",
     title: "",
     description: "",
-    type: Constants.Bookmark.Type.WEBSITE
+    type: Constants.Bookmark.Type.WEBSITE,
+    reading_time: 1, // the estimated time (in seconds) to read the content.
+    preview_picture: null
   },
 
   PAGING_BOOKMARK: {

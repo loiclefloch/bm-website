@@ -19,7 +19,7 @@ var BookmarksTable = React.createClass({
 
     this.props.bookmarks.forEach(function (bookmark) {
       switch (this.props.bookmarkListType) {
-        case Constants.View.BookmarkListType.NORMAL:
+        case Constants.View.BookmarkListType.SIMPLE:
           rows.push(<BookmarkItemSimple bookmark={bookmark} key={bookmark.id}/>);
           break;
         case Constants.View.BookmarkListType.BLOCK:

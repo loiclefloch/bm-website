@@ -1,5 +1,6 @@
 var React = require('react');
 
+var Constants = require('../../../constants/Constants');
 var WebAPIUtils = require('../../../utils/WebAPIUtils.js');
 var TagStore = require('../../../stores/TagStore.react.jsx');
 var SessionStore = require('../../../stores/SessionStore.react.jsx');
@@ -78,7 +79,7 @@ var TagPage = React.createClass({
 
     var bookmarkTable = (<div></div>);
     if (!_.isEmpty(tag.bookmarks)) {
-      bookmarkTable = (<BookmarksTable bookmarks={tag.bookmarks}/>);
+      bookmarkTable = (<BookmarksTable bookmarks={tag.bookmarks} bookmarkListType={Constants.View.BookmarkListType.SIMPLE}/>);
     }
     else if (this.state.isLoading) {
       bookmarkTable = (<NoBookmarkForTag />);
@@ -112,6 +113,9 @@ var TagPage = React.createClass({
         <div className="tag__bookmarks_list top-buffer-50">
           {bookmarkTable}
         </div>
+
+        <div className="clear"></div>
+        <div className="top-buffer-50"></div>
       </div>
 
     );

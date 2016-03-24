@@ -12,7 +12,9 @@ var BookmarkContent = React.createClass({
 
   propTypes: {
     content: React.PropTypes.string,
-    type: React.PropTypes.number.isRequired
+    type: React.PropTypes.number.isRequired,
+    changeUrl: React.PropTypes.func.isRequired,
+    urlQueryParams: React.PropTypes.object.isRequired
   },
 
   getInitialState: function () {
@@ -21,23 +23,16 @@ var BookmarkContent = React.createClass({
     }
   },
 
-  componentDidUpdate: function () {
-
-    // -- Begin slide
-    if ($('.slide').length > 0) {
-      console.log('slide', $('.slide').length);
-      $('.slide_1').show();
-
-      var slideNavigation = (
-        <div>
-          Previous
-          Current
-          Next
-        </div>);
-    }
-    // -- End slide
-
-  },
+  //componentDidUpdate: function () {
+  //
+  //  // -- Begin slide
+  //  if ($('.slide').length > 0) {
+  //    console.log('slide', $('.slide').length);
+  //    $('.slide_1').show();
+  //  }
+  //  // -- End slide
+  //
+  //},
 
   toggleFullScreenMode: function () {
 
@@ -66,6 +61,8 @@ var BookmarkContent = React.createClass({
       var slideNavigation = (
         <SlideNavigation firstPage={firstPage}
                          lastPage={lastPage}
+                         changeUrl={this.props.changeUrl}
+                         urlQueryParams={this.props.urlQueryParams}
                          toggleFullScreenMode={this.toggleFullScreenMode}/>
       );
     }
@@ -73,6 +70,10 @@ var BookmarkContent = React.createClass({
     var blockClasses = 'bookmark__content';
     if (this.state.fullScreenEnabled == true) {
       blockClasses += ' fullScreen';
+    }
+
+    if (this.props.type == Constants.Bookmark.Type.SLIDE) {
+      blockClasses += ' bookmark__content_slide';
     }
 
     return (
