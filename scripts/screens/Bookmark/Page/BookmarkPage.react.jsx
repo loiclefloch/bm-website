@@ -82,6 +82,10 @@ var BookmarkPage = React.createClass({
 
   },
 
+  _deleteTag: function (tag) {
+    WebAPIUtils.deleteTagsForBookmark([tag], this.state.bookmark);
+  },
+
   handleChangeUrl: function (newParams) {
     this.context.router.replaceWith(
       this.context.router.getCurrentPathname(),
@@ -138,7 +142,7 @@ var BookmarkPage = React.createClass({
           </div>}
 
           <div className="top-buffer-30">
-            <BookmarkTagList bookmark={bookmark}/>
+            <BookmarkTagList bookmark={bookmark} deleteTag={this._deleteTag}/>
           </div>
 
           <div className="top-buffer-30">

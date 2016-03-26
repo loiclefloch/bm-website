@@ -12,7 +12,8 @@ var TagItem = require('./TagItem.react.jsx');
 var BookmarkTagList = React.createClass({
 
   propTypes: {
-    bookmark: React.PropTypes.object
+    bookmark: React.PropTypes.object,
+    deleteTag: React.PropTypes.func.isRequired
   },
 
   getInitialState: function () {
@@ -46,10 +47,13 @@ var BookmarkTagList = React.createClass({
 
     // -- Create tags list view.
     var tagsListView = [];
-    this.props.bookmark.tags.forEach(function (tag) {
-      tagsListView.push(<TagItem tag={tag} key={tag.id}/>);
-    }.bind(this));
 
+    console.log(this.props.bookmark.tags);
+    if (!_.isUndefined(this.props.bookmark.tags)) {
+      this.props.bookmark.tags.forEach(function (tag) {
+        tagsListView.push(<TagItem tag={tag} key={tag.id} deleteTag={this.props.deleteTag}/>);
+      }.bind(this));
+    }
     var addTagView = (<AddTag allTags={this.state.allTags}
                               bookmark={this.props.bookmark}/>);
 

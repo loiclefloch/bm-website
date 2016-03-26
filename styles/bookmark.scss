@@ -52,6 +52,35 @@
       }
     }
 
+    .tag_dropdown_menu {
+      padding: 5px;
+
+      li {
+        text-align: center;
+        width: 50px;
+        height: 40px;
+        line-height: 50px;
+        font-size: 20pt;
+        padding: 0;
+        display: inline-block;
+
+        &:hover {
+          background: $main-color;
+
+          a, span {
+            color: white;
+          }
+        }
+
+        a, span {
+          padding: 0;
+          color: black;
+        }
+
+      }
+
+    }
+
   }
 
   .bookmark__icon {
