@@ -4,6 +4,9 @@ import React from 'react';
 import TagStore from 'stores/TagStore';
 import SessionStore from 'stores/SessionStore';
 
+// -- utils
+import ViewUtils from 'utils/ViewUtils';
+
 // -- constants
 import Events from 'constants/Events';
 
@@ -11,21 +14,22 @@ import Events from 'constants/Events';
 import TagAction from 'actions/TagAction';
 import RouteAction from 'actions/RouteAction';
 
+// -- entities
+import TagsList from 'entities/TagsList';
+
 // -- views
 import AbstractComponent from 'abstracts/AbstractComponent';
 import LoadMore from './components/LoadMore';
-import SearchBox from './components/SearchBox';
+import SearchBox from 'components/SearchBox';
 import TagsTable from './components/TagsTable';
-import NoTag from './components/NoTag';
+import NoTags from './components/NoTags';
 
 export default class TagListPage extends AbstractComponent {
 
   state = {
-    tags: TagStore.getAllTags(),
-    searchTags: TagStore.getSearchTags(),
-    search: TagStore.getSearch(),
-    paging: TagStore.getPaging(),
-    searchPaging: TagStore.getSearchPaging()
+    tagsList: TagStore.getTagsList(),
+
+    searchQuery: ''
   };
 
 
@@ -41,7 +45,7 @@ export default class TagListPage extends AbstractComponent {
     }
 
 
-    TagStore.addListener(Events.CHANGE, this._onChange);
+    TagStore.addListener(Events.CHANGE, this.onChange);
     TagStore.addListener(Events.LOADING, this.hideLoading);
 
     if (_.isEmpty(this.state.tags)) { // do not call if we came back on the page
@@ -53,86 +57,62 @@ export default class TagListPage extends AbstractComponent {
 
   componentWillUnmount() {
     TagStore.removeErrors();
-    TagStore.removeListener(Events.CHANGE, this._onChange);
+    TagStore.removeListener(Events.CHANGE, this.onChange);
     TagStore.removeListener(Events.LOADING, this.hideLoading);
   }
 
-  handleSearchInput(search) {
+  onChange = () => {
     this.setState({
-      search: search
+      tagsList: TagStore.getTagsList(),
     });
-  }
+  };
 
-  handleSearchSubmit(search) {
-    this.showLoading();
-    Api.searchTags(search);
-  }
-
-  handleLoadMore() {
-    const paging = this.state.paging;
-    this.showLoading();
-    Api.loadTags(parseInt(paging.page) + 1);
-  }
-
-  handleLoadMoreSearch() {
-    const paging = this.state.searchPaging;
-    this.showLoading();
-    Api.loadTags(this.state.search, parseInt(paging.page) + 1);
-  }
-
-  _onChange() {
+  onSearchInput = (searchQuery) => {
     this.setState({
-      tags: TagStore.getAllTags(),
-      searchTags: TagStore.getSearchTags(),
-      search: TagStore.getSearch(),
-      paging: TagStore.getPaging(),
-      searchPaging: TagStore.getSearchPaging()
+      searchQuery
     });
-  }
+  };
 
   render() {
     let tagTable = (<div className="tags__loading"></div>);
-    let loadMore = (null);
-    let tagsList = [];
+    let tags = [];
 
-    if (_.isEmpty(this.state.search.name)) {
+    if (_.isNull(this.state.tagsList)) {
+      return this.renderOnLoadingContent();
+    }
+
+    if (_.isEmpty(this.state.searchQuery)) {
       console.log(this.state);
-      tagsList = this.state.tags;
-      loadMore = (<LoadMore paging={this.state.paging} loadMore={this.handleLoadMore} />);
+      tags = this.state.tagsList.tags;
     }
     else {
-      // Use search Page
-      if (!_.isEmpty(this.state.searchTags)) {
-        tagsList = this.state.searchTags;
-        loadMore = (
-          <LoadMore paging={this.state.searchPaging} loadMore={this.handleLoadMoreSearch} />);
-      }
-      else { // wait for api search, manually search on displayed Page.
-
-        this.state.tags.forEach(function(tag) {
-          const name = tag.name;
-          const filterText = this.state.search.name.toLowerCase();
-
-          // A simple filter no case sensitive
-          if (name.indexOf(filterText) >= 0) {
-            tagsList.push(tag);
-          }
-
-        }.bind(this));
-
-      }
+      // Use searchQuery Page
+      _.each(this.state.tagsList.tags, (tag) => {
+        if (ViewUtils.searchStringOn(this.state.searchQuery, tag.name)) {
+          tags.push(tag);
+        }
+      });
 
     }
 
-    if (!_.isEmpty(tagsList)) {
-      tagTable = (<TagsTable tags={tagsList} />);
+    const tagsList:TagsList = new TagsList();
+    tagsList.tags = tags;
+
+    if (!_.isEmpty(tags)) {
+      tagTable = (
+        <TagsTable
+          tagsList={tagsList}
+        />
+      );
     }
-    else if (_.isEmpty(tagsList) && this.state.loading == false) {
-      tagTable = (<NoTag />);
+    else if (_.isEmpty(tags) && this.state.loading == false) {
+      tagTable = (<NoTags />);
     }
+
+    console.log('tags', tags);
 
     return (
-      <div id="bookmark-list">
+      <div id="tags-list">
         {this.renderErrorView()}
         {this.renderLoading()}
 
@@ -143,9 +123,10 @@ export default class TagListPage extends AbstractComponent {
 
           <div className="col-sm-12 col-md-9 col-md-offset-2">
 
-            <SearchBox search={this.state.search}
-                       onSearchSubmit={this.handleSearchSubmit}
-                       onSearchInput={this.handleSearchInput} />
+            <SearchBox
+              search={this.state.searchQuery}
+              onSearchInput={this.onSearchInput}
+            />
 
             <div className="top-buffer-50"></div>
 
@@ -153,15 +134,11 @@ export default class TagListPage extends AbstractComponent {
 
           </div>
 
-          <div className="col-sm-12 col-md-9 col-md-offset-2 top-buffer-50">
-            {loadMore}
-          </div>
         </div>
 
         <div className="top-buffer-50"></div>
 
       </div>
-
     );
 
   }

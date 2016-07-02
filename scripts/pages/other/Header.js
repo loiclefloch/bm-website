@@ -3,6 +3,9 @@ import React, { PropTypes, Component } from 'react';
 // -- actions
 import SessionAction from 'actions/SessionAction';
 
+// -- stores
+import SessionStore from 'stores/SessionStore';
+
 // -- constants
 import RoutingEnum from 'constants/RoutingEnum';
 
@@ -29,7 +32,7 @@ export default class Header extends Component {
     SessionAction.logout();
   };
 
-  render() {
+  renderLoggedInMenu() {
     const currentRoutes = this.props.routes;
     let currentRoute = null;
     if (currentRoutes.length > 0) {
@@ -40,7 +43,7 @@ export default class Header extends Component {
 //      console.log('CURRENT ROUTE:', currentRoute, currentRoutes);
     }
 
-    const nav = this.props.isLoggedIn ? (
+    return (
       <div className="collapse navbar-collapse">
         <ul className="nav navbar-nav">
 
@@ -78,7 +81,11 @@ export default class Header extends Component {
           </li>
         </ul>
       </div>
-    ) : (
+    );
+  }
+
+  renderNotLoggedInMenu() {
+    return (
       <div className="collapse navbar-collapse">
         <ul className="nav navbar-nav navbar-right">
           <li>
@@ -87,6 +94,10 @@ export default class Header extends Component {
         </ul>
       </div>
     );
+  }
+
+  render() {
+    const nav = SessionStore.isLoggedIn() ? this.renderLoggedInMenu() : this.renderNotLoggedInMenu();
 
     return (
       <nav className="navbar navbar-default">

@@ -1,3 +1,5 @@
+import Diacritics from 'utils/Diacritics';
+
 export default {
 
   Colors: {
@@ -36,6 +38,14 @@ export default {
       return !this.isLightColor(color);
     }
 
+  },
+
+  searchStringOn(search:String, value:String) {
+    // to lower case, replace accents by the corresponding letter and then remove all non-alpha characters.
+    const searchFormatted = Diacritics.replaceDiacritics(search.toLowerCase()).replace(/\W/g, '');
+    const valueFormatted = Diacritics.replaceDiacritics(value.toLowerCase()).replace(/\W/g, '');
+
+    return valueFormatted.indexOf(searchFormatted) >= 0;
   }
 
 };

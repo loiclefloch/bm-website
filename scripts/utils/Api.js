@@ -295,10 +295,12 @@ class Api {
       .end(function(error, res) {
         handleResponse(error, res,
           function Success(json) {
-            ServerAction.receiveTags(json);
+            const tagsList:TagsList = new TagsList();
+            tagsList.fromJson(json);
+            ServerAction.receiveTags(tagsList);
           },
           function Failure(errors) {
-            ServerAction.receiveTags(null, errors);
+            ServerAction.receiveTagsError(errors);
           });
       });
   }

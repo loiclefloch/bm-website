@@ -108,10 +108,10 @@ export default class ServerAction {
    * ==================================================================================================
    */
 
-  static receiveTags(tag:Tag) {
+  static receiveTags(tagsList:TagsList) {
     AppDispatcher.handleServerAction({
       type: ActionTypes.RECEIVE_TAGS,
-      tag
+      tagsList
     });
   }
 

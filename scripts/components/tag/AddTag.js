@@ -5,6 +5,9 @@ import WebApiUtils from 'utils/Api';
 import BookmarkStore from 'stores/BookmarkStore';
 import Events from 'constants/Events';
 
+// -- entities
+import TagsList from 'entities/TagsList';
+
 // -- views
 import AddTagListRow from './components/AddTagListRow';
 import AddTagColorList from './components/AddTagColorList';
@@ -12,7 +15,8 @@ import AddTagColorList from './components/AddTagColorList';
 export default class AddTag extends Component {
 
   static propTypes = {
-    allTags: PropTypes.array.isRequired,
+    tagsList: PropTypes.objectOf(TagsList).isRequired,
+    
     bookmark: PropTypes.object.isRequired
   };
 
@@ -26,100 +30,98 @@ export default class AddTag extends Component {
 
   componentDidMount() {
     $.material.init();
-    BookmarkStore.addListener( Events.LOADING_TAGS_CHANGE, this.onhideLoading );
+    BookmarkStore.addListener(Events.LOADING_TAGS_CHANGE, this.onHideLoading);
   }
 
   componentWillUnmount() {
-    BookmarkStore.removeListener( Events.LOADING_TAGS_CHANGE, this.onhideLoading );
+    BookmarkStore.removeListener(Events.LOADING_TAGS_CHANGE, this.onHideLoading);
   }
 
-  onhideLoading() {
-    this.setState( {
+  onHideLoading = () => {
+    this.setState({
       loading: false
-    } )
-  }
+    })
+  };
 
-  onShowLoading() {
-    this.setState( {
+  onShowLoading = () => {
+    this.setState({
       loading: true
-    } )
-  }
+    })
+  };
 
-  displayAddTagMenu() {
-    this.toggleMenu();
-  }
+  onDisplayAddTagMenu = () => {
+    this.onToggleMenu();
+  };
 
-  toggleTag(tag) {
+  onToggleTag = (tag) => {
     let selectedTags = this.state.selectedTags;
 
-    if (_.indexOf( selectedTags, tag ) === -1) { // add tag
-      selectedTags.push( tag );
+    if (_.indexOf(selectedTags, tag) === -1) { // add tag
+      selectedTags.push(tag);
     }
     else { // remove tag
-      selectedTags = _.remove( selectedTags, function(n) {
+      selectedTags = _.remove(selectedTags, function(n) {
         return n.id != tag.id;
-      } );
+      });
     }
 
-    this.setState( {
+    this.setState({
       selectedTags: selectedTags
-    } );
+    });
+  };
 
-  }
-
-  _validateOnClick() {
-
+  validateOnClick = () => {
     if (this.state.isCreationTagMode == false) {
       this.onShowLoading();
 
       // Add the tags
-      WebApiUtils.postTagsToBookmark( this.state.selectedTags, this.props.bookmark );
+      WebApiUtils.postTagsToBookmark(this.state.selectedTags, this.props.bookmark);
 
-      this.toggleMenu();
+      this.onToggleMenu();
 
       // clear the search. TODO: remove when the selectedTags is update after the API call to add the tag
-      this.updateTagQuery( "" );
+      this.updateTagQuery("");
     }
     else {
-      this._onCreateNewTag();
+      this.onCreateNewTag();
     }
-  }
+  };
 
-  toggleMenu() {
-    $( '#bookmark__tag_list__add_tag_dropdown' ).parent().toggleClass( 'open' );
-    this.setCreationTagModeTo( false );
-  }
+  onToggleMenu = () => {
+    $('#bookmark__tag_list__add_tag_dropdown').parent().toggleClass('open');
+    this.onChangeCreationTagMode(false);
+  };
 
-  _handleSearchChange() {
+  onSearchChange = () => {
     const query = this.refs.searchTagInput.value;
 
     // update the tag
-    this.updateTagQuery( query );
+    this.updateTagQuery(query);
 
-    const tagsToPropose = this.getTagsToPropose( query );
+    const tagsToPropose = this.getTagsToPropose(query);
 
-    if (!_.isEmpty( tagsToPropose )) {
-      this.setCreationTagModeTo( false );
+    if (!_.isEmpty(tagsToPropose)) {
+      this.onChangeCreationTagMode(false);
     }
     else {
       // Create the tag mode
-      this.setCreationTagModeTo( true );
+      this.onChangeCreationTagMode(true);
     }
-  }
+  };
 
-  setCreationTagModeTo(mode) {
-    this.setState( {
+  onChangeCreationTagMode = (mode) => {
+    this.setState({
       isCreationTagMode: mode
-    } );
-  }
+    });
+  };
 
-  _onNewTagColorChosen(tagColor) {
-    this.setState( {
+  onNewTagColorChosen = (tagColor) => {
+    this.setState({
       newTagColor: tagColor
-    } );
-  }
+    });
+  };
 
-  _handleSearchSubmit(e) {
+  onSearchSubmit = (e) => {
 
     /**
      * On enter, we toggle the first tag of the displayed list (getTagsToPropose).
@@ -128,20 +130,19 @@ export default class AddTag extends Component {
     if (e.key === 'Enter') {
       const query = this.refs.searchTagInput.value;
 
-      const tagsToPropose = this.getTagsToPropose( query );
+      const tagsToPropose = this.getTagsToPropose(query);
 
-      if (!_.isEmpty( tagsToPropose )) {
-        this.toggleTag( tagsToPropose[0] );
-        this.updateTagQuery( "" );
+      if (!_.isEmpty(tagsToPropose)) {
+        this.onToggleTag(tagsToPropose[0]);
+        this.updateTagQuery("");
       }
       else {
-        this._onCreateNewTag();
+        this.onCreateNewTag();
       }
     }
+  };
 
-  }
-
-  _onCreateNewTag() {
+  onCreateNewTag = () => {
     const query = this.refs.searchTagInput.value;
 
     const newTag = {
@@ -150,49 +151,49 @@ export default class AddTag extends Component {
       name: query // We use the current query as tag name.
     };
 
-    this.props.allTags.unshift( newTag );
-    this.toggleTag( newTag );
+    this.props.tagsList.unshift(newTag);
+    this.onToggleTag(newTag);
 
-    this.setCreationTagModeTo( false );
-    this.updateTagQuery( "" );
+    this.onChangeCreationTagMode(false);
+    this.updateTagQuery("");
   }
 
-  updateTagQuery(query) {
-    this.setState( {
+  updateTagQuery = (query) => {
+    this.setState({
       tagQuery: query
-    } );
+    });
   }
 
   getTagsToPropose(tagQuery) {
     let tagsToPropose = [];
 
     // -- Create list of tags that can be add for the bookmark.
-    if (!_.isEmpty( this.props.allTags ) && !_.isEmpty( this.props.bookmark.tags )) {
+    if (!_.isEmpty(this.props.tagsList) && !_.isEmpty(this.props.bookmark.tags)) {
 
       // We propose all the tags minus the tags already set on the bookmark.
-      tagsToPropose = _.differenceWith( this.props.allTags, this.props.bookmark.tags,
+      tagsToPropose = _.differenceWith(this.props.tagsList, this.props.bookmark.tags,
         function(value, other) {
           return value.id == other.id;
         }
       );
 
       // -- sort by name
-      tagsToPropose = _.sortBy( tagsToPropose, ['asc'], function(tag) {
+      tagsToPropose = _.sortBy(tagsToPropose, ['asc'], function(tag) {
         return tag.name.toLowerCase();
-      } );
+      });
     }
 
     // filter by tag query
     if (tagQuery.length > 0) {
-      tagsToPropose = _.remove( tagsToPropose.slice(), function(tag) {
+      tagsToPropose = _.remove(tagsToPropose.slice(), function(tag) {
         // case insensitive + remove all spaces
-        const query = tagQuery.replace( /\s+/g, '' ).toLowerCase();
-        const tagName = tag.name.replace( /\s+/g, '' ).toLowerCase();
-        return tagName.indexOf( query ) !== -1;
-      } );
+        const query = tagQuery.replace(/\s+/g, '').toLowerCase();
+        const tagName = tag.name.replace(/\s+/g, '').toLowerCase();
+        return tagName.indexOf(query) !== -1;
+      });
     }
     else {
-      if (_.isUndefined( this.props.allTags )) { // when the page hasn't load yet, allTags can be undefined.
+      if (_.isUndefined(this.props.tagsList)) { // when the page hasn't load yet, tagsList can be undefined.
         tagsToPropose = [];
       }
     }
@@ -207,7 +208,7 @@ export default class AddTag extends Component {
 
     const tagQuery = this.state.tagQuery;
 
-    const tagsToPropose = this.getTagsToPropose( tagQuery );
+    const tagsToPropose = this.getTagsToPropose(tagQuery);
     let listView = [];
 
     /*
@@ -216,29 +217,29 @@ export default class AddTag extends Component {
      */
     if (this.state.isCreationTagMode == false) {
 
-      tagsToPropose.forEach( function(tag) {
+      tagsToPropose.forEach(function(tag) {
 
         // is the tag on the selected tags list?
-        const isSelected = _.indexOf( selectedTags, tag ) !== -1;
+        const isSelected = _.indexOf(selectedTags, tag) !== -1;
 
-        listView.push( <AddTagListRow tag={tag}
-                                      isSelected={isSelected}
-                                      onTagClicked={this.toggleTag}
-                                      key={tag.id}/> );
-      }.bind( this ) );
+        listView.push(<AddTagListRow tag={tag}
+                                     isSelected={isSelected}
+                                     onTagClicked={this.onToggleTag}
+                                     key={tag.id} />);
+      }.bind(this));
 
     }
     else { // Setup colors list for the new bookmark
-      const tagNameToFind = this.state.tagQuery.replace( /\s+/g, '' ).toLowerCase();
+      const tagNameToFind = this.state.tagQuery.replace(/\s+/g, '').toLowerCase();
 
-      const found = _.find( this.props.bookmark.tags, function(bookmarkTag) {
+      const found = _.find(this.props.bookmark.tags, function(bookmarkTag) {
         // case insensitive + remove all spaces
-        const bookmarkTagName = bookmarkTag.name.replace( /\s+/g, '' ).toLowerCase();
-        return tagNameToFind.localeCompare( bookmarkTagName ) === 0;
-      } );
+        const bookmarkTagName = bookmarkTag.name.replace(/\s+/g, '').toLowerCase();
+        return tagNameToFind.localeCompare(bookmarkTagName) === 0;
+      });
 
-      console.log( found );
-      if (!_.isUndefined( found )) { // verify that the tags is not already set to the bookmark.
+      console.log(found);
+      if (!_.isUndefined(found)) { // verify that the tags is not already set to the bookmark.
         listView = (
           <div className="bookmark__tag_list__tag_already_exists">
             <em>Tag already set with this name.</em>
@@ -250,7 +251,7 @@ export default class AddTag extends Component {
         listView = (
           <AddTagColorList
             defaultSelection={this.state.newTagColor}
-            onColorChosen={this._onNewTagColorChosen}/>
+            onColorChosen={this.onNewTagColorChosen} />
         );
       }
     }
@@ -259,7 +260,7 @@ export default class AddTag extends Component {
     let buttonView = (
       <button id="bookmark__tag_list__add_tag_dropdown"
               className="btn"
-              onClick={this.displayAddTagMenu}
+              onClick={this.onDisplayAddTagMenu}
               aria-haspopup="true"
               aria-expanded="false">
         +
@@ -270,7 +271,7 @@ export default class AddTag extends Component {
     if (this.state.loading) {
       buttonView = (
         <button className="btn btn-disabled">
-          <i className="fa fa-spinner"/>
+          <i className="fa fa-spinner" />
         </button>
       );
     }
@@ -290,17 +291,17 @@ export default class AddTag extends Component {
                 placeholder=""
                 value={this.state.tagQuery}
                 ref="searchTagInput"
-                onChange={this._handleSearchChange}
-                onKeyPress={this._handleSearchSubmit}
-                className="form-control empty"/>
-              <span className="material-input"/>
+                onChange={this.onSearchChange}
+                onKeyPress={this.onSearchSubmit}
+                className="form-control empty" />
+              <span className="material-input" />
             </div>
           </div>
 
           {/* validate btn: only on big screen */}
           <div className="text-center hidden-sm hidden-xs col-md-3">
             <button className="btn btn-primary"
-                    onClick={this._validateOnClick}>
+                    onClick={this.validateOnClick}>
               Validate
             </button>
           </div>
@@ -314,7 +315,7 @@ export default class AddTag extends Component {
           {/* validate btn: only on small screen */}
           <div className="text-center col-xs-12 col-sm-12 hidden-md hidden-lg">
               <span className="btn btn-primary"
-                    onClick={this._validateOnClick}>
+                    onClick={this.validateOnClick}>
                 Validate
               </span>
           </div>

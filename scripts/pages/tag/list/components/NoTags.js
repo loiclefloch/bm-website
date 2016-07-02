@@ -1,6 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 
-export default class NoTag extends Component {
+export default class NoTags extends Component {
 
   render() {
     return (

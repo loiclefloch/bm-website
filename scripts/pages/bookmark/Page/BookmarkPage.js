@@ -101,6 +101,8 @@ export default class BookmarkPage extends AbstractComponent {
     const converter = new showdown.Converter();
     const notesHtml = converter.makeHtml(bookmark.notes);
 
+    console.log('props', this.props);
+
     return (
       <div id="bookmark" className="row">
         {this.renderLoading()}
@@ -172,7 +174,7 @@ export default class BookmarkPage extends AbstractComponent {
           <BookmarkContent
             content={bookmark.content}
             type={bookmark.type}
-            urlQueryParams={this.props.query}
+            urlQueryParams={this.props.location.query}
             changeUrl={this.onChangeUrl}
           />
         </div>

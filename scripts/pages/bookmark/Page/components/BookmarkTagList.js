@@ -9,6 +9,9 @@ import TagAction from 'actions/TagAction';
 // -- constants
 import Events from 'constants/Events';
 
+// -- entities
+import Bookmark from 'entities/Bookmark';
+
 // -- views
 import AddTag from 'components/tag/AddTag';
 import TagItem from './TagItem';
@@ -16,18 +19,19 @@ import TagItem from './TagItem';
 export default class BookmarkTagList extends Component {
 
   static propTypes = {
-    bookmark: PropTypes.object,
+    bookmark: PropTypes.objectOf(Bookmark).isRequired,
+
     deleteTag: PropTypes.func.isRequired
   };
 
   state = {
-    allTags: TagStore.getAllTags()
+    tagsList: TagStore.getTagsList()
   };
 
   componentDidMount() {
     TagStore.addListener(Events.CHANGE, this.onChange);
 
-    if (_.isNull(this.state.tags)) { // do not call if we came back on the page
+    if (_.isNull(this.state.tagsList)) { // do not call if we came back on the page
       TagAction.loadTags();
     }
 
@@ -39,7 +43,7 @@ export default class BookmarkTagList extends Component {
 
   onChange = () => {
     this.setState({
-      allTags: TagStore.getAllTags()
+      tagsList: TagStore.getTagsList()
     });
   };
 
@@ -60,7 +64,7 @@ export default class BookmarkTagList extends Component {
     }
     const addTagView = (
       <AddTag
-        allTags={this.state.allTags}
+        tagsList={this.state.tagsList}
         bookmark={this.props.bookmark}
       />
     );

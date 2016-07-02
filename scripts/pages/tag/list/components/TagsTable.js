@@ -10,12 +10,12 @@ import TagItem from './TagItem';
 export default class TagsTable extends Component {
 
   static propTypes = {
-    tags: PropTypes.objectOf(TagsList).isRequired
+    tagsList: PropTypes.arrayOf(TagsList).isRequired
   };
 
   render() {
     // Sort by name
-    const tags = _.sortBy(this.props.tags, ['asc'], (tag) => {
+    const tags = _.sortBy(this.props.tagsList.tags, ['asc'], (tag) => {
       return tag.name.toLowerCase();
     });
 

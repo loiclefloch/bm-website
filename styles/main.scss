@@ -248,12 +248,21 @@ body {
 
 /* ----- Import components styles */
 
+// --  components
+@import 'components/loading';
 @import 'components/header';
+@import 'components/highlightjs';
+
+// -- bookmarks
 @import 'pages/bookmark/bookmarks';
 @import 'pages/bookmark/bookmark';
-@import 'components/loading';
+
+// -- settings
 @import 'pages/settings/settings';
+
+// -- other pages
 @import 'pages/other/server-error-page';
+
+// -- tags
 @import 'pages/tag/tags';
 @import 'pages/tag/tag_add';
-@import 'components/highlightjs';

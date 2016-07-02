@@ -29,7 +29,9 @@ export default class BookmarkContent extends Component {
   };
 
   defaultProps = {
-    content: ''
+    content: '',
+
+    urlQueryParams: {}
   };
 
   state = {

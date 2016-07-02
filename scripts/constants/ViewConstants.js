@@ -5,7 +5,7 @@ export default {
   },
 
   Image: {
-    LOADING_BAR: 'public/img/loading-bar.svg'
+    LOADING_BAR: '/public/img/loading-bars.svg'
   },
 
   /**
