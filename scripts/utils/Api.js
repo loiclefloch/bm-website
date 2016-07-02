@@ -329,10 +329,21 @@ class Api {
       .end(function(error, res) {
         handleResponse(error, res,
           function Success(json) {
-            ServerAction.receiveTag(json);
+            console.log('[LOAD TAG]', json);
+            const tag:Tag = new Tag();
+            tag.fromJson(json.tag);
+
+            const bookmarks = [];
+            _.each(json.bookmarks, (bookmarkData) => {
+              const bookmark:Bookmark = new Bookmark();
+              bookmark.fromJson(bookmarkData);
+              bookmarks.push(bookmark);
+            });
+            tag.bookmarks = bookmarks;
+            ServerAction.receiveTag(tag);
           },
           function Failure(errors) {
-            ServerAction.receiveTag(null, errors);
+            ServerAction.receiveTagError(errors);
           });
       });
   }

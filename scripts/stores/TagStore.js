@@ -92,16 +92,10 @@ tagStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
       break;
 
     case ActionTypes.RECEIVE_TAG:
-      if (action.json) {
-        _tag = action.tag;
-        // Attach bookmarks with the tag to the tag to make things easier
-        _tag['bookmarks'] = action.bookmarks;
-        _errors = [];
-      }
-      if (action.errors) {
-        _errors = action.errors;
-      }
-      tagStoreInstance.emitEvent(Events.CHANGE);
+      _tag = action.tag;
+      _errors = [];
+
+      tagStoreInstance.emitEvent(Events.ON_LOADING_TAG);
       tagStoreInstance.emitEvent(Events.LOADING);
       break;
 

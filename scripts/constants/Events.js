@@ -1,11 +1,19 @@
+import keyMirror from 'keymirror';
 
-const Events = {
-  CHANGE: 'change',
-  LOADING: 'loading_end',
-  CREATE: 'created',
-  REMOVE: 'removed',
-  TAGS_CHANGE_FOR_BOOKMARK: 'tags_change_for_bookmark',
-  LOADING_TAGS_CHANGE: 'loading_tags_change_end'
-};
+const Events = keyMirror({
+  CHANGE: null,
+
+  LOADING: null,
+
+  CREATE: null,
+
+  REMOVE: null,
+
+  TAGS_CHANGE_FOR_BOOKMARK: null,
+
+  LOADING_TAGS_CHANGE: null,
+
+  ON_LOADING_TAG: null
+});
 
 module.exports = Events;

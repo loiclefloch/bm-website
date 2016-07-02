@@ -11,7 +11,11 @@ const Env = {
 
     github_repository_link: 'http://github.com/loiclefloch/bm',
 
-    github_api_repository_link: 'http://github.com/loiclefloch/bm'
+    github_api_repository_link: 'http://github.com/loiclefloch/bm',
+
+    Logger: {
+      SENTRY_URL: ''
+    }
   },
 
   DEV: {

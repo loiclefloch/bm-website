@@ -3,13 +3,16 @@ import moment from 'moment';
 import showdown from 'showdown';
 import _ from 'lodash';
 
+// -- constants
+import Events from 'constants/Events';
 import Constants from 'constants/Constants';
-import Api from 'utils/Api';
+import ViewConstants from 'constants/ViewConstants';
+
+// -- stores
 import TagStore from 'stores/TagStore';
 import SessionStore from 'stores/SessionStore';
 
-import Events from 'constants/Events';
-
+// -- actions
 import TagAction from 'actions/TagAction';
 import RouteAction from 'actions/RouteAction';
 
@@ -30,28 +33,26 @@ export default class TagPage extends AbstractComponent {
       RouteAction.redirect('login');
     }
 
-    TagStore.addListener(Events.CHANGE, this._onChange);
+    TagStore.addListener(Events.ON_LOADING_TAG, this.onChange);
     TagStore.addListener(Events.LOADING, this.hideLoading);
 
     this.showLoading();
-    TagAction.loadTag(this.getParams().tagId);
+    TagAction.loadTag(this.props.params.tagId);
   }
 
   componentWillUnmount() {
-    TagStore.removeListener(Events.CHANGE, this._onChange);
+    TagStore.removeListener(Events.ON_LOADING_TAG, this.onChange);
     TagStore.removeListener(Events.LOADING, this.hideLoading);
-    TagStore.clearTag();
+//    TagStore.clearTag();
   }
 
-  _onChange() {
+  onChange = () => {
     this.setState({
       tag: TagStore.getTag()
     });
-
-    this.handleError(TagStore.getErrors());
   }
 
-  _deleteTag(e) {
+  deleteTag = (e) => {
     e.preventDefault();
     const tag = this.state.tag;
     const self = this;
@@ -61,18 +62,25 @@ export default class TagPage extends AbstractComponent {
         Api.deleteTag(tag.id);
       }
     });
-
   }
 
   render() {
     const tag = this.state.tag;
 
+    if (_.isNull(tag)) {
+      return this.renderOnLoadingContent();
+    }
+
     let bookmarkTable = (null);
     if (_.isNull(tag)) {
       bookmarkTable = this.renderOnLoadingContent();
     } else if (!_.isEmpty(tag.bookmarks)) {
-      bookmarkTable = (<BookmarksTable bookmarks={tag.bookmarks}
-                                       bookmarkListType={ViewConstants.BookmarkListType.SIMPLE} />);
+      bookmarkTable = (
+        <BookmarksTable
+          bookmarks={tag.bookmarks}
+          bookmarkListType={ViewConstants.BookmarkListType.SIMPLE}
+        />)
+      ;
     }
     else if (this.state.isLoading) {
       bookmarkTable = (<NoBookmarkForTag />);
