@@ -4,7 +4,7 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import Events from 'constants/Events';
 import ActionTypes from 'constants/ActionTypes';
 
-// -- entitites
+// -- entities
 import TagsList from 'entities/TagsList';
 import Tag from 'entities/Tag';
 

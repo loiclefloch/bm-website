@@ -88,7 +88,7 @@ export default class BookmarkPage extends AbstractComponent {
 
   }
 
-  render() {
+  renderBody() {
     const bookmark = this.state.bookmark;
 
     console.log(bookmark);
@@ -104,11 +104,11 @@ export default class BookmarkPage extends AbstractComponent {
     console.log('props', this.props);
 
     return (
-      <div id="bookmark" className="row">
-        {this.renderLoading()}
-        {this.renderErrorView()}
+      <div>
 
-        <BookmarkFloatMenu bookmark={bookmark} />
+        <BookmarkFloatMenu
+          bookmark={bookmark}
+        />
 
         <div className="col-xs-12">
           <div className="bookmark__page_header">
@@ -187,6 +187,16 @@ export default class BookmarkPage extends AbstractComponent {
       </div>
 
     );
+  }
+
+  render() {
+    return (
+      <div id="bookmark" className="row">
+        {this.renderLoading()}
+        {this.renderErrorView()}
+        {this.renderBody()}
+      </div>
+    )
   }
 
 }

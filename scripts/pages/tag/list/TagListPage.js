@@ -32,23 +32,16 @@ export default class TagListPage extends AbstractComponent {
     searchQuery: ''
   };
 
-
   componentDidMount() {
     if (!SessionStore.isLoggedIn()) {
       RouteAction.redirect('login');
     }
 
-    // Do not display the loading if we have already load the Page.
-    // For example, when we came back to this page from the tag page.
-    if (_.isEmpty(this.state.tags)) {
-      this.showLoading();
-    }
-
-
     TagStore.addListener(Events.CHANGE, this.onChange);
     TagStore.addListener(Events.LOADING, this.hideLoading);
 
-    if (_.isEmpty(this.state.tags)) { // do not call if we came back on the page
+    if (_.isNull(this.state.tagsList)) { // do not call if we came back on the page
+      this.showLoading();
       TagAction.loadTags();
     }
 
@@ -73,7 +66,7 @@ export default class TagListPage extends AbstractComponent {
     });
   };
 
-  render() {
+  renderBody() {
     let tagTable = (<div className="tags__loading"></div>);
     let tags = [];
 
@@ -82,7 +75,6 @@ export default class TagListPage extends AbstractComponent {
     }
 
     if (_.isEmpty(this.state.searchQuery)) {
-      console.log(this.state);
       tags = this.state.tagsList.tags;
     }
     else {
@@ -112,10 +104,7 @@ export default class TagListPage extends AbstractComponent {
     console.log('tags', tags);
 
     return (
-      <div id="tags-list">
-        {this.renderErrorView()}
-        {this.renderLoading()}
-
+      <div>
         {/*
          <Fab />
          */}
@@ -137,7 +126,17 @@ export default class TagListPage extends AbstractComponent {
         </div>
 
         <div className="top-buffer-50"></div>
+      </div>
+    );
+  }
 
+  render() {
+    return (
+      <div id="tags-list">
+        {this.renderErrorView()}
+        {this.renderLoading()}
+
+        {this.renderBody()}
       </div>
     );
 

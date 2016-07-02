@@ -25,7 +25,7 @@ import NoBookmarkForTag from './components/NoBookmarkForTag';
 export default class TagPage extends AbstractComponent {
 
   state = {
-    tag: TagStore.getTag()
+    tag: null
   };
 
   componentDidMount() {
@@ -50,7 +50,7 @@ export default class TagPage extends AbstractComponent {
     this.setState({
       tag: TagStore.getTag()
     });
-  }
+  };
 
   deleteTag = (e) => {
     e.preventDefault();
@@ -62,9 +62,9 @@ export default class TagPage extends AbstractComponent {
         Api.deleteTag(tag.id);
       }
     });
-  }
+  };
 
-  render() {
+  renderBody() {
     const tag = this.state.tag;
 
     if (_.isNull(tag)) {
@@ -93,10 +93,7 @@ export default class TagPage extends AbstractComponent {
     };
 
     return (
-      <div id="tag">
-        {this.renderLoading()}
-        {this.renderErrorView()}
-
+      <div>
         <div>
           <div className="tag__page_header">
             <h1 className="tag__title">{tag.name}</h1>
@@ -118,7 +115,17 @@ export default class TagPage extends AbstractComponent {
         <div className="clear"></div>
         <div className="top-buffer-50"></div>
       </div>
+    );
+  }
 
+  render() {
+    return (
+      <div className="tag_page">
+        {this.renderLoading()}
+        {this.renderErrorView()}
+
+        {this.renderBody()}
+      </div>
     );
   }
 

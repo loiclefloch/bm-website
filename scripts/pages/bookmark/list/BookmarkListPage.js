@@ -47,8 +47,9 @@ export default class BookmarkListPage extends AbstractComponent {
 
     // do not call if we came back on the page. We need to call if there is only 1 bookmarks
     // because when we create a new bookmark, we are redirect to this page, but the bookmark list is not loaded
-    // if we haven't go here before
+    // if we haven't went there before
     if (_.isNull(this.state.bookmarksList) || this.state.bookmarks.bookmarksList == 1) {
+      this.showLoading();
       BookmarkAction.loadBookmarks();
     }
 
@@ -105,7 +106,7 @@ export default class BookmarkListPage extends AbstractComponent {
     SessionStore.saveBookmarkListType(newBookmarkListType);
   };
 
-  render() {
+  renderBody() {
     let bookmarkTable = (null);
     let loadMoreView = (null);
     let bookmarks = [];
@@ -153,10 +154,7 @@ export default class BookmarkListPage extends AbstractComponent {
     }
 
     return (
-      <div id="bookmark-list">
-        {this.renderLoading()}
-        {this.renderErrorView()}
-
+      <div>
         <BookmarksSidebar
           search={this.state.search}
           onSearchSubmit={this.onSearchSubmit}
@@ -180,6 +178,17 @@ export default class BookmarkListPage extends AbstractComponent {
         </div>
 
         <div className="top-buffer-50"></div>
+      </div>
+    );
+  }
+
+  render() {
+    return (
+      <div id="bookmark-list">
+        {this.renderLoading()}
+        {this.renderErrorView()}
+
+        {this.renderBody()}
 
       </div>
     );

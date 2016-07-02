@@ -1,6 +1,13 @@
 import React, { PropTypes, Component } from 'react';
 
+// -- entities
+import Bookmark from 'entities/Bookmark';
+
 export default class BookmarkFloatMenu extends Component {
+
+  static propTypes = {
+    bookmark: PropTypes.objectOf(Bookmark).isRequired
+  };
 
   onGoTop() {
     $('html, body').animate({
