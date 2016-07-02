@@ -1,0 +1,7 @@
+# /node_modules and /bower_components ignored by default
+# files with extensions .ts.js or .coffee.js are also ignored by default
+
+# public/dist/ contains the compiled javascript and public/js/ contains libs that cannot be use with bower_components.
+public/
+public/dist/
+.gulpfile.js

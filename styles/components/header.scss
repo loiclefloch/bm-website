@@ -1,0 +1,41 @@
+@import '../colors';
+
+.navbar {
+  background-color: $header-color;
+  border-color: $header-color;
+  border-radius: 0;
+
+  .navbar-brand {
+    color: white;
+
+    &:hover {
+      color: white;
+    }
+  }
+
+  .navbar-nav {
+    li {
+      a {
+        color: white;
+
+        &:hover {
+          color: white;
+        }
+      }
+    }
+  }
+
+  li.active {
+    background-color: $header-color!important;
+    border-bottom: 2px solid white;
+
+    a {
+      background: none!important;
+      color: white!important;
+
+      &:hover {
+        color: white;
+      }
+    }
+  }
+}

@@ -2,8 +2,8 @@ module.exports = {
 
   Colors: {
 
-    isLightColor: function (color) {
-      var r, b, g, hsp, a = color;
+    isLightColor(color) {
+      const r, b, g, hsp, a = color;
 
       if (a.match(/^rgb/)) {
         a = a.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/);
@@ -32,7 +32,7 @@ module.exports = {
       }
     },
 
-    isDarkColor: function (color) {
+    isDarkColor(color) {
       return !this.isLightColor(color);
     }
 

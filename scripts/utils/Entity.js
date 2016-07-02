@@ -1,6 +1,6 @@
-var Constants = require('../constants/Constants.js');
+const Constants from 'constants/Constants';
 
-var Entity = {
+const Entity = {
 
   BOOKMARK: {
     name: "",

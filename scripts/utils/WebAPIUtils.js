@@ -1,15 +1,15 @@
-var ServerActionCreators = require('../actions/ServerActionCreators.react.jsx');
-var ApiConstants = require('../constants/ApiConstants.js');
-var Constants = require('../constants/Constants.js');
-var request = require('superagent');
-var RouteActionCreators = require('../actions/RouteActionCreators.react.jsx');
-var SessionStore = require('../stores/SessionStore.react.jsx');
-var ServerStore = require('../stores/ServerStore.react.jsx');
+const ServerAction from '../actions/ServerAction');
+const ApiConstants from 'constants/ApiConstants';
+const Constants from 'constants/Constants';
+const request from 'superagent');
+const RouteAction from '../actions/RouteAction');
+const SessionStore from '../stores/SessionStore');
+const ServerStore from '../stores/ServerStore');
 
-var _ = require('lodash');
+const _ from 'lodash');
 
 function _getErrors(text) {
-  var errorMsgs = ["Something went wrong, please try again"];
+  const errorMsgs = ["Something went wrong, please try again"];
   if ((json = JSON.parse(text))) {
     if (!_.isEmpty(json['errors'])) {
       errorMsgs = json['errors'];
@@ -33,7 +33,7 @@ function _getAuthorizationHeader() {
   return 'Bearer ' + SessionStore.getAccessToken();
 }
 
-var APIEndpoints = ApiConstants.APIEndpoints;
+const APIEndpoints = ApiConstants.APIEndpoints;
 
 function handleResponse(error, res, success, failure) {
 
@@ -49,27 +49,27 @@ function handleResponse(error, res, success, failure) {
   else {
     if (res.statusCode == 404) {
       console.error('[API] Not found');
-      RouteActionCreators.redirect('page-not-found');
+      RouteAction.redirect('page-not-found');
     }
     else if (res.statusCode == 401) {
       BM.loading.hide();
       console.log('[API] 401');
-      RouteActionCreators.redirect('login');
+      RouteAction.redirect('login');
     }
     else if (res.statusCode == 500) {
       console.log(res);
       console.error('[API] Error 500', res.text);
       ServerStore.setServerError(res); // send wall request
-      RouteActionCreators.redirect('server-error');
+      RouteAction.redirect('server-error');
     }
     else {
       console.log('get api errors');
-      var errors = _getErrors(res.text);
+      const errors = _getErrors(res.text);
       console.error('[API]', errors);
       console.log('js error', error);
 
       //if (error) {
-      //    var errors = _getErrors(error);
+      //    const errors = _getErrors(error);
       //  failure(errors);
       //}
 
@@ -80,7 +80,7 @@ function handleResponse(error, res, success, failure) {
 
 module.exports = {
 
-  login: function (username, password) {
+  login(username, password) {
     request.post(APIEndpoints.LOGIN)
       .set('Accept', 'application/x-www-form-urlencoded')
       .send(
@@ -97,16 +97,16 @@ module.exports = {
           errors = _getErrors(error);
         }
         else if (res.statusCode == 401 || res.statusCode == 400) {
-          var json = JSON.parse(res.text);
-          var errors = [json.error_description];
+          const json = JSON.parse(res.text);
+          const errors = [json.error_description];
           if (!errors) {
             errors = _getErrors(res.text);
           }
-          ServerActionCreators.receiveLogin(null, errors);
+          ServerAction.receiveLogin(null, errors);
         } else {
           json = JSON.parse(res.text);
           localStorage.setItem('username', username);
-          ServerActionCreators.receiveLogin(json, null);
+          ServerAction.receiveLogin(json, null);
         }
       });
   },
@@ -117,7 +117,7 @@ module.exports = {
    * ==================================================================================================
    */
 
-  loadBookmarks: function (page, limit) {
+  loadBookmarks(page, limit) {
 
     if (_.isUndefined(limit)) {
       limit = Constants.Bookmark.DEFAULT_LIMIT
@@ -133,15 +133,15 @@ module.exports = {
       .end(function (error, res) {
         handleResponse(error, res,
           function Success(json) {
-            ServerActionCreators.receiveBookmarks(json);
+            ServerAction.receiveBookmarks(json);
           },
           function Failure(errors) {
-            ServerActionCreators.receiveBookmarks(null, errors);
+            ServerAction.receiveBookmarks(null, errors);
           });
       });
   },
 
-  searchBookmarks: function (search, page, limit) {
+  searchBookmarks(search, page, limit) {
 
     if (_.isUndefined(limit)) {
       limit = Constants.Bookmark.DEFAULT_LIMIT
@@ -157,15 +157,15 @@ module.exports = {
       .end(function (error, res) {
         handleResponse(error, res,
           function Success(json) {
-            ServerActionCreators.receiveSearchBookmarks(json);
+            ServerAction.receiveSearchBookmarks(json);
           },
           function Failure(errors) {
-            ServerActionCreators.receiveSearchBookmarks(null, errors);
+            ServerAction.receiveSearchBookmarks(null, errors);
           });
       });
   },
 
-  loadBookmark: function (bookmarkId) {
+  loadBookmark(bookmarkId) {
 
     request.get(APIEndpoints.BOOKMARKS + '/' + bookmarkId)
       .set('Accept', 'application/json')
@@ -173,15 +173,15 @@ module.exports = {
       .end(function (error, res) {
         handleResponse(error, res,
           function Success(json) {
-            ServerActionCreators.receiveBookmark(json);
+            ServerAction.receiveBookmark(json);
           },
           function Failure(errors) {
-            ServerActionCreators.receiveBookmark(null, errors);
+            ServerAction.receiveBookmark(null, errors);
           });
       });
   },
 
-  createBookmark: function (name, url, tags, notes) {
+  createBookmark(name, url, tags, notes) {
     request.post(APIEndpoints.BOOKMARKS)
       .set('Accept', 'application/json')
       .set('Authorization', _getAuthorizationHeader())
@@ -196,31 +196,31 @@ module.exports = {
         if (res) {
           handleResponse(error, res,
             function Success(json) {
-              ServerActionCreators.receiveCreatedBookmark(json, null);
+              ServerAction.receiveCreatedBookmark(json, null);
             },
             function Failure(errors) {
-              ServerActionCreators.receiveCreatedBookmark(null, errors);
+              ServerAction.receiveCreatedBookmark(null, errors);
             });
         }
       });
   },
 
-  deleteBookmark: function (bookmarkId) {
+  deleteBookmark(bookmarkId) {
     request.delete(APIEndpoints.BOOKMARKS + '/' + bookmarkId)
       .set('Accept', 'application/json')
       .set('Authorization', _getAuthorizationHeader())
       .end(function (error, res) {
         handleResponse(error, res,
           function Success(json) {
-            ServerActionCreators.receiveRemovedBookmark(json);
+            ServerAction.receiveRemovedBookmark(json);
           },
           function Failure(errors) {
-            ServerActionCreators.receiveRemovedBookmark(null, errors);
+            ServerAction.receiveRemovedBookmark(null, errors);
           });
       });
   },
 
-  postTagsToBookmark: function (tags, bookmark) {
+  postTagsToBookmark(tags, bookmark) {
     request.post(APIEndpoints.BOOKMARKS + '/' + bookmark.id + '/tags')
       .set('Accept', 'application/json')
       .set('Authorization', _getAuthorizationHeader())
@@ -232,16 +232,16 @@ module.exports = {
         if (res) {
           handleResponse(error, res,
             function Success(json) {
-              ServerActionCreators.receiveUpdateTagsBookmark(json, null);
+              ServerAction.receiveUpdateTagsBookmark(json, null);
             },
             function Failure(errors) {
-              ServerActionCreators.receiveUpdateTagsBookmark(null, errors);
+              ServerAction.receiveUpdateTagsBookmark(null, errors);
             });
         }
       });
   },
 
-  deleteTagsForBookmark: function (tags, bookmark) {
+  deleteTagsForBookmark(tags, bookmark) {
     request.delete(APIEndpoints.BOOKMARKS + '/' + bookmark.id + '/tags')
       .set('Accept', 'application/json')
       .set('Authorization', _getAuthorizationHeader())
@@ -253,10 +253,10 @@ module.exports = {
         if (res) {
           handleResponse(error, res,
             function Success(json) {
-              ServerActionCreators.receiveUpdateTagsBookmark(json, null);
+              ServerAction.receiveUpdateTagsBookmark(json, null);
             },
             function Failure(errors) {
-              ServerActionCreators.receiveUpdateTagsBookmark(null, errors);
+              ServerAction.receiveUpdateTagsBookmark(null, errors);
             });
         }
       });
@@ -268,7 +268,7 @@ module.exports = {
    * ==================================================================================================
    */
 
-  loadTags: function (page, limit) {
+  loadTags(page, limit) {
 
     if (_.isUndefined(limit)) {
       limit = Constants.Tag.DEFAULT_LIMIT
@@ -284,15 +284,15 @@ module.exports = {
       .end(function (error, res) {
         handleResponse(error, res,
           function Success(json) {
-            ServerActionCreators.receiveTags(json);
+            ServerAction.receiveTags(json);
           },
           function Failure(errors) {
-            ServerActionCreators.receiveTags(null, errors);
+            ServerAction.receiveTags(null, errors);
           });
       });
   },
 
-  searchTags: function (search, page, limit) {
+  searchTags(search, page, limit) {
 
     if (_.isUndefined(limit)) {
       limit = Constants.Tag.DEFAULT_LIMIT
@@ -308,15 +308,15 @@ module.exports = {
       .end(function (error, res) {
         handleResponse(error, res,
           function Success(json) {
-            ServerActionCreators.receiveSearchTags(json);
+            ServerAction.receiveSearchTags(json);
           },
           function Failure(errors) {
-            ServerActionCreators.receiveSearchTags(null, errors);
+            ServerAction.receiveSearchTags(null, errors);
           });
       });
   },
 
-  loadTag: function (tagId) {
+  loadTag(tagId) {
 
     request.get(APIEndpoints.TAGS + '/' + tagId)
       .set('Accept', 'application/json')
@@ -324,15 +324,15 @@ module.exports = {
       .end(function (error, res) {
         handleResponse(error, res,
           function Success(json) {
-            ServerActionCreators.receiveTag(json);
+            ServerAction.receiveTag(json);
           },
           function Failure(errors) {
-            ServerActionCreators.receiveTag(null, errors);
+            ServerAction.receiveTag(null, errors);
           });
       });
   },
 
-  createTag: function (name, url, tags, notes) {
+  createTag(name, url, tags, notes) {
     request.post(APIEndpoints.TAGS)
       .set('Accept', 'application/json')
       .set('Authorization', _getAuthorizationHeader())
@@ -347,26 +347,26 @@ module.exports = {
         if (res) {
           handleResponse(error, res,
             function Success(json) {
-              ServerActionCreators.receiveCreatedTag(json, null);
+              ServerAction.receiveCreatedTag(json, null);
             },
             function Failure(errors) {
-              ServerActionCreators.receiveCreatedTag(null, errors);
+              ServerAction.receiveCreatedTag(null, errors);
             });
         }
       });
   },
 
-  deleteTag: function (tagId) {
+  deleteTag(tagId) {
     request.delete(APIEndpoints.TAGS + '/' + tagId)
       .set('Accept', 'application/json')
       .set('Authorization', _getAuthorizationHeader())
       .end(function (error, res) {
         handleResponse(error, res,
           function Success(json) {
-            ServerActionCreators.receiveRemovedTag(json);
+            ServerAction.receiveRemovedTag(json);
           },
           function Failure(errors) {
-            ServerActionCreators.receiveRemovedTag(null, errors);
+            ServerAction.receiveRemovedTag(null, errors);
           });
       });
   },
@@ -375,7 +375,7 @@ module.exports = {
    * The request will create the json file to export.
    * It returns the url to download the file.
    */
-  exportData: function () {
+  exportData() {
 
     request.get(APIEndpoints.DATA + '/export')
       .set('Accept', 'application/json')
@@ -383,18 +383,18 @@ module.exports = {
       .end(function (error, res) {
         handleResponse(error, res,
           function Success(json) {
-            ServerActionCreators.receiveExport(json);
+            ServerAction.receiveExport(json);
             // Open the url to download the file
             window.open(json.url);
           },
           function Failure(errors) {
-            ServerActionCreators.receiveExport(null, errors);
+            ServerAction.receiveExport(null, errors);
           });
       });
 
   },
 
-  importData: function (file) {
+  importData(file) {
 
     request.post(APIEndpoints.DATA + '/import/test') // TODO: remove /test when testing done.
       .set('Accept', 'application/json')
@@ -404,11 +404,11 @@ module.exports = {
         handleResponse(error, res,
           function Success(json) {
             console.log('Import ok !', json);
-            ServerActionCreators.receiveImport(json);
+            ServerAction.receiveImport(json);
           },
           function Failure(errors) {
             console.log('ERROR on APIUtils', errors);
-            ServerActionCreators.receiveImport(null, errors);
+            ServerAction.receiveImport(null, errors);
           });
       });
 

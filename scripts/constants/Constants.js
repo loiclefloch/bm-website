@@ -1,18 +1,7 @@
 module.exports = {
 
   Bookmark: {
-    DEFAULT_LIMIT: 20, // numbers of bookmarks to display on tags page
-
-    Type: {
-      WEBSITE: 0, // default
-      ARTICLE: 1,
-      VIDEO: 2,
-      MUSIC: 3,
-      CODE: 4, // for example: github code page or project
-      GAME: 5,
-      SLIDE: 6
-    }
-
+    DEFAULT_LIMIT: 20 // numbers of bookmarks to display on tags page
   },
 
   /**
@@ -164,6 +153,6 @@ module.exports = {
       '#BFBFBF'
     ]
 
-  },
+  }
 
 };

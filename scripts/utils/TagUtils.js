@@ -1,8 +1,8 @@
-var Constants = require('../constants/Constants');
+const Constants from 'constants/Constants');
 
 module.exports = {
 
-  getDefaultColors: function () {
+  getDefaultColors() {
     return Constants.Tag.DEFAULT_COLORS;
   }
 

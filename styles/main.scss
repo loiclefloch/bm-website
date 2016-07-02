@@ -1,5 +1,5 @@
 @import 'fonts';
-@import 'spinner';
+@import 'components/spinner';
 @import 'colors';
 
 body {
@@ -248,12 +248,12 @@ body {
 
 /* ----- Import components styles */
 
-@import 'header';
-@import 'bookmarks';
-@import 'bookmark';
-@import 'loading';
-@import 'settings';
-@import 'server-error-page';
-@import 'tags';
-@import 'tag_add';
-@import 'highlightjs';
+@import 'components/header';
+@import 'pages/bookmark/bookmarks';
+@import 'pages/bookmark/bookmark';
+@import 'components/loading';
+@import 'pages/settings/settings';
+@import 'pages/other/server-error-page';
+@import 'pages/tag/tags';
+@import 'pages/tag/tag_add';
+@import 'components/highlightjs';
