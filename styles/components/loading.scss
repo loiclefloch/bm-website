@@ -1,24 +1,21 @@
-.loading {
+.page_loading_show {
+  position: fixed;
+  background: black;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: .5;
+  z-index: 10000; /* YOLO */
 
-  .loading__screenloading {
-    position: fixed;
-    background: black;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    opacity: .5;
-    z-index: 10000; /* YOLO */
+  .page_loading_show__gif {
+    position: absolute;
+    left: 48%;
+    top: 40%;
 
-    .loading__gif {
-      position: absolute;
-      left: 48%;
-      top: 40%;
-
-      img {
-        height: 100px;
-      }
+    img {
+      height: 100px;
     }
-
   }
+
 }

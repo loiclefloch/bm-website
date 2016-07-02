@@ -151,7 +151,7 @@ export default class AddTag extends Component {
       name: query // We use the current query as tag name.
     };
 
-    this.props.tagsList.unshift(newTag);
+    this.props.tagsList.tags.unshift(newTag);
     this.onToggleTag(newTag);
 
     this.onChangeCreationTagMode(false);
@@ -168,10 +168,10 @@ export default class AddTag extends Component {
     let tagsToPropose = [];
 
     // -- Create list of tags that can be add for the bookmark.
-    if (!_.isEmpty(this.props.tagsList) && !_.isEmpty(this.props.bookmark.tags)) {
+    if (!_.isNull(this.props.tagsList) && !_.isEmpty(this.props.bookmark.tags)) {
 
       // We propose all the tags minus the tags already set on the bookmark.
-      tagsToPropose = _.differenceWith(this.props.tagsList, this.props.bookmark.tags,
+      tagsToPropose = _.differenceWith(this.props.tagsList.tags, this.props.bookmark.tags,
         function(value, other) {
           return value.id == other.id;
         }
@@ -238,7 +238,6 @@ export default class AddTag extends Component {
         return tagNameToFind.localeCompare(bookmarkTagName) === 0;
       });
 
-      console.log(found);
       if (!_.isUndefined(found)) { // verify that the tags is not already set to the bookmark.
         listView = (
           <div className="bookmark__tag_list__tag_already_exists">

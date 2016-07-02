@@ -30,6 +30,18 @@ function createLocationDescriptor(to:Object, { query, hash, state }):Object {
   return to;
 }
 
+
+function constructPathWithParams(path, params) {
+  if (!_.isNull(params)) {
+    // replace params. On url definition, params start with ':'
+    _.forIn(params, (param, key) => {
+      path = path.replace(`:${key}`, param);
+    });
+  }
+
+  return path;
+}
+
 /**
  * inspired by https://github.com/reactjs/react-router/blob/master/modules/Link.js/**
  *
@@ -104,13 +116,17 @@ class Link extends Component {
     event.preventDefault();
 
     if (allowTransition) {
-      const { to, query, hash, state } = this.props;
-      const location = createLocationDescriptor(to.path, { query, hash, state });
+      const { to, query, hash, state, params } = this.props;
+
+      const path = constructPathWithParams(to.path, params);
+
+      const location = createLocationDescriptor(path, { query, hash, state });
 
 //      console.log('[LINK]', this, location);
       this.context.router.push(location);
     }
   };
+
 
   // -- renderers
 
@@ -128,14 +144,7 @@ class Link extends Component {
     // console.log(this.context);
 
     if (router && to) {
-      let path = to.path;
-
-      if (!_.isNull(params)) {
-        // replace params. On url definition, params start with ':'
-        _.forIn(params, (param, key) => {
-          path = path.replace(`:${key}`, param);
-        });
-      }
+      const path = constructPathWithParams(to.path, params);
 
       const location = createLocationDescriptor(path, { query, hash, state });
 

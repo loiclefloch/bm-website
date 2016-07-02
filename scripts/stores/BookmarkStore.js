@@ -38,7 +38,7 @@ class BookmarkStore extends BMEventEmitter {
   }
 
   clearBookmark() {
-    _bookmark = {}
+    _bookmark = null;
   }
 
   getBookmark() {

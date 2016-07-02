@@ -10,9 +10,9 @@ export default class AddTagColorRow extends Component {
     isSelected: PropTypes.bool.isRequired
   };
 
-  onColorClicked() {
+  onColorClicked = () => {
     this.props.onClicked(this.props.color);
-  }
+  };
 
   render() {
 
@@ -20,7 +20,9 @@ export default class AddTagColorRow extends Component {
       background: this.props.color
     };
 
-    let selectedView = (<span className="add_tag_color_list__row__not_selected" />);
+    let selectedView = (
+      <span className="add_tag_color_list__row__not_selected" />
+    );
 
     if (this.props.isSelected) {
       // Setup the check icon color according to the color background.
@@ -36,8 +38,10 @@ export default class AddTagColorRow extends Component {
     }
 
     return (
-      <span className="add_tag_color_list__row pointer"
-            onClick={this.onColorClicked}>
+      <span
+        className="add_tag_color_list__row pointer"
+        onClick={this.onColorClicked}
+      >
         <span className="add_tag_color_list__row__tag_color vcenter" style={style}>
           {selectedView}
         </span>

@@ -15,6 +15,7 @@ import Events from 'constants/Events';
 import AbstractComponent from 'abstracts/AbstractComponent';
 import FontAwesome from 'react-fontawesome';
 import Dropzone from 'react-dropzone';
+import EditUserForm from './components/EditUserForm';
 
 export default class SettingsPage extends AbstractComponent {
 
