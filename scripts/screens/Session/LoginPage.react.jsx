@@ -35,13 +35,13 @@ var LoginPage = React.createClass({
     e.preventDefault();
     this.displayLoading();
     this.hideError();
-    var username = this.refs.username.value;
-    var password = this.refs.password.value;
+    const username = this.refs.username.value;
+    const password = this.refs.password.value;
     SessionActionCreators.login(username, password);
   },
 
   render: function () {
-    var username = SessionStore.getUsername();
+    const username = SessionStore.getUsername();
     return (
       <div>
         {this.state.loadingView}
@@ -51,7 +51,7 @@ var LoginPage = React.createClass({
             <form onSubmit={this._onSubmit} className="form col-sm-12 col-md-6 col-md-offset-3">
               <div className="card--login__field form-group">
                 <label name="username">Username</label>
-                <input type="text" value={username} name="username" ref="username" className="form-control"/>
+                <input type="text" defaultValue={username} name="username" ref="username" className="form-control"/>
               </div>
               <div className="card--login__field form-group">
                 <label name="password">Password</label>

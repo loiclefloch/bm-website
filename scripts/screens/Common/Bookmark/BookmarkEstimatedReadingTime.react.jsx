@@ -7,9 +7,11 @@ var BookmarkEstimatedTime = React.createClass({
   },
 
   componentDidUpdate: function () {
-
     $('[data-toggle="tooltip-reading-time"]').tooltip();
+  },
 
+  componentDidMount: function () {
+    $('[data-toggle="tooltip-reading-time"]').tooltip();
   },
 
   render: function () {

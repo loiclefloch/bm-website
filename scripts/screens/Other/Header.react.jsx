@@ -19,8 +19,8 @@ var Header = React.createClass({
     e.preventDefault();
     SessionActionCreators.logout();
   },
-  render: function () {
 
+  render: function () {
     var state = this.props.state;
     var currentRoutes = state.routes;
     var currentRoute = currentRoutes[currentRoutes.length - 1].name;

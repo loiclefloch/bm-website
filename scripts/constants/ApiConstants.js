@@ -1,6 +1,6 @@
 var keyMirror = require('keymirror');
 
-var APIRoot = "http://www.local.bm/app_dev.php";
+var APIRoot = "http://localhost:90/bm-api/web/app_dev.php"
 
 module.exports = {
 

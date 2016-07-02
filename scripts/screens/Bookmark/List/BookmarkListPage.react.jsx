@@ -59,13 +59,16 @@ var BookmarkListPage = React.createClass({
       BookmarkActionCreators.loadBookmarks();
     }
 
-    $.material.init();
   },
 
   componentWillUnmount: function () {
     BookmarkStore.removeErrors();
     BookmarkStore.removeListener(Events.CHANGE, this._onChange);
     BookmarkStore.removeListener(Events.LOADING, this.hideLoading);
+  },
+
+  componentDidUpdate: function () {
+    $.material.init();
   },
 
   handleSearchInput: function (search) {

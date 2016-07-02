@@ -169,7 +169,7 @@ var ServerErrorPage = React.createClass({
 
           <div className="row">
 
-            <div className="col-sm-12 col-md-6 col-md-offset-3">
+            <div className="col-sm-12">
               <pre className="server_error_page__report text-left">
                 # Response info<br />
                 ------------------------------------------------------------<br />
