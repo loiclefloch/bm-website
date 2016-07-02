@@ -11,9 +11,9 @@
               { "src": "./scripts/components", "expose": "components" },
               { "src": "./scripts/objects", "expose": "objects" },
               { "src": "./scripts/constants", "expose": "constants" },
+              { "src": "./scripts/abstracts/", "expose": "abstracts" },
               { "src": "./scripts/api", "expose": "api" },
-              { "src": "./tests/", "expose": "tests" },
-              { "src": "./abstracts/", "expose": "abstracts" }
+              { "src": "./tests/", "expose": "tests" }
             ]]
     ],
     "presets": [ "es2015","react"]

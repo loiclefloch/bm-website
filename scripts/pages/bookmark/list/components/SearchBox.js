@@ -12,7 +12,8 @@ export default class SearchBox extends Component {
     onSearchInput: PropTypes.func.isRequired
   };
 
-  onSubmit = () => {
+  onSubmit = (e) => {
+    e.preventDefault();
     const value = this.refs.filterTextInput.value;
     this.props.search.name = value;
     this.props.onSearchSubmit(this.props.search);
@@ -41,7 +42,7 @@ export default class SearchBox extends Component {
           <input
             type="text"
             placeholder=""
-            value={this.props.search.name}
+            defaultValue={this.props.search.name}
             ref="filterTextInput"
             onChange={this.onChange}
             className="form-control empty" />

@@ -2,15 +2,24 @@ import BMEventEmitter from 'abstracts/BMEventEmitter';
 
 import AppDispatcher from '../dispatcher/AppDispatcher';
 
+import ActionTypes from 'constants/ActionTypes';
+import Events from 'constants/Events';
+
+// -- entities
+import Bookmark from 'entities/Bookmark';
+import BookmarksList from 'entities/BookmarksList';
+import BookmarkSearch from 'entities/search/BookmarkSearch';
+import Paging from 'entities/paging/Paging';
+
 // -- vars
 
-let _bookmarks = null;
-let _searchBookmarks = null; 
+let _bookmarksList:BookmarksList = null;
+let _searchBookmarksList:BookmarksList = null;
 let _errors = null;
-let _search = Entity.SEARCH_BOOKMARK;
-let _paging = Entity.PAGING_BOOKMARK;
-let _searchPaging = Entity.PAGING_BOOKMARK;
-let _bookmark = null;
+let _search:BookmarkSearch = new BookmarkSearch();
+let _paging:Paging = new Paging();
+let _searchPaging:Paging = new Paging();
+let _bookmark:Bookmark = null;
 
 /**
  * Stores are like a mix between a model and a controller,
@@ -20,12 +29,12 @@ let _bookmark = null;
  */
 class BookmarkStore extends BMEventEmitter {
 
-  getAllBookmarks() {
-    return _bookmarks;
+  getAllBookmarksList() {
+    return _bookmarksList;
   }
 
-  getSearchBookmarks() {
-    return _searchBookmarks;
+  getSearchBookmarksList() {
+    return _searchBookmarksList;
   }
 
   clearBookmark() {
@@ -57,9 +66,9 @@ class BookmarkStore extends BMEventEmitter {
   }
 
   clearSearch() {
-    if (!_.isEmpty(_searchBookmarks)) {
+    if (!_.isEmpty(_searchBookmarksList)) {
       _searchPaging = PAGING_OBJECT;
-      _searchBookmarks = [];
+      _searchBookmarksList = [];
       _search = SEARCH_DEFAULT;
       this.emitEvent(Events.CHANGE);
     }
@@ -76,24 +85,24 @@ bookmarkStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
   switch (action.type) {
 
     case ActionTypes.RECEIVE_BOOKMARKS:
-      _bookmarks = _.unionWith(_bookmarks, action.json.bookmarks, (a, b) => {
+      _bookmarksList = _.unionWith(_bookmarksList, action.bookmarksList.bookmarks, (a, b) => {
         return a.id == b.id;
       });
-      _paging = action.json.paging;
+      _paging = action.bookmarksList.paging;
       bookmarkStoreInstance.emitEvent(Events.CHANGE);
       bookmarkStoreInstance.emitEvent(Events.LOADING);
       break;
 
     case ActionTypes.RECEIVE_SEARCH_BOOKMARKS:
-      _searchBookmarks = action.json.bookmarks;
-      _searchPaging = action.json.paging;
+      _searchBookmarksList = action.bookmarksList.bookmarks;
+      _searchPaging = action.bookmarksList.paging;
       bookmarkStoreInstance.emitEvent(Events.CHANGE);
       bookmarkStoreInstance.emitEvent(Events.LOADING);
       break;
 
     case ActionTypes.RECEIVE_CREATED_BOOKMARK:
       if (action.json) {
-        _bookmarks.unshift(action.json);
+        _bookmarksList.unshift(action.bookmark);
         _errors = [];
         bookmarkStoreInstance.emitEvent(Events.CREATE);
       }
@@ -104,22 +113,7 @@ bookmarkStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
       bookmarkStoreInstance.emitEvent(Events.LOADING);
       break;
 
-    case ActionTypes.RECEIVE_REMOVED_BOOKMARK:
-      if (action.json) {
-        _bookmarks = _.remove(_bookmarks, function(n) {
-          return n.id == action.json.id;
-        });
-        _errors = [];
-        bookmarkStoreInstance.emitEvent(Events.REMOVE);
-      }
-      if (action.errors) {
-        _errors = action.errors;
-      }
-      bookmarkStoreInstance.emitEvent(Events.CHANGE);
-      bookmarkStoreInstance.emitEvent(Events.LOADING);
-      break;
-
-    case ActionTypes.RECEIVE_CREATED_BOOKMARK_ERROR:
+    case ActionTypes.RECEIVE_CREATED_BOOKMARK_FAILURE:
       if (action.json) {
         _errors = [];
       }
@@ -131,9 +125,27 @@ bookmarkStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
       break;
 
     case ActionTypes.RECEIVE_BOOKMARK:
-      if (action.json) {
-        _bookmark = action.json;
+      _bookmark = action.bookmark;
+      _errors = [];
+
+      bookmarkStoreInstance.emitEvent(Events.CHANGE);
+      bookmarkStoreInstance.emitEvent(Events.LOADING);
+      break;
+
+    case ActionTypes.RECEIVE_BOOKMARK_FAILURE:
+      _errors = action.error;
+
+      bookmarkStoreInstance.emitEvent(Events.CHANGE);
+      bookmarkStoreInstance.emitEvent(Events.LOADING);
+      break;
+
+    case ActionTypes.RECEIVE_REMOVED_BOOKMARK:
+      if (action.bookmark) {
+        _bookmarksList = _.remove(_bookmarksList, function(n) {
+          return n.id == action.bookmark.id;
+        });
         _errors = [];
+        bookmarkStoreInstance.emitEvent(Events.REMOVE);
       }
       if (action.errors) {
         _errors = action.errors;
@@ -153,7 +165,7 @@ bookmarkStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
 
     case ActionTypes.RECEIVE_BOOKMARK_TAGS:
       if (action.json) {
-        _bookmark = action.json;
+        _bookmark = action.bookmark;
         _errors = [];
       }
       if (action.errors) {

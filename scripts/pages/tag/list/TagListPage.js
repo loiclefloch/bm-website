@@ -1,19 +1,18 @@
 import React from 'react';
 
 // -- store
-import TagStore from 'stores/TagStore.react.jsx';
-import SessionStore from 'stores/SessionStore.react.jsx';
+import TagStore from 'stores/TagStore';
+import SessionStore from 'stores/SessionStore';
 
 // -- constants
 import Events from 'constants/Events';
 
 // -- actions
-import TagAction from 'actions/TagAction.react.jsx';
-import RouteAction from 'actions/RouteAction.react.jsx';
+import TagAction from 'actions/TagAction';
+import RouteAction from 'actions/RouteAction';
 
 // -- views
 import AbstractComponent from 'abstracts/AbstractComponent';
-import ErrorNotice from 'components/ErrorNotice.react.jsx';
 import LoadMore from './components/LoadMore';
 import SearchBox from './components/SearchBox';
 import TagsTable from './components/TagsTable';
@@ -38,7 +37,7 @@ export default class TagListPage extends AbstractComponent {
     // Do not display the loading if we have already load the Page.
     // For example, when we came back to this page from the tag page.
     if (_.isEmpty(this.state.tags)) {
-      this.displayLoading();
+      this.showLoading();
     }
 
 
@@ -65,20 +64,20 @@ export default class TagListPage extends AbstractComponent {
   }
 
   handleSearchSubmit(search) {
-    this.displayLoading();
-    WebAPIUtils.searchTags(search);
+    this.showLoading();
+    Api.searchTags(search);
   }
 
   handleLoadMore() {
     const paging = this.state.paging;
-    this.displayLoading();
-    WebAPIUtils.loadTags(parseInt(paging.page) + 1);
+    this.showLoading();
+    Api.loadTags(parseInt(paging.page) + 1);
   }
 
   handleLoadMoreSearch() {
     const paging = this.state.searchPaging;
-    this.displayLoading();
-    WebAPIUtils.loadTags(this.state.search, parseInt(paging.page) + 1);
+    this.showLoading();
+    Api.loadTags(this.state.search, parseInt(paging.page) + 1);
   }
 
   _onChange() {

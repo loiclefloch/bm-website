@@ -1,18 +1,18 @@
 import React, { PropTypes } from 'react';
 
 // -- actions
-import SessionAction from '../../actions/SessionAction';
-import SettingsAction from '../../actions/SettingsAction';
+import SessionAction from 'actions/SessionAction';
+import SettingsAction from 'actions/SettingsAction';
 
 // -- stores
-import SessionStore from '../../stores/SessionStore';
-import ServerStore from '../../stores/ServerStore';
+import SessionStore from 'stores/SessionStore';
+import ServerStore from 'stores/ServerStore';
 
 // -- constants
 import Events from 'constants/Events';
 
 // -- views
-import AbstractComponent from 'abstracts/AbstractComponent;'
+import AbstractComponent from 'abstracts/AbstractComponent';
 import FontAwesome from 'react-fontawesome';
 import Dropzone from 'react-dropzone';
 
@@ -41,7 +41,7 @@ export default class SettingsPage extends AbstractComponent {
   }
 
   onExport() {
-    this.displayLoading();
+    this.showLoading();
     SettingsAction.exportData();
   }
 
@@ -57,7 +57,7 @@ export default class SettingsPage extends AbstractComponent {
     const self = this;
     bootbox.confirm("Upload " + file.name + "?", function(result) {
       if (result == true) {
-        self.displayLoading();
+        self.showLoading();
         SettingsAction.importData(file);
       }
     });
@@ -66,7 +66,7 @@ export default class SettingsPage extends AbstractComponent {
 
   render() {
     const profile = {
-      username: SessionStore.getUsername()
+      username: SessionStore.getUser().username
     };
 
     return (

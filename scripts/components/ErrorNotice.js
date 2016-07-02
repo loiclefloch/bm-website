@@ -8,37 +8,43 @@ import _ from 'lodash';
 export default class ErrorNotice extends Component {
 
   static propTypes = {
-    errors: PropTypes.array.isRequired,
-    options: PropTypes.object.isRequired,
-    hide: PropTypes.func.isRequired
+    errors: PropTypes.array,
+    options: PropTypes.object,
+    onHide: PropTypes.func.isRequired
+  };
+
+  static defaultProps = {
+    errors: [],
+    options: {},
+    onHide: () => {}
   };
 
   state = {
-    _displayError: true
+    _displayError: !_.isNull(this.props.errors)
   };
 
 
 //  [TimerMixin]
 
-  show() {
-    this.setState( {
+  onShow = () => {
+    this.setState({
       _displayError: true
-    } );
-  }
+    });
+  };
 
-  hide() {
-    this.setState( {
-      _displayFalse: true
-    } );
-  }
+  onHide = () => {
+    this.setState({
+      _displayError: true
+    });
+  };
 
   render() {
     // handle options like timeout
-    if (_.isInteger( this.props.options.timeout ) && this.props.options.timeout !== 0) {
+    if (_.isInteger(this.props.options.timeout) && this.props.options.timeout !== 0) {
       this.setTimeout(() => {
-        this.hide();
+        this.onHde();
         this.props.hide();
-      }, this.props.options.timeout * 1000 );
+      }, this.props.options.timeout * 1000);
     }
 
     if (!this.state._displayError) {
@@ -47,7 +53,7 @@ export default class ErrorNotice extends Component {
 
     return (
       <div className="error_notice">
-        {this.props.errors.map( function(error, index) {
+        {this.props.errors.map(function(error, index) {
           return (
             <div
               className="error_notice__error alert alert-danger"
@@ -56,7 +62,7 @@ export default class ErrorNotice extends Component {
               {error}
             </div>
           );
-        } )}
+        })}
       </div>
     );
   }

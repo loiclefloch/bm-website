@@ -1,15 +1,28 @@
-const ServerAction from '../actions/ServerAction');
-const ApiConstants from 'constants/ApiConstants';
-const Constants from 'constants/Constants';
-const request from 'superagent');
-const RouteAction from '../actions/RouteAction');
-const SessionStore from '../stores/SessionStore');
-const ServerStore from '../stores/ServerStore');
+import request from 'superagent';
+import _ from 'lodash';
 
-const _ from 'lodash');
+// -- constants
+import ApiConstants from 'constants/ApiConstants';
+import Config from 'constants/Config';
+import Constants from 'constants/Constants';
+import ApiEndpoints from 'constants/ApiEndpoints';
+
+// -- actions
+import RouteAction from 'actions/RouteAction';
+import ServerAction from 'actions/ServerAction';
+
+// -- stores
+import SessionStore from 'stores/SessionStore';
+import ServerStore from 'stores/ServerStore';
+
+// -- entities
+import Bookmark from 'entities/Bookmark';
+import Tag from 'entities/Tag';
+import BookmarksList from 'entities/BookmarksList';
+import TagsList from 'entities/TagsList';
 
 function _getErrors(text) {
-  const errorMsgs = ["Something went wrong, please try again"];
+  let errorMsgs = ['Something went wrong, please try again'];
   if ((json = JSON.parse(text))) {
     if (!_.isEmpty(json['errors'])) {
       errorMsgs = json['errors'];
@@ -32,8 +45,6 @@ function _getErrors(text) {
 function _getAuthorizationHeader() {
   return 'Bearer ' + SessionStore.getAccessToken();
 }
-
-const APIEndpoints = ApiConstants.APIEndpoints;
 
 function handleResponse(error, res, success, failure) {
 
@@ -78,38 +89,39 @@ function handleResponse(error, res, success, failure) {
   }
 }
 
-module.exports = {
+class Api {
 
-  login(username, password) {
-    request.post(APIEndpoints.LOGIN)
+  static login(username, password) {
+    request.post(ApiEndpoints.LOGIN)
       .set('Accept', 'application/x-www-form-urlencoded')
       .send(
         {
-          grant_type: ApiConstants.Auth.grant_type,
-          client_id: ApiConstants.Auth.client_id,
-          client_secret: ApiConstants.Auth.client_secret,
+          grant_type: Config.Auth.grant_type,
+          client_id: Config.Auth.client_id,
+          client_secret: Config.Auth.client_secret,
           username: username,
           password: password
         })
-      .end(function (error, res) {
+      .end(function(error, res) {
+        let errors = null;
         // do not call handleResponse due to different handling of 401.
         if (error) {
           errors = _getErrors(error);
         }
         else if (res.statusCode == 401 || res.statusCode == 400) {
           const json = JSON.parse(res.text);
-          const errors = [json.error_description];
+          let errors = [json.error_description];
           if (!errors) {
             errors = _getErrors(res.text);
           }
-          ServerAction.receiveLogin(null, errors);
+          ServerAction.receiveLoginError(errors);
         } else {
-          json = JSON.parse(res.text);
-          localStorage.setItem('username', username);
-          ServerAction.receiveLogin(json, null);
+          let json = JSON.parse(res.text);
+          SessionStore.saveUsername(username);
+          ServerAction.receiveLogin(json);
         }
       });
-  },
+  }
 
   /*
    * ==================================================================================================
@@ -117,7 +129,7 @@ module.exports = {
    * ==================================================================================================
    */
 
-  loadBookmarks(page, limit) {
+  static loadBookmarks(page, limit) {
 
     if (_.isUndefined(limit)) {
       limit = Constants.Bookmark.DEFAULT_LIMIT
@@ -126,63 +138,60 @@ module.exports = {
     if (_.isUndefined(page)) {
       page = 1
     }
-    request.get(APIEndpoints.BOOKMARKS)
+    request.get(ApiEndpoints.BOOKMARKS)
       .query({'page': page, 'limit': limit})
       .set('Accept', 'application/json')
       .set('Authorization', _getAuthorizationHeader())
-      .end(function (error, res) {
+      .end(function(error, res) {
         handleResponse(error, res,
           function Success(json) {
-            ServerAction.receiveBookmarks(json);
+            const bookmarksList:BookmarksList = new BookmarksList();
+            bookmarksList.fromJson(json);
+            ServerAction.receiveBookmarksList(bookmarksList);
           },
           function Failure(errors) {
-            ServerAction.receiveBookmarks(null, errors);
+            ServerAction.receiveBookmarksListError(errors);
           });
       });
-  },
+  }
 
-  searchBookmarks(search, page, limit) {
-
-    if (_.isUndefined(limit)) {
-      limit = Constants.Bookmark.DEFAULT_LIMIT
-    }
-
-    if (_.isUndefined(page)) {
-      page = 1
-    }
-    request.get(APIEndpoints.SEARCH_BOOKMARKS)
+  static searchBookmarks(search, page = 1, limit = Constants.Bookmark.DEFAULT_LIMIT) {
+    request.get(ApiEndpoints.SEARCH_BOOKMARKS)
       .query({'name': search.name})
       .set('Accept', 'application/json')
       .set('Authorization', _getAuthorizationHeader())
-      .end(function (error, res) {
+      .end(function(error, res) {
         handleResponse(error, res,
           function Success(json) {
-            ServerAction.receiveSearchBookmarks(json);
+            const bookmarksList:BookmarksList = new BookmarksList();
+            bookmarksList.fromJson(json);
+            ServerAction.receiveSearchBookmarks(bookmarksList);
           },
           function Failure(errors) {
-            ServerAction.receiveSearchBookmarks(null, errors);
+            ServerAction.receiveSearchBookmarksError(errors);
           });
       });
-  },
+  }
 
-  loadBookmark(bookmarkId) {
-
-    request.get(APIEndpoints.BOOKMARKS + '/' + bookmarkId)
+  static loadBookmark(bookmarkId) {
+    request.get(ApiEndpoints.BOOKMARKS + '/' + bookmarkId)
       .set('Accept', 'application/json')
       .set('Authorization', _getAuthorizationHeader())
-      .end(function (error, res) {
+      .end(function(error, res) {
         handleResponse(error, res,
           function Success(json) {
-            ServerAction.receiveBookmark(json);
+            const bookmark:Bookmark = new Bookmark();
+            bookmark.fromJson(json);
+            ServerAction.receiveBookmark(bookmark);
           },
           function Failure(errors) {
-            ServerAction.receiveBookmark(null, errors);
+            ServerAction.receiveBookmarkError(errors);
           });
       });
-  },
+  }
 
-  createBookmark(name, url, tags, notes) {
-    request.post(APIEndpoints.BOOKMARKS)
+  static createBookmark(name, url, tags, notes) {
+    request.post(ApiEndpoints.BOOKMARKS)
       .set('Accept', 'application/json')
       .set('Authorization', _getAuthorizationHeader())
       .send(
@@ -192,43 +201,45 @@ module.exports = {
           tags: tags,
           notes: notes
         })
-      .end(function (error, res) {
+      .end(function(error, res) {
         if (res) {
           handleResponse(error, res,
             function Success(json) {
-              ServerAction.receiveCreatedBookmark(json, null);
+              const bookmark:Bookmark = new Bookmark();
+              bookmark.fromJson(json);
+              ServerAction.receiveCreatedBookmark(bookmark);
             },
             function Failure(errors) {
-              ServerAction.receiveCreatedBookmark(null, errors);
+              ServerAction.receiveCreatedBookmarkError(errors);
             });
         }
       });
-  },
+  }
 
-  deleteBookmark(bookmarkId) {
-    request.delete(APIEndpoints.BOOKMARKS + '/' + bookmarkId)
+  static deleteBookmark(bookmark) {
+    request.delete(ApiEndpoints.BOOKMARKS + '/' + bookmarkId)
       .set('Accept', 'application/json')
       .set('Authorization', _getAuthorizationHeader())
-      .end(function (error, res) {
+      .end(function(error, res) {
         handleResponse(error, res,
           function Success(json) {
-            ServerAction.receiveRemovedBookmark(json);
+            ServerAction.receiveRemovedBookmark(bookmark);
           },
           function Failure(errors) {
-            ServerAction.receiveRemovedBookmark(null, errors);
+            ServerAction.receiveRemovedBookmarkError(errors);
           });
       });
-  },
+  }
 
-  postTagsToBookmark(tags, bookmark) {
-    request.post(APIEndpoints.BOOKMARKS + '/' + bookmark.id + '/tags')
+  static postTagsToBookmark(tags, bookmark) {
+    request.post(ApiEndpoints.BOOKMARKS + '/' + bookmark.id + '/tags')
       .set('Accept', 'application/json')
       .set('Authorization', _getAuthorizationHeader())
       .send(
         {
           tags: tags
         })
-      .end(function (error, res) {
+      .end(function(error, res) {
         if (res) {
           handleResponse(error, res,
             function Success(json) {
@@ -239,17 +250,17 @@ module.exports = {
             });
         }
       });
-  },
+  }
 
-  deleteTagsForBookmark(tags, bookmark) {
-    request.delete(APIEndpoints.BOOKMARKS + '/' + bookmark.id + '/tags')
+  static deleteTagsForBookmark(tags, bookmark) {
+    request.delete(ApiEndpoints.BOOKMARKS + '/' + bookmark.id + '/tags')
       .set('Accept', 'application/json')
       .set('Authorization', _getAuthorizationHeader())
       .send(
         {
           tags: tags
         })
-      .end(function (error, res) {
+      .end(function(error, res) {
         if (res) {
           handleResponse(error, res,
             function Success(json) {
@@ -260,7 +271,7 @@ module.exports = {
             });
         }
       });
-  },
+  }
 
   /*
    * ==================================================================================================
@@ -268,7 +279,7 @@ module.exports = {
    * ==================================================================================================
    */
 
-  loadTags(page, limit) {
+  static loadTags(page, limit) {
 
     if (_.isUndefined(limit)) {
       limit = Constants.Tag.DEFAULT_LIMIT
@@ -277,11 +288,11 @@ module.exports = {
     if (_.isUndefined(page)) {
       page = 1
     }
-    request.get(APIEndpoints.TAGS)
+    request.get(ApiEndpoints.TAGS)
       .query({'page': page, 'limit': limit})
       .set('Accept', 'application/json')
       .set('Authorization', _getAuthorizationHeader())
-      .end(function (error, res) {
+      .end(function(error, res) {
         handleResponse(error, res,
           function Success(json) {
             ServerAction.receiveTags(json);
@@ -290,22 +301,14 @@ module.exports = {
             ServerAction.receiveTags(null, errors);
           });
       });
-  },
+  }
 
-  searchTags(search, page, limit) {
-
-    if (_.isUndefined(limit)) {
-      limit = Constants.Tag.DEFAULT_LIMIT
-    }
-
-    if (_.isUndefined(page)) {
-      page = 1
-    }
-    request.get(APIEndpoints.SEARCH_TAGS)
+  static searchTags(search, page = 1, limit = Constants.Tag.DEFAULT_LIMIT) {
+    request.get(ApiEndpoints.SEARCH_TAGS)
       .query({'name': search.name})
       .set('Accept', 'application/json')
       .set('Authorization', _getAuthorizationHeader())
-      .end(function (error, res) {
+      .end(function(error, res) {
         handleResponse(error, res,
           function Success(json) {
             ServerAction.receiveSearchTags(json);
@@ -314,14 +317,14 @@ module.exports = {
             ServerAction.receiveSearchTags(null, errors);
           });
       });
-  },
+  }
 
-  loadTag(tagId) {
+  static loadTag(tagId) {
 
-    request.get(APIEndpoints.TAGS + '/' + tagId)
+    request.get(ApiEndpoints.TAGS + '/' + tagId)
       .set('Accept', 'application/json')
       .set('Authorization', _getAuthorizationHeader())
-      .end(function (error, res) {
+      .end(function(error, res) {
         handleResponse(error, res,
           function Success(json) {
             ServerAction.receiveTag(json);
@@ -330,10 +333,10 @@ module.exports = {
             ServerAction.receiveTag(null, errors);
           });
       });
-  },
+  }
 
-  createTag(name, url, tags, notes) {
-    request.post(APIEndpoints.TAGS)
+  static createTag(name, url, tags, notes) {
+    request.post(ApiEndpoints.TAGS)
       .set('Accept', 'application/json')
       .set('Authorization', _getAuthorizationHeader())
       .send(
@@ -343,7 +346,7 @@ module.exports = {
           tags: tags,
           notes: notes
         })
-      .end(function (error, res) {
+      .end(function(error, res) {
         if (res) {
           handleResponse(error, res,
             function Success(json) {
@@ -354,13 +357,13 @@ module.exports = {
             });
         }
       });
-  },
+  }
 
-  deleteTag(tagId) {
-    request.delete(APIEndpoints.TAGS + '/' + tagId)
+  static deleteTag(tagId) {
+    request.delete(ApiEndpoints.TAGS + '/' + tagId)
       .set('Accept', 'application/json')
       .set('Authorization', _getAuthorizationHeader())
-      .end(function (error, res) {
+      .end(function(error, res) {
         handleResponse(error, res,
           function Success(json) {
             ServerAction.receiveRemovedTag(json);
@@ -369,18 +372,17 @@ module.exports = {
             ServerAction.receiveRemovedTag(null, errors);
           });
       });
-  },
+  }
 
   /**
    * The request will create the json file to export.
    * It returns the url to download the file.
    */
-  exportData() {
-
-    request.get(APIEndpoints.DATA + '/export')
+  static exportData() {
+    request.get(ApiEndpoints.DATA + '/export')
       .set('Accept', 'application/json')
       .set('Authorization', _getAuthorizationHeader())
-      .end(function (error, res) {
+      .end(function(error, res) {
         handleResponse(error, res,
           function Success(json) {
             ServerAction.receiveExport(json);
@@ -392,15 +394,14 @@ module.exports = {
           });
       });
 
-  },
+  }
 
-  importData(file) {
-
-    request.post(APIEndpoints.DATA + '/import/test') // TODO: remove /test when testing done.
+  static importData(file) {
+    request.post(ApiEndpoints.DATA + '/import/test') // TODO: remove /test when testing done.
       .set('Accept', 'application/json')
       .set('Authorization', _getAuthorizationHeader())
       .attach(file.name, file)
-      .end(function (error, res) {
+      .end(function(error, res) {
         handleResponse(error, res,
           function Success(json) {
             console.log('Import ok !', json);
@@ -411,8 +412,8 @@ module.exports = {
             ServerAction.receiveImport(null, errors);
           });
       });
-
   }
 
-};
+}
 
+export default Api;

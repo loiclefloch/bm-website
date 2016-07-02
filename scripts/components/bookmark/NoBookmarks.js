@@ -1,6 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 
-export default class NoBookmark extends Component {
+export default class NoBookmarks extends Component {
 
   render() {
     return (

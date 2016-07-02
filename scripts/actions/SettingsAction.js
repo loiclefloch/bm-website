@@ -1,8 +1,8 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import ApiConstants from 'constants/ApiConstants';
-import WebAPIUtils from '../utils/WebAPIUtils';
+import Api from '../utils/Api';
 
-const ActionTypes = ApiConstants.ActionTypes;
+import ActionTypes from 'constants/ActionTypes';
 
 export default class SettingsAction {
 
@@ -10,14 +10,14 @@ export default class SettingsAction {
     AppDispatcher.handleViewAction({
       type: ActionTypes.EXPORT_DATA
     });
-    WebAPIUtils.exportData();
+    Api.exportData();
   }
 
   static importData(file) {
     AppDispatcher.handleViewAction({
       type: ActionTypes.IMPORT_DATA
     });
-    WebAPIUtils.importData(file);
+    Api.importData(file);
   }
 
 };

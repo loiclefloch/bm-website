@@ -6,9 +6,12 @@ import OnLoadingContentViewForModal from 'components/OnLoadingContentViewForModa
 
 import ViewConstants from 'constants/ViewConstants';
 
-import ErrorView from 'components/mixins/ErrorView';
+// -- views
+import ErrorNotice from 'components/ErrorNotice';
 
 class AbstractComponent extends Component {
+
+  state = {};
 
   // ---- Loading
 
@@ -60,17 +63,22 @@ class AbstractComponent extends Component {
 
   // -- notifications.
 
-  attachErrors(errors) {
+  handleError(errors) {
     this.setState({
       errors
     });
   }
 
+  onHide = () => {
+
+  };
+
   renderErrorView() {
     if (!_.isNull(this.state.errors)) {
       return (
-        <ErrorNotice errors={this.state.errors}
-                     hide={this.hideError}
+        <ErrorNotice
+          errors={this.state.errors}
+          onHide={this.onHideError}
         />
       );
     }

@@ -1,36 +1,40 @@
 import React, { PropTypes } from 'react';
 
-import WebAPIUtils from 'utils/WebAPIUtils';
+import Api from 'utils/Api';
 
+// -- stores
 import BookmarkStore from 'stores/BookmarkStore';
 import SessionStore from 'stores/SessionStore';
-
-import Events from 'constants/Events';
 
 // -- actions
 import BookmarkAction from 'actions/BookmarkAction';
 import RouteAction from 'actions/RouteAction';
 
+// -- constants
+import Events from 'constants/Events';
+import ViewConstants from 'constants/ViewConstants';
 import Constants  from 'constants/Constants';
-import BookmarkUtils from 'utils/BookmarkUtils';
+
+// -- entities
+import Bookmark from 'entities/Bookmark';
 
 // -- views
 import AbstractComponent from 'abstracts/AbstractComponent';
-import ErrorNotice from 'components/ErrorNotice';
 import LoadMore from './components/LoadMore';
 import SearchBox from './components/SearchBox';
-import BookmarksTable from './components/BookmarksTable';
+import BookmarksTable from './../../../components/bookmark/BookmarksTable';
 import BookmarksSidebar from './components/BookmarkSidebar';
+import NoBookmarks from 'components/bookmark/NoBookmarks';
 
 export default class BookmarkListPage extends AbstractComponent {
 
   state = {
-    bookmarks: BookmarkStore.getAllBookmarks(),
-    searchBookmarks: BookmarkStore.getSearchBookmarks(),
+    bookmarksList: BookmarkStore.getAllBookmarksList(),
+    searchBookmarks: BookmarkStore.getSearchBookmarksList(),
     search: BookmarkStore.getSearch(),
     paging: BookmarkStore.getPaging(),
     searchPaging: BookmarkStore.getSearchPaging(),
-    bookmarkListType: SessionStore.getIntItemFromSession(Constants.Session.BOOKMARK_LIST_TYPE, ViewConstants.BookmarkListType.SIMPLE)
+    bookmarkListType: SessionStore.getBookmarkListType()
   };
 
   componentDidMount() {
@@ -44,7 +48,7 @@ export default class BookmarkListPage extends AbstractComponent {
     // do not call if we came back on the page. We need to call if there is only 1 bookmarks
     // because when we create a new bookmark, we are redirect to this page, but the bookmark list is not loaded
     // if we haven't go here before
-    if (_.isEmpty(this.state.bookmarks) || this.state.bookmarks.length == 1) {
+    if (_.isNull(this.state.bookmarksList) || this.state.bookmarks.bookmarksList == 1) {
       BookmarkAction.loadBookmarks();
     }
 
@@ -62,8 +66,8 @@ export default class BookmarkListPage extends AbstractComponent {
 
   onChange = () => {
     this.setState({
-      bookmarks: BookmarkStore.getAllBookmarks(),
-      searchBookmarks: BookmarkStore.getSearchBookmarks(),
+      bookmarksList: BookmarkStore.getAllBookmarksList(),
+      searchBookmarks: BookmarkStore.getSearchBookmarksList(),
       search: BookmarkStore.getSearch(),
       paging: BookmarkStore.getPaging(),
       searchPaging: BookmarkStore.getSearchPaging()
@@ -77,19 +81,19 @@ export default class BookmarkListPage extends AbstractComponent {
   };
 
   onSearchSubmit = (search)=> {
-    this.displayLoading();
+    this.showLoading();
     BookmarkAction.searchBookmarks(search);
   };
 
   onLoadMore = ()=> {
     const paging = this.state.paging;
-    this.displayLoading();
+    this.showLoading();
     BookmarkAction.loadBookmarks(parseInt(paging.page) + 1);
   };
 
   onLoadMoreSearch = () => {
     const paging = this.state.searchPaging;
-    this.displayLoading();
+    this.showLoading();
     BookmarkAction.searchBookmarks(this.state.search, parseInt(paging.page) + 1);
   };
 
@@ -104,32 +108,31 @@ export default class BookmarkListPage extends AbstractComponent {
   render() {
     let bookmarkTable = (null);
     let loadMoreView = (null);
-    let bookmarksView = (null);
+    let bookmarks = [];
 
-    if (_.isNull(this.state.bookmarks)) {
+    if (_.isNull(this.state.bookmarksList)) {
       return this.renderOnLoadingContent();
     }
 
     if (_.isEmpty(this.state.search.name)) {
-      bookmarksView = this.state.bookmarks;
+      bookmarks = this.state.bookmarksList;
       loadMoreView = (<LoadMore paging={this.state.paging} loadMore={this.onLoadMore} />);
     }
     else {
       // Use search Page
       if (!_.isEmpty(this.state.searchBookmarks)) {
-        bookmarksView = this.state.searchBookmarks;
+        bookmarks = this.state.searchBookmarks;
         loadMoreView = (
           <LoadMore paging={this.state.searchPaging} loadMore={this.onLoadMoreSearch} />);
       }
       else { // wait for api search, manually search on displayed Page.
-
-        this.state.bookmarks.forEach((bookmark) => {
-          const name = BookmarkUtils.getDefaultName(bookmark).toLowerCase();
+        this.state.bookmarksList.bookmarks.forEach((bookmark:Bookmark) => {
+          const name = bookmark.getDefaultName().toLowerCase();
           const filterText = this.state.search.name.toLowerCase();
 
           // A simple filter no case sensitive
           if (name.indexOf(filterText) >= 0) {
-            bookmarksView.push(bookmark);
+            bookmarks.push(bookmark);
           }
         });
 
@@ -137,12 +140,16 @@ export default class BookmarkListPage extends AbstractComponent {
 
     }
 
-    if (!_.isEmpty(bookmarksView)) {
-      bookmarkTable = (<BookmarksTable bookmarks={bookmarksView}
-                                       bookmarkListType={this.state.bookmarkListType} />);
+    if (!_.isEmpty(bookmarks)) {
+      bookmarkTable = (
+        <BookmarksTable
+          bookmarks={bookmarks}
+          bookmarkListType={this.state.bookmarkListType}
+        />
+      );
     }
-    else if (_.isEmpty(bookmarksView) && this.state.loading == false) {
-      bookmarkTable = (<NoBookmark />);
+    else if (_.isEmpty(bookmarks) && this.state.loading == false) {
+      bookmarkTable = (<NoBookmarks />);
     }
 
     return (
@@ -150,11 +157,13 @@ export default class BookmarkListPage extends AbstractComponent {
         {this.renderLoading()}
         {this.renderErrorView()}
 
-        <BookmarksSidebar search={this.state.search}
-                          onSearchSubmit={this.onSearchSubmit}
-                          onSearchInput={this.onSearchChange}
-                          bookmarkListType={this.state.bookmarkListType}
-                          onChangeListType={this.onListTypeChange} />
+        <BookmarksSidebar
+          search={this.state.search}
+          onSearchSubmit={this.onSearchSubmit}
+          onSearchInput={this.onSearchChange}
+          bookmarkListType={this.state.bookmarkListType}
+          onChangeListType={this.onListTypeChange}
+        />
 
         {/*
          <Fab />
@@ -162,9 +171,7 @@ export default class BookmarkListPage extends AbstractComponent {
         <div className="row">
 
           <div className="col-sm-12 col-md-9 col-md-offset-2">
-
             {bookmarkTable}
-
           </div>
 
           <div className="col-sm-12 col-md-9 col-md-offset-2 top-buffer-50">

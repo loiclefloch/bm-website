@@ -1,7 +1,5 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import ApiConstants from 'constants/ApiConstants';
-
-const ActionTypes = ApiConstants.ActionTypes;
+import ActionTypes from 'constants/ActionTypes';
 
 export default class RouteAction {
 

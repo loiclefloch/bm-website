@@ -18,9 +18,7 @@ import RouteAction from 'actions/RouteAction';
 import showdown from 'showdown';
 import AbstractComponent from 'abstracts/AbstractComponent';
 
-export default class BookmarkNew extends AbstractComponent {
-
-//  mixins: [LoadingMixin, ErrorMixin],
+export default class BookmarkNewPage extends AbstractComponent {
 
   state = {
     canSubmit: false
@@ -73,7 +71,7 @@ export default class BookmarkNew extends AbstractComponent {
       });
     }
     else {
-      this.displayLoading();
+      this.showLoading();
       BookmarkAction.createBookmark(name, url, tags, notes);
     }
   };

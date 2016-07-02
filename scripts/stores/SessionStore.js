@@ -8,13 +8,16 @@ import SessionUtils from 'utils/SessionUtils';
 
 import Events from 'constants/Events';
 import Constants from 'constants/Constants';
+import ActionTypes from 'constants/ActionTypes';
 
-const ActionTypes = ApiConstants.ActionTypes;
+// -- entities
+import User from 'entities/User';
 
 // Load an access token from the session storage, you might want to implement
 // a 'remember me' using localSgorage
 let _user = null;
 let _errors = [];
+let _accessToken = null;
 
 /**
  * Contains the key used to save items on session storage
@@ -27,13 +30,16 @@ const SessionItemsKeys = {
 
   ACCESS_TOKEN: 'ACCESS_TOKEN',
 
-  USER: 'USER'
+  USER: 'USER',
+
+  USERNAME: 'USERNAME'
 };
 
 class SessionStore extends BMEventEmitter {
 
   isLoggedIn():Boolean {
-    const authorization = this.getAuthorization();
+    const authorization = this.getAccessToken();
+    console.log('isLoggedIn', authorization);
     return !_.isUndefined(authorization) && !_.isNull(authorization);
   }
 
@@ -49,7 +55,7 @@ class SessionStore extends BMEventEmitter {
     }
 
     // Try to get on session
-    const jsonObject = SessionUtils.getItemFromSession(SessionItemKeys.USER);
+    const jsonObject = SessionUtils.getItemFromSession(SessionItemsKeys.USER);
 
     const user:User = new User();
     user.fromJson(jsonObject);
@@ -63,8 +69,16 @@ class SessionStore extends BMEventEmitter {
     return _errors;
   }
 
-  saveBookmarkListType(type) {
+  saveBookmarkListType(type:Number) {
     SessionUtils.saveItemToSession(SessionItemsKeys.BOOKMARK_LIST_TYPE, type);
+  }
+
+  getBookmarkListType() {
+    return SessionUtils.getIntItemFromSession(SessionItemsKeys.BOOKMARK_LIST_TYPE);
+  }
+
+  saveUsername(username:String) {
+    SessionUtils.saveItemToSession(SessionItemsKeys.USERNAME, username);
   }
 
 }
@@ -106,5 +120,5 @@ sessionStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
   return true;
 });
 
-module.exports = SessionStore;
+export default sessionStoreInstance;
 

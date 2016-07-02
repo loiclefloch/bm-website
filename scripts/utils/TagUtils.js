@@ -1,9 +1,9 @@
-const Constants from 'constants/Constants');
+import ViewConstants from 'constants/ViewConstants';
 
-module.exports = {
+export default {
 
   getDefaultColors() {
-    return Constants.Tag.DEFAULT_COLORS;
+    return ViewConstants.Tag.DEFAULT_COLORS;
   }
 
-};
+}

@@ -1,10 +1,15 @@
 import React, { PropTypes, Component } from 'react';
 
 // -- utils
-import BookmarkUtils from 'utils/BookmarkUtils';
+
+// -- constants
+import RoutingEnum from 'constants/RoutingEnum';
 
 // -- entities
 import Bookmark from 'entities/Bookmark';
+
+// -- views
+import Link from 'components/Link';
 
 export default class BookmarkItemCompact extends Component {
 
@@ -20,7 +25,7 @@ export default class BookmarkItemCompact extends Component {
 
         <div className="text-left">
           <h3 className="bookmarks__item_title">
-            <Link to="bookmark" params={ {bookmarkId: bookmark.id} }>
+            <Link to={RoutingEnum.BOOKMARK} params={ {bookmarkId: bookmark.id} }>
               {bookmark.getDefaultName()}
             </Link>
           </h3>

@@ -1,8 +1,8 @@
-import AppDispatcher from 'dispatcher/AppDispatcher';
+import AppDispatcher from '../dispatcher/AppDispatcher';
 import ApiConstants from 'constants/ApiConstants';
-import WebAPIUtils from 'utils/WebAPIUtils';
+import Api from 'utils/Api';
 
-const ActionTypes = ApiConstants.ActionTypes;
+import ActionTypes from 'constants/ActionTypes';
 
 export default class BookmarkAction {
   
@@ -11,7 +11,7 @@ export default class BookmarkAction {
       type: ActionTypes.LOAD_BOOKMARKS,
       page
     });
-    WebAPIUtils.loadBookmarks(page);
+    Api.loadBookmarks(page);
   }
 
   static loadBookmark(bookmarkId) {
@@ -19,7 +19,7 @@ export default class BookmarkAction {
       type: ActionTypes.LOAD_BOOKMARK,
       bookmarkId: bookmarkId
     });
-    WebAPIUtils.loadBookmark(bookmarkId);
+    Api.loadBookmark(bookmarkId);
   }
 
   static createBookmark(name, url, tags, notes) {
@@ -30,11 +30,15 @@ export default class BookmarkAction {
       tags: tags,
       notes: notes
     });
-    WebAPIUtils.createBookmark(name, url, tags, notes);
+    Api.createBookmark(name, url, tags, notes);
   }
 
   static searchBookmarks(search, page = 0) {
+    console.error('To implement');
+  }
 
+  static deleteBookmark(bookmark) {
+    console.error('To implement');
   }
 
 }

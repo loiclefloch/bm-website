@@ -1,8 +1,6 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import ApiConstants from 'constants/ApiConstants';
-import WebAPIUtils from '../utils/WebAPIUtils';
-
-const ActionTypes = ApiConstants.ActionTypes;
+import ActionTypes from 'constants/ActionTypes';
+import Api from '../utils/Api';
 
 export default class TagAction {
 
@@ -10,7 +8,7 @@ export default class TagAction {
     AppDispatcher.handleViewAction({
       type: ActionTypes.LOAD_TAGS
     });
-    WebAPIUtils.loadTags();
+    Api.loadTags();
   }
 
   static loadTag(tagId) {
@@ -18,7 +16,7 @@ export default class TagAction {
       type: ActionTypes.LOAD_TAG,
       tagId: tagId
     });
-    WebAPIUtils.loadTag(tagId);
+    Api.loadTag(tagId);
   }
 
   static createTag(name, url, tags, notes) {
@@ -29,7 +27,7 @@ export default class TagAction {
       tags: tags,
       notes: notes
     });
-    WebAPIUtils.createTag(name, url, tags, notes);
+    Api.createTag(name, url, tags, notes);
   }
 
 }

@@ -1,7 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 
 import Constants from 'constants/Constants';
-import WebApiUtils from 'utils/WebAPIUtils';
+import WebApiUtils from 'utils/Api';
 import BookmarkStore from 'stores/BookmarkStore';
 import Events from 'constants/Events';
 
@@ -26,20 +26,20 @@ export default class AddTag extends Component {
 
   componentDidMount() {
     $.material.init();
-    BookmarkStore.addListener( Events.LOADING_TAGS_CHANGE, this._hideLoading );
+    BookmarkStore.addListener( Events.LOADING_TAGS_CHANGE, this.onhideLoading );
   }
 
   componentWillUnmount() {
-    BookmarkStore.removeListener( Events.LOADING_TAGS_CHANGE, this._hideLoading );
+    BookmarkStore.removeListener( Events.LOADING_TAGS_CHANGE, this.onhideLoading );
   }
 
-  _hideLoading() {
+  onhideLoading() {
     this.setState( {
       loading: false
     } )
   }
 
-  showLoading() {
+  onShowLoading() {
     this.setState( {
       loading: true
     } )
@@ -50,7 +50,7 @@ export default class AddTag extends Component {
   }
 
   toggleTag(tag) {
-    const selectedTags = this.state.selectedTags;
+    let selectedTags = this.state.selectedTags;
 
     if (_.indexOf( selectedTags, tag ) === -1) { // add tag
       selectedTags.push( tag );
@@ -70,7 +70,7 @@ export default class AddTag extends Component {
   _validateOnClick() {
 
     if (this.state.isCreationTagMode == false) {
-      this.showLoading();
+      this.onShowLoading();
 
       // Add the tags
       WebApiUtils.postTagsToBookmark( this.state.selectedTags, this.props.bookmark );
@@ -164,7 +164,7 @@ export default class AddTag extends Component {
   }
 
   getTagsToPropose(tagQuery) {
-    const tagsToPropose = [];
+    let tagsToPropose = [];
 
     // -- Create list of tags that can be add for the bookmark.
     if (!_.isEmpty( this.props.allTags ) && !_.isEmpty( this.props.bookmark.tags )) {
@@ -208,7 +208,7 @@ export default class AddTag extends Component {
     const tagQuery = this.state.tagQuery;
 
     const tagsToPropose = this.getTagsToPropose( tagQuery );
-    const listView = [];
+    let listView = [];
 
     /*
      If we are not in creation mode, we display the tags.
@@ -229,7 +229,6 @@ export default class AddTag extends Component {
 
     }
     else { // Setup colors list for the new bookmark
-
       const tagNameToFind = this.state.tagQuery.replace( /\s+/g, '' ).toLowerCase();
 
       const found = _.find( this.props.bookmark.tags, function(bookmarkTag) {
@@ -257,7 +256,7 @@ export default class AddTag extends Component {
     }
 
     // -- Setup button view
-    const buttonView = (
+    let buttonView = (
       <button id="bookmark__tag_list__add_tag_dropdown"
               className="btn"
               onClick={this.displayAddTagMenu}

@@ -1,3 +1,5 @@
+import assign from 'object-assign';
+
 const Env = {
 
   COMMON: {

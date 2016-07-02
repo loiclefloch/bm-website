@@ -1,19 +1,27 @@
 import React, { PropTypes, Component } from 'react';
 
 // -- actions
-import SessionAction from '../../actions/SessionAction';
+import SessionAction from 'actions/SessionAction';
+
+// -- constants
+import RoutingEnum from 'constants/RoutingEnum';
 
 // -- route
-import RouteStore from '../../stores/RouteStore';
+import RouteStore from 'stores/RouteStore';
 
 // -- views
+import Link from 'components/Link';
 import FontAwesome from 'react-fontawesome';
 
 export default class Header extends Component {
 
-  state = {
-    username: PropTypes.string,
-    isLoggedIn: PropTypes.bool
+  static propTypes = {
+
+    /**
+     * Cf App.js. We give to our Layout the app state, that contains the
+     * current route.
+     */
+    routes: PropTypes.any.isRequired
   };
 
   onLogout = (e) => {
@@ -22,31 +30,37 @@ export default class Header extends Component {
   };
 
   render() {
-    const state = this.props.state;
-    const currentRoutes = state.routes;
-    const currentRoute = currentRoutes[currentRoutes.length - 1].name;
+    const currentRoutes = this.props.routes;
+    let currentRoute = null;
+    if (currentRoutes.length > 0) {
+      currentRoute = currentRoutes[currentRoutes.length - 1];
+      if (_.isUndefined(currentRoute)) {
+        currentRoute = null;
+      }
+//      console.log('CURRENT ROUTE:', currentRoute, currentRoutes);
+    }
 
     const nav = this.props.isLoggedIn ? (
       <div className="collapse navbar-collapse">
         <ul className="nav navbar-nav">
 
           <li className={ currentRoute == 'bookmarks' ? 'active' : '' }>
-            <Link to="bookmarks">Bookmarks</Link>
+            <Link to={RoutingEnum.BOOKMARKS_LIST}>Bookmarks</Link>
           </li>
 
           <li className={ currentRoute == 'tag-list' ? 'active' : '' }>
-            <Link to="tag-list">Tags</Link>
+            <Link to={RoutingEnum.TAGS_LIST}>Tags</Link>
           </li>
 
           <li className={ currentRoute == 'new-bookmark' ? 'active' : '' }>
-            <Link to="new-bookmark">New bookmark</Link>
+            <Link to={RoutingEnum.NEW_BOOKMARK}>New bookmark</Link>
           </li>
 
         </ul>
 
         <ul className="nav navbar-nav navbar-right">
           <li className={ currentRoute == 'settings' ? 'active' : ''}>
-            <Link to="settings">
+            <Link to={RoutingEnum.SETTINGS}>
               <FontAwesome
                 className=''
                 name='gear'
@@ -68,7 +82,7 @@ export default class Header extends Component {
       <div className="collapse navbar-collapse">
         <ul className="nav navbar-nav navbar-right">
           <li>
-            <Link to="login">Login</Link>
+            <Link to={RoutingEnum.LOGIN}>Login</Link>
           </li>
         </ul>
       </div>
@@ -86,7 +100,11 @@ export default class Header extends Component {
               <span className="icon-bar"/>
               <span className="icon-bar"/>
             </button>
-            <a className="navbar-brand" href="#">Bookmark Manager</a>
+            <Link
+              to={RoutingEnum.HOME}
+              className="navbar-brand">
+              Bookmark Manager
+            </Link>
           </div>
           {nav}
         </div>

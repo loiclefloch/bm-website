@@ -1,44 +1,43 @@
-import React, { PropTypes } from 'react';
+import React, { PropTypes, Component } from 'react';
 
-const ViewUtils from '../utils/ViewUtils');
+import ViewUtils from 'utils/ViewUtils';
 
-const AddTagColorRow extends Component {
+export default class AddTagColorRow extends Component {
 
   static propTypes = {
     color: PropTypes.string.isRequired,
     onClicked: PropTypes.func.isRequired,
     isSelected: PropTypes.bool.isRequired
-  },
+  };
 
-  _onColorClicked() {
+  onColorClicked() {
     this.props.onClicked(this.props.color);
-  },
+  }
 
-  render()  {
+  render() {
 
     const style = {
       background: this.props.color
     };
 
-    const selectedView = (<span className="add_tag_color_list__row__not_selected"/>);
+    let selectedView = (<span className="add_tag_color_list__row__not_selected" />);
 
     if (this.props.isSelected) {
-
       // Setup the check icon color according to the color background.
-      const colorClass = "light";
+      let colorClass = 'light';
       if (ViewUtils.Colors.isLightColor(this.props.color)) {
-        colorClass = "dark";
+        colorClass = 'dark';
       }
       selectedView = (
         <span className="add_tag_color_list__row__selected">
-          <i className={"fa fa-check-circle " + colorClass}/>
+          <i className={"fa fa-check-circle " + colorClass} />
         </span>
       );
     }
 
     return (
       <span className="add_tag_color_list__row pointer"
-            onClick={this._onColorClicked}>
+            onClick={this.onColorClicked}>
         <span className="add_tag_color_list__row__tag_color vcenter" style={style}>
           {selectedView}
         </span>
@@ -46,6 +45,4 @@ const AddTagColorRow extends Component {
 
   }
 
-});
-
-module.exports = AddTagColorRow;
+}

@@ -1,5 +1,6 @@
 import _ from 'lodash';
 
+import Events from 'constants/Events';
 import BMEventEmitter from 'abstracts/BMEventEmitter';
 import AppDispatcher from '../dispatcher/AppDispatcher.js';
 
@@ -55,7 +56,7 @@ routeStoreInstance.dispatchToken = AppDispatcher.register((payload:Object) => {
 
     case ActionTypes.LOGIN_RESPONSE:
       if (SessionStore.isLoggedIn()) {
-        routeStoreInstance.redirectTo(RoutingEnum.HOME);
+        routeStoreInstance.redirectTo(RoutingEnum.BOOKMARKS_LIST);
       }
       break;
 

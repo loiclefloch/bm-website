@@ -3,10 +3,9 @@ import React, { PropTypes, Component } from 'react';
 export default class Loading extends Component {
 
   render() {
-    const loading = (<div className="loading__hide"></div>);
     if (this.props.display == true) {
 
-      loading = (
+      return (
         <div className="loading">
           <div className="loading__screenloading">
             <div className="loading__gif">
@@ -16,6 +15,6 @@ export default class Loading extends Component {
         </div>
       );
     }
-    return (loading);
+    return (<div className="loading__hide"></div>);
   }
 }

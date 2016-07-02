@@ -1,5 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 
+import Logger from 'utils/Logger'
+
 import SessionStore from '../stores/SessionStore';
 import RouteStore from '../stores/RouteStore';
 import Events from 'constants/Events';
@@ -9,14 +11,13 @@ import Header from './other/Header';
 function getStateFromStores() {
   return {
     isLoggedIn: SessionStore.isLoggedIn(),
-    username: SessionStore.getUsername()
   };
 }
 
 /**
  * Component that serves as the root layout.
  */
-export default class App extends Component {
+export default class Layout extends Component {
 
   /**
    * fired when the component is initialized
@@ -25,33 +26,42 @@ export default class App extends Component {
 
 
   componentDidMount() {
-    SessionStore.addListener(Events.CHANGE, this._onChange);
+//    SessionStore.addListener(Events.CHANGE, this.onChange);
   }
 
   componentWillUnmount() {
-    SessionStore.removeListener(Events.CHANGE, this._onChange);
+//    SessionStore.removeListener(Events.CHANGE, this.onChange);
   }
 
   /**
    * called when the SessionStore emits a new change.
    * @private
    */
-  _onChange() {
+  onChange = () => {
     this.setState(getStateFromStores());
   }
 
-  render() {
+  renderLayout() {
     return (
       <div className="app">
         <Header
-          state={this.props.state}
-          username={this.state.username}
-          isLoggedIn={this.state.isLoggedIn} />
+          routes={this.props.routes}
+        />
         <div className="container">
-          <RouteHandler />
+          {this.props.children}
         </div>
       </div>
     );
   }
 
+  render() {
+    /**
+     * Render the layout of our page. If an exception occured, we log it and send it to our tracker.
+     */
+    try {
+      return this.renderLayout();
+    } catch (exception) {
+      Logger.logException(exception);
+    }
+  }
 }

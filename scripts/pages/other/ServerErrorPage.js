@@ -1,13 +1,12 @@
 import React, { PropTypes } from 'react';
 
-import SessionAction from '../../actions/SessionAction';
-import SessionStore from '../../stores/SessionStore';
-import ServerStore from '../../stores/ServerStore';
+import SessionAction from 'actions/SessionAction';
+import SessionStore from 'stores/SessionStore';
+import ServerStore from 'stores/ServerStore';
 import Config from 'constants/Config';
 
 // -- views
 import AbstractComponent from 'abstracts/AbstractComponent';
-import ErrorNotice from 'components/ErrorNotice';
 import FontAwesome from 'react-fontawesome';
 
 export default class ServerErrorPage extends AbstractComponent {

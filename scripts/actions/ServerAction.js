@@ -1,23 +1,35 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import ApiConstants from 'constants/ApiConstants';
 
-const ActionTypes = ApiConstants.ActionTypes;
+import ApiConstants from 'constants/ApiConstants';
+import ActionTypes from 'constants/ActionTypes';
+
+// -- entities
+import Bookmark from 'entities/Bookmark';
+import BookmarksList from 'entities/BookmarksList';
+import Tag from 'entities/Tag';
+import TagsList from 'entities/TagsList';
 
 export default class ServerAction {
 
   static receiveError(json) {
     AppDispatcher.handleServerAction({
-      type: ActionTypes.ERROR_RESPONSE,
+      type: ActionTypes.FAILURE_RESPONSE,
       json: json,
       errors: null
     });
   }
 
-  static receiveLogin(json, errors) {
+  static receiveLogin(json) {
     AppDispatcher.handleServerAction({
       type: ActionTypes.LOGIN_RESPONSE,
-      json: json,
-      errors: errors
+      json
+    });
+  }
+
+  static receiveLoginError(error) {
+    AppDispatcher.handleServerAction({
+      type: ActionTypes.LOGIN_RESPONSE_FAILURE,
+      error
     });
   }
 
@@ -27,52 +39,66 @@ export default class ServerAction {
    * ==================================================================================================
    */
 
-  static receiveBookmarks(json) {
+  static receiveBookmarksList(bookmarksList:BookmarksList) {
     AppDispatcher.handleServerAction({
       type: ActionTypes.RECEIVE_BOOKMARKS,
-      json: json
+      bookmarksList
     });
   }
 
-  static receiveSearchBookmarks(json) {
+  static receiveBookmarksListError(error) {
+    AppDispatcher.handleServerAction({
+      type: ActionTypes.RECEIVE_BOOKMARKS_FAILURE,
+      error
+    });
+  }
+
+  static receiveSearchBookmarks(bookmarksList:BookmarksList) {
     AppDispatcher.handleServerAction({
       type: ActionTypes.RECEIVE_SEARCH_BOOKMARKS,
-      json: json
+      bookmarksList
     });
   }
 
-  static receiveBookmark(json) {
+  static receiveSearchBookmarksError(error) {
+    AppDispatcher.handleServerAction({
+      type: ActionTypes.RECEIVE_SEARCH_BOOKMARKS,
+      error
+    });
+  }
+
+  static receiveBookmark(bookmark) {
     AppDispatcher.handleServerAction({
       type: ActionTypes.RECEIVE_BOOKMARK,
-      json: json
+      bookmark
     });
   }
 
-  static receiveCreatedBookmark(json, errors) {
-    const type = ActionTypes.RECEIVE_CREATED_BOOKMARK;
-    if (errors != null) {
-      type = ActionTypes.RECEIVE_CREATED_BOOKMARK_ERROR
-    }
+  static receiveCreatedBookmark(bookmark:Bookmark) {
     AppDispatcher.handleServerAction({
-      type: type,
-      json: json,
-      errors: errors
+      type: ActionTypes.RECEIVE_CREATED_BOOKMARK,
+      bookmark
     });
   }
 
-  static receiveRemovedBookmark(json, errors) {
+  static receiveCreatedBookmarkError(error) {
+    AppDispatcher.handleServerAction({
+      type: ActionTypes.RECEIVE_CREATED_BOOKMARK_FAILURE,
+      error
+    });
+  }
+
+  static receiveRemovedBookmark(bookmark:Bookmark) {
     AppDispatcher.handleServerAction({
       type: ActionTypes.RECEIVE_REMOVED_BOOKMARK,
-      json: json,
-      errors: errors
+      bookmark
     });
   }
 
-  static receiveUpdateTagsBookmark(json, errors) {
+  static receiveUpdateTagsBookmark(bookmark:Bookmark) {
     AppDispatcher.handleServerAction({
       type: ActionTypes.RECEIVE_BOOKMARK_TAGS,
-      json: json,
-      errors: errors
+      bookmark
     });
   }
 
@@ -82,60 +108,59 @@ export default class ServerAction {
    * ==================================================================================================
    */
 
-  static receiveTags(json) {
+  static receiveTags(tag:Tag) {
     AppDispatcher.handleServerAction({
       type: ActionTypes.RECEIVE_TAGS,
-      json: json
+      tag
     });
   }
 
-  static receiveSearchTags(json) {
+  static receiveSearchTags(tagsList:TagsList) {
     AppDispatcher.handleServerAction({
       type: ActionTypes.RECEIVE_SEARCH_TAGS,
-      json: json
+      tagsList
     });
   }
 
-  static receiveTag(json) {
+  static receiveTag(tag:Tag) {
     AppDispatcher.handleServerAction({
       type: ActionTypes.RECEIVE_TAG,
+      tag
+    });
+  }
+
+  static receiveCreatedTag(tag:Tag) {
+    AppDispatcher.handleServerAction({
+      type: ActionTypes.RECEIVE_CREATED_TAG,
+      tag
+    });
+  }
+
+  static receiveCreatedTagError(error) {
+    AppDispatcher.handleServerAction({
+      type: ActionTypes.RECEIVE_CREATED_TAG_FAILURE,
+      error
+    });
+  }
+
+  static receiveRemovedTag(tag:Tag) {
+    AppDispatcher.handleServerAction({
+      type: ActionTypes.RECEIVE_REMOVED_TAG,
+      tag
+    });
+  }
+
+  static receiveExport(json) {
+    AppDispatcher.handleServerAction({
+      type: ActionTypes.RECEIVE_EXPORT_DATA,
       json: json
     });
   }
 
-  static receiveCreatedTag(json, errors) {
-    const type = ActionTypes.RECEIVE_CREATED_TAG;
-    if (errors != null) {
-      type = ActionTypes.RECEIVE_CREATED_TAG_ERROR
-    }
-    AppDispatcher.handleServerAction({
-      type: type,
-      json: json,
-      errors: errors
-    });
-  }
-
-  static receiveRemovedTag(json, errors) {
-    AppDispatcher.handleServerAction({
-      type: ActionTypes.RECEIVE_REMOVED_TAG,
-      json: json,
-      errors: errors
-    });
-  }
-
-  static receiveExport(json, errors) {
-    AppDispatcher.handleServerAction({
-      type: ActionTypes.RECEIVE_EXPORT_DATA,
-      json: json,
-      errors: errors
-    });
-  }
-
-  static receiveImport(json, errors) {
+  static receiveImport(json) {
     AppDispatcher.handleServerAction({
       type: ActionTypes.RECEIVE_IMPORT_DATA,
-      json: json,
-      errors: errors
+      json: json
     });
   }
 

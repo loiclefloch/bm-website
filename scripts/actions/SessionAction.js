@@ -1,8 +1,7 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import ApiConstants from 'constants/ApiConstants';
-import WebAPIUtils from '../utils/WebAPIUtils';
+import ActionTypes from 'constants/ActionTypes';
+import Api from '../utils/Api';
 
-const ActionTypes = ApiConstants.ActionTypes;
 
 export default class SessionAction {
 
@@ -12,7 +11,7 @@ export default class SessionAction {
       username: username,
       password: password
     });
-    WebAPIUtils.login(username, password);
+    Api.login(username, password);
   }
 
   static logout() {

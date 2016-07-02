@@ -1,16 +1,16 @@
-import React, { PropTypes } from 'react';
+import React, { PropTypes, Component } from 'react';
 
-const AddTagListRow extends Component {
+export default class AddTagListRow extends Component {
 
   static propTypes = {
     isSelected: PropTypes.bool.isRequired,
     tag: PropTypes.object.isRequired,
     onTagClicked: PropTypes.func.isRequired
-  },
+  };
 
-  onTagClicked() {
+  onTagClicked = () => {
     this.props.onTagClicked(this.props.tag);
-  },
+  };
 
   render() {
     const tag = this.props.tag;
@@ -20,7 +20,7 @@ const AddTagListRow extends Component {
     };
 
     // -- Setup selectedView
-    const selectedView = (<span className="bookmark__tag_list__add_tag_list__tag_row__not_selected"/>);
+    let selectedView = (<span className="bookmark__tag_list__add_tag_list__tag_row__not_selected"/>);
 
     if (this.props.isSelected === true) {
       selectedView = (
@@ -46,6 +46,4 @@ const AddTagListRow extends Component {
     )
   }
 
-});
-
-module.exports = AddTagListRow;
+}

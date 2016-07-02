@@ -1,4 +1,8 @@
 import BMEventEmitter from 'abstracts/BMEventEmitter';
+import AppDispatcher from '../dispatcher/AppDispatcher';
+import Events from 'constants/Events';
+
+import ActionTypes from 'constants/ActionTypes';
 
 let _errors = [];
 

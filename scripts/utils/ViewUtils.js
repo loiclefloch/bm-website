@@ -1,9 +1,9 @@
-module.exports = {
+export default {
 
   Colors: {
 
     isLightColor(color) {
-      const r, b, g, hsp, a = color;
+      let r, b, g, hsp, a = color;
 
       if (a.match(/^rgb/)) {
         a = a.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/);

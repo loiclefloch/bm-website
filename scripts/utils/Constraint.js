@@ -1,6 +1,6 @@
-const _ from 'lodash');
+import _ from 'lodash';
 
-module.exports = {
+export default {
 
   matchRegexp(value, regexp) {
     return _.isNull(value) || _.isEmpty(value) || regexp.test(value);

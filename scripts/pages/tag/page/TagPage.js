@@ -4,7 +4,7 @@ import showdown from 'showdown';
 import _ from 'lodash';
 
 import Constants from 'constants/Constants';
-import WebAPIUtils from 'utils/WebAPIUtils';
+import Api from 'utils/Api';
 import TagStore from 'stores/TagStore';
 import SessionStore from 'stores/SessionStore';
 
@@ -15,7 +15,7 @@ import RouteAction from 'actions/RouteAction';
 
 // -- views;
 import AbstractComponent from 'abstracts/AbstractComponent';
-import BookmarksTable  from './components/BookmarksTable';
+import BookmarksTable  from 'components/bookmark/BookmarksTable';
 import NoBookmarkForTag from './components/NoBookmarkForTag';
 
 
@@ -33,7 +33,7 @@ export default class TagPage extends AbstractComponent {
     TagStore.addListener(Events.CHANGE, this._onChange);
     TagStore.addListener(Events.LOADING, this.hideLoading);
 
-    this.displayLoading();
+    this.showLoading();
     TagAction.loadTag(this.getParams().tagId);
   }
 
@@ -57,8 +57,8 @@ export default class TagPage extends AbstractComponent {
     const self = this;
     bootbox.confirm("Are you sure you want to remove the tag " + tag.name + "?", function(result) {
       if (result == true) {
-        self.displayLoading();
-        WebAPIUtils.deleteTag(tag.id);
+        self.showLoading();
+        Api.deleteTag(tag.id);
       }
     });
 

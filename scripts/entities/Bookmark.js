@@ -1,5 +1,7 @@
 import ApiObject from 'abstracts/ApiObject';
 
+import Tag from 'entities/Tag';
+
 export default class Bookmark extends ApiObject {
 
   title:String;
@@ -16,7 +18,19 @@ export default class Bookmark extends ApiObject {
 
   reading_time:Number;
 
-  const Type = {
+  notes:String;
+
+  preview_picture:String;
+
+  type:Number = Bookmark.Type.WEBSITE;
+
+  updated_at:Number;
+
+  created_at:Number;
+
+  tags:Array<Tag> = [];
+
+  static Type = {
     WEBSITE: 0, // default
     ARTICLE: 1,
     VIDEO: 2,
@@ -26,6 +40,16 @@ export default class Bookmark extends ApiObject {
     SLIDE: 6
   };
 
+  postJsonAssignation(data:JSON) {
+    this.reading_time = parseInt(data.reading_time);
+
+    this.tags = [];
+    _.each(data.tags, (tagData) => {
+      const tag:Tag = new Tag();
+      tag.fromJson(tagData);
+      this.tags.push(tag);
+    });
+  }
 
   /**
    * Return an url without the http(s)://

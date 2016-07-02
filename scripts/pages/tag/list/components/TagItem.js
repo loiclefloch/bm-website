@@ -1,7 +1,13 @@
 import React, { PropTypes, Component } from 'react';
 
+// -- constants
+import RoutingEnum from 'constants/RoutingEnum';
+
 // -- entities
 import Tag from 'entities/Tag';
+
+// -- views
+import Link from 'components/Link';
 
 export default class TagItem extends Component {
 
@@ -24,7 +30,7 @@ export default class TagItem extends Component {
 
           <div className="col-xs-10">
             <span className="tags__item_title">
-              <Link to="tag" params={ {tagId: tag.id} }>
+              <Link to={RoutingEnum.TAG} params={ {tagId: tag.id} }>
                 {tag.name}
               </Link>
             </span>
