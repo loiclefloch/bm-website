@@ -14,6 +14,7 @@ import RouteAction from 'actions/RouteAction';
 import Events from 'constants/Events';
 import ViewConstants from 'constants/ViewConstants';
 import Constants  from 'constants/Constants';
+import RoutingEnum from 'constants/RoutingEnum';
 
 // -- entities
 import Bookmark from 'entities/Bookmark';
@@ -39,10 +40,11 @@ export default class BookmarkListPage extends AbstractComponent {
 
   componentDidMount() {
     if (!SessionStore.isLoggedIn()) {
-      RouteAction.redirect('login');
+      // RouteAction.redirect(RoutingEnum.LOGIN);
     }
 
-    BookmarkStore.addListener(Events.CHANGE, this.onChange);
+    BookmarkStore.addListener(Events.LOAD_BOOKMARKS_SUCCESS, this.onChange);
+    BookmarkStore.addListener(Events.RECEIVE_BOOKING_SEARCH_SUCCESS, this.onChange);
     BookmarkStore.addListener(Events.LOADING, this.hideLoading);
 
     // do not call if we came back on the page. We need to call if there is only 1 bookmarks
@@ -56,8 +58,8 @@ export default class BookmarkListPage extends AbstractComponent {
   }
 
   componentWillUnmount() {
-    BookmarkStore.removeErrors();
-    BookmarkStore.removeListener(Events.CHANGE, this.onChange);
+    BookmarkStore.removeListener(Events.LOAD_BOOKMARKS_SUCCESS, this.onChange);
+    BookmarkStore.removeListener(Events.RECEIVE_BOOKING_SEARCH_SUCCESS, this.onChange);
     BookmarkStore.removeListener(Events.LOADING, this.hideLoading);
   }
 
@@ -66,6 +68,8 @@ export default class BookmarkListPage extends AbstractComponent {
   }
 
   onChange = () => {
+    console.log('on change');
+
     this.setState({
       bookmarksList: BookmarkStore.getAllBookmarksList(),
       searchBookmarks: BookmarkStore.getSearchBookmarksList(),
@@ -127,7 +131,7 @@ export default class BookmarkListPage extends AbstractComponent {
           <LoadMore paging={this.state.searchPaging} loadMore={this.onLoadMoreSearch} />);
       }
       else { // wait for api search, manually search on displayed Page.
-        this.state.bookmarksList.bookmarks.forEach((bookmark:Bookmark) => {
+        _.each(this.state.bookmarksList.bookmarks, (bookmark:Bookmark) => {
           const name = bookmark.getDefaultName().toLowerCase();
           const filterText = this.state.search.name.toLowerCase();
 

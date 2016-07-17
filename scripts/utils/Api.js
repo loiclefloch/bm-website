@@ -6,10 +6,13 @@ import ApiConstants from 'constants/ApiConstants';
 import Config from 'constants/Config';
 import Constants from 'constants/Constants';
 import ApiEndpoints from 'constants/ApiEndpoints';
+import RoutingEnum from 'constants/RoutingEnum';
 
 // -- actions
 import RouteAction from 'actions/RouteAction';
 import ServerAction from 'actions/ServerAction';
+import BookmarkAction from 'actions/BookmarkAction';
+import TagAction from 'actions/TagAction';
 
 // -- stores
 import SessionStore from 'stores/SessionStore';
@@ -23,7 +26,8 @@ import TagsList from 'entities/TagsList';
 
 function _getErrors(text) {
   let errorMsgs = ['Something went wrong, please try again'];
-  if ((json = JSON.parse(text))) {
+  const json = JSON.parse(text);
+  if (json) {
     if (!_.isEmpty(json['errors'])) {
       errorMsgs = json['errors'];
     } else if (!_.isEmpty(json['error'])) {
@@ -60,18 +64,19 @@ function handleResponse(error, res, success, failure) {
   else {
     if (res.statusCode == 404) {
       console.error('[API] Not found');
-      RouteAction.redirect('page-not-found');
+      RouteAction.redirect(RoutingEnum.NOT_FOUND);
     }
     else if (res.statusCode == 401) {
       BM.loading.hide();
       console.log('[API] 401');
-      RouteAction.redirect('login');
+      SessionStore.logout();
+      // RouteAction.redirect(RoutingEnum.LOGIN);
     }
     else if (res.statusCode == 500) {
       console.log(res);
       console.error('[API] Error 500', res.text);
       ServerStore.setServerError(res); // send wall request
-      RouteAction.redirect('server-error');
+      RouteAction.redirect(RoutingEnum.SERVER_ERROR);
     }
     else {
       console.log('get api errors');
@@ -147,10 +152,10 @@ class Api {
           function Success(json) {
             const bookmarksList:BookmarksList = new BookmarksList();
             bookmarksList.fromJson(json);
-            ServerAction.receiveBookmarksList(bookmarksList);
+            BookmarkAction.receiveBookmarksList(bookmarksList);
           },
           function Failure(errors) {
-            ServerAction.receiveBookmarksListError(errors);
+            BookmarkAction.receiveBookmarksListError(errors);
           });
       });
   }
@@ -165,10 +170,10 @@ class Api {
           function Success(json) {
             const bookmarksList:BookmarksList = new BookmarksList();
             bookmarksList.fromJson(json);
-            ServerAction.receiveSearchBookmarks(bookmarksList);
+            BookmarkAction.receiveSearchBookmarks(bookmarksList);
           },
           function Failure(errors) {
-            ServerAction.receiveSearchBookmarksError(errors);
+            BookmarkAction.receiveSearchBookmarksError(errors);
           });
       });
   }
@@ -182,10 +187,10 @@ class Api {
           function Success(json) {
             const bookmark:Bookmark = new Bookmark();
             bookmark.fromJson(json);
-            ServerAction.receiveBookmark(bookmark);
+            BookmarkAction.receiveBookmark(bookmark);
           },
           function Failure(errors) {
-            ServerAction.receiveBookmarkError(errors);
+            BookmarkAction.receiveBookmarkError(errors);
           });
       });
   }
@@ -207,10 +212,10 @@ class Api {
             function Success(json) {
               const bookmark:Bookmark = new Bookmark();
               bookmark.fromJson(json);
-              ServerAction.receiveCreatedBookmark(bookmark);
+              BookmarkAction.receiveCreatedBookmark(bookmark);
             },
             function Failure(errors) {
-              ServerAction.receiveCreatedBookmarkError(errors);
+              BookmarkAction.receiveCreatedBookmarkError(errors);
             });
         }
       });
@@ -223,10 +228,10 @@ class Api {
       .end(function(error, res) {
         handleResponse(error, res,
           function Success(json) {
-            ServerAction.receiveRemovedBookmark(bookmark);
+            BookmarkAction.receiveDeletedBookmark(bookmark);
           },
           function Failure(errors) {
-            ServerAction.receiveRemovedBookmarkError(errors);
+            BookmarkAction.receiveDeletedBookmarkError(errors);
           });
       });
   }
@@ -243,10 +248,12 @@ class Api {
         if (res) {
           handleResponse(error, res,
             function Success(json) {
-              ServerAction.receiveUpdateTagsBookmark(json, null);
+              const bookmark:Bookmark = new Bookmark();
+              bookmark.fromJson(json);
+              BookmarkAction.receiveUpdateTagsBookmark(bookmark);
             },
             function Failure(errors) {
-              ServerAction.receiveUpdateTagsBookmark(null, errors);
+              BookmarkAction.receiveUpdateTagsBookmarkError(errors);
             });
         }
       });
@@ -264,10 +271,12 @@ class Api {
         if (res) {
           handleResponse(error, res,
             function Success(json) {
-              ServerAction.receiveUpdateTagsBookmark(json, null);
+              const bookmark:Bookmark = new Bookmark();
+              bookmark.fromJson(json);
+              BookmarkAction.receiveUpdateTagsBookmark(bookmark);
             },
             function Failure(errors) {
-              ServerAction.receiveUpdateTagsBookmark(null, errors);
+              BookmarkAction.receiveUpdateTagsBookmarkError(errors);
             });
         }
       });
@@ -297,10 +306,10 @@ class Api {
           function Success(json) {
             const tagsList:TagsList = new TagsList();
             tagsList.fromJson(json);
-            ServerAction.receiveTags(tagsList);
+            TagAction.receiveTags(tagsList);
           },
           function Failure(errors) {
-            ServerAction.receiveTagsError(errors);
+            TagAction.receiveTagsError(errors);
           });
       });
   }
@@ -313,10 +322,12 @@ class Api {
       .end(function(error, res) {
         handleResponse(error, res,
           function Success(json) {
-            ServerAction.receiveSearchTags(json);
+            const tagsList:TagsList = new TagsList();
+            tagsList.fromJson(json);
+            TagAction.receiveSearchTags(tagsList);
           },
           function Failure(errors) {
-            ServerAction.receiveSearchTags(null, errors);
+            TagAction.receiveSearchTagsError(errors);
           });
       });
   }
@@ -340,10 +351,11 @@ class Api {
               bookmarks.push(bookmark);
             });
             tag.bookmarks = bookmarks;
-            ServerAction.receiveTag(tag);
+
+            TagAction.receiveTag(tag);
           },
           function Failure(errors) {
-            ServerAction.receiveTagError(errors);
+            TagAction.receiveTagError(errors);
           });
       });
   }
@@ -363,10 +375,13 @@ class Api {
         if (res) {
           handleResponse(error, res,
             function Success(json) {
-              ServerAction.receiveCreatedTag(json, null);
+              const tag:Tag = new Tag();
+              tag.fromJson(json.tag);
+
+              TagAction.receiveCreatedTag(tag);
             },
             function Failure(errors) {
-              ServerAction.receiveCreatedTag(null, errors);
+              TagAction.receiveCreatedTagError(errors);
             });
         }
       });
@@ -379,10 +394,13 @@ class Api {
       .end(function(error, res) {
         handleResponse(error, res,
           function Success(json) {
-            ServerAction.receiveRemovedTag(json);
+            const tag:Tag = new Tag();
+            tag.fromJson(json.tag);
+
+            TagAction.receiveRemovedTag(tag);
           },
           function Failure(errors) {
-            ServerAction.receiveRemovedTag(null, errors);
+            TagAction.receiveRemovedTagError(errors);
           });
       });
   }

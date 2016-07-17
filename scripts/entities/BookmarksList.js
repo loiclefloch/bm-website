@@ -22,4 +22,8 @@ export default class BookmarksList extends ApiObject {
     this.paging = new Paging();
     this.paging.fromJson(data.paging);
   }
+
+  unshift(bookmark:Bookmark) {
+    this.bookmarks.unshift(bookmark);
+  }
 }

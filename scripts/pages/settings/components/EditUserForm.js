@@ -1,6 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 
-class EditUserForm extends Component {
+export default class EditUserForm extends Component {
 
   handleSubmit() {
     const pwd = this.refs.profilePassword.getDOMNode().value;

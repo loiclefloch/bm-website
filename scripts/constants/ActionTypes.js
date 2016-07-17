@@ -15,6 +15,7 @@ const ActionTypes = keyMirror({
   RECEIVE_BOOKMARKS: null,
   RECEIVE_BOOKMARKS_FAILURE: null,
 
+  LOAD_SEARCH_BOOKMARKS: null,
   RECEIVE_SEARCH_BOOKMARKS: null,
   RECEIVE_SEARCH_BOOKMARKS_FAILURE: null,
 
@@ -48,6 +49,8 @@ const ActionTypes = keyMirror({
   RECEIVE_CREATED_TAG: null,
   RECEIVE_CREATED_TAG_FAILURE: null,
 
+  REMOVE_BOOKMARK_TAGS: null,
+  
   RECEIVE_REMOVED_TAG: null,
 
   EXPORT_DATA: null,

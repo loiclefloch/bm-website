@@ -3,7 +3,8 @@ import moment from 'moment';
 import showdown from 'showdown';
 import _ from 'lodash';
 
-// -- utils
+// -- constants
+import RoutingEnum from 'constants/RoutingEnum';
 import Events from 'constants/Events';
 
 // -- stores
@@ -37,7 +38,7 @@ export default class BookmarkPage extends AbstractComponent {
     this.showLoading();
 
     if (!SessionStore.isLoggedIn()) {
-      RouteAction.redirect('login');
+      RouteAction.redirect(RoutingEnum.LOGIN);
     }
 
     BookmarkStore.addListener(Events.CHANGE, this.onBookmarkChange);
@@ -80,18 +81,8 @@ export default class BookmarkPage extends AbstractComponent {
     BookmarkAction.deleteTagsForBookmark([tag], this.state.bookmark);
   };
 
-  onChangeUrl = (newParams) => {
-    this.context.router.replaceWith(
-      this.context.router.getCurrentPathname(),
-      this.props.params, newParams
-    );
-
-  }
-
   renderBody() {
     const bookmark = this.state.bookmark;
-
-    console.log(bookmark);
 
     if (_.isNull(bookmark)) {
       return this.renderOnLoadingContent();
@@ -100,8 +91,6 @@ export default class BookmarkPage extends AbstractComponent {
     // Convert markdown
     const converter = new showdown.Converter();
     const notesHtml = converter.makeHtml(bookmark.notes);
-
-    console.log('props', this.props);
 
     return (
       <div>
@@ -175,7 +164,7 @@ export default class BookmarkPage extends AbstractComponent {
             content={bookmark.content}
             type={bookmark.type}
             urlQueryParams={this.props.location.query}
-            changeUrl={this.onChangeUrl}
+            changeUrl={this.onChangeQueryUrl}
           />
         </div>
 

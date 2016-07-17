@@ -2,12 +2,14 @@ import React, { PropTypes } from 'react';
 
 // -- actions
 import SessionAction from 'actions/SessionAction';
+import RouteAction from 'actions/RouteAction';
 
 // -- stores
 import SessionStore from 'stores/SessionStore';
 
 // -- constants
 import Events from 'constants/Events';
+import RoutingEnum from 'constants/RoutingEnum';
 
 // -- entities
 import User from 'entities/User';
@@ -18,12 +20,16 @@ import AbstractComponent from 'abstracts/AbstractComponent';
 export default class LoginPage extends AbstractComponent {
 
   componentDidMount() {
-    SessionStore.addListener(Events.CHANGE, this.onChange);
+    if (SessionStore.isLoggedIn()) {
+      RouteAction.redirectTo(RoutingEnum.HOME);
+    }
+
+    SessionStore.addListener(Events.LOGIN_SUCCESS, this.onChange);
     SessionStore.addListener(Events.LOADING, this.hideLoading);
   }
 
   componentWillUnmount() {
-    SessionStore.removeListener(Events.CHANGE, this.onChange);
+    SessionStore.removeListener(Events.LOGIN_SUCCESS, this.onChange);
     SessionStore.removeListener(Events.LOADING, this.hideLoading);
   }
 

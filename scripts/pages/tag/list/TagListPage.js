@@ -9,6 +9,7 @@ import ViewUtils from 'utils/ViewUtils';
 
 // -- constants
 import Events from 'constants/Events';
+import RoutingEnum from 'constants/RoutingEnum';
 
 // -- actions
 import TagAction from 'actions/TagAction';
@@ -34,7 +35,7 @@ export default class TagListPage extends AbstractComponent {
 
   componentDidMount() {
     if (!SessionStore.isLoggedIn()) {
-      RouteAction.redirect('login');
+      RouteAction.redirect(RoutingEnum.LOGIN);
     }
 
     TagStore.addListener(Events.CHANGE, this.onChange);

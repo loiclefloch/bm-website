@@ -6,6 +6,8 @@ import { EventEmitter } from 'events';
 
 import SessionUtils from 'utils/SessionUtils';
 
+import RouteStore from 'stores/RouteStore';
+import RoutingEnum from 'constants/RoutingEnum';
 import Events from 'constants/Events';
 import Constants from 'constants/Constants';
 import ActionTypes from 'constants/ActionTypes';
@@ -40,7 +42,7 @@ class SessionStore extends BMEventEmitter {
   isLoggedIn():Boolean {
     const authorization = this.getAccessToken();
     console.log('isLoggedIn', authorization);
-    return !_.isUndefined(authorization) && !_.isNull(authorization);
+    return !_.isUndefined(authorization) && !_.isEmpty(authorization);
   }
 
   // -- user and session
@@ -81,6 +83,11 @@ class SessionStore extends BMEventEmitter {
     SessionUtils.saveItemToSession(SessionItemsKeys.USERNAME, username);
   }
 
+  logout() {
+    SessionUtils.saveItemToSession(SessionItemsKeys.ACCESS_TOKEN, null);
+    RouteStore.redirectTo(RoutingEnum.LOGIN);
+  }
+
 }
 
 const sessionStoreInstance = new SessionStore();
@@ -99,7 +106,7 @@ sessionStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
       if (action.errors) {
         _errors = action.errors;
       }
-      sessionStoreInstance.emitEvent(Events.CHANGE);
+      sessionStoreInstance.emitEvent(Events.LOGIN_SUCCESS);
       sessionStoreInstance.emitEvent(Events.LOADING);
       break;
 
@@ -121,4 +128,3 @@ sessionStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
 });
 
 export default sessionStoreInstance;
-

@@ -7,6 +7,7 @@ import _ from 'lodash';
 import Events from 'constants/Events';
 import Constants from 'constants/Constants';
 import ViewConstants from 'constants/ViewConstants';
+import RoutingEnum from 'constants/RoutingEnum';
 
 // -- stores
 import TagStore from 'stores/TagStore';
@@ -30,7 +31,7 @@ export default class TagPage extends AbstractComponent {
 
   componentDidMount() {
     if (!SessionStore.isLoggedIn()) {
-      RouteAction.redirect('login');
+      RouteAction.redirect(RoutingEnum.LOGIN);
     }
 
     TagStore.addListener(Events.ON_LOADING_TAG, this.onChange);
@@ -52,14 +53,14 @@ export default class TagPage extends AbstractComponent {
     });
   };
 
-  deleteTag = (e) => {
+  onDeleteTag = (e) => {
     e.preventDefault();
     const tag = this.state.tag;
     const self = this;
     bootbox.confirm("Are you sure you want to remove the tag " + tag.name + "?", function(result) {
       if (result == true) {
         self.showLoading();
-        Api.deleteTag(tag.id);
+        TagAction.deleteTag(tag);
       }
     });
   };
@@ -102,7 +103,7 @@ export default class TagPage extends AbstractComponent {
           <div className="top-buffer-20" style={separatorStyle}></div>
 
           <div className="tag__action_bar top-buffer-50">
-            <a href="#" onClick={this._deleteTag}>
+            <a href="#" onClick={this.onDeleteTag}>
               <i className="fa fa-trash" />
             </a>
           </div>

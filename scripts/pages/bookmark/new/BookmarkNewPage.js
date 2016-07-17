@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 
 // -- constants
 import Events from 'constants/Events';
+import RoutingsEnum from 'constants/RoutingEnum';
 
 // -- utils
 import Constraint from 'utils/Constraint';
@@ -26,20 +27,20 @@ export default class BookmarkNewPage extends AbstractComponent {
 
   componentDidMount() {
     if (!SessionStore.isLoggedIn()) {
-      RouteAction.redirect('login');
+      RouteAction.redirect(RoutingEnum.LOGIN);
     }
-    BookmarkStore.addListener(Events.CHANGE, this.onChange);
+    BookmarkStore.addListener(Events.RECEIVE_CREATED_BOOKMARK_FAILURE, this.onError);
     BookmarkStore.addListener(Events.LOADING, this.hideLoading);
   }
 
   componentWillUnmount() {
-    BookmarkStore.removeListener(Events.CHANGE, this.onChange);
+    BookmarkStore.removeListener(Events.RECEIVE_CREATED_BOOKMARK_FAILURE, this.onError);
     BookmarkStore.removeListener(Events.LOADING, this.hideLoading);
   }
 
-  onChange = ()=> {
+  onError = () => {
+    console.log('onError', BookmarkStore.getErrors());
     this.handleError(BookmarkStore.getErrors());
-    return true
   };
 
   onNotesChange = ()=> {

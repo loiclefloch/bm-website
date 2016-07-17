@@ -4,7 +4,7 @@ const express = require('express');
 const path = require('path');
 
 const PORT = 9000;
-const environment = process.env.NODE_ENV;
+const environment = process.env.NODE_ENV || 'development';
 
 const app = express();
 

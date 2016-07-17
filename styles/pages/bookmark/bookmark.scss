@@ -253,11 +253,36 @@
 }
 
 .toc {
+  
+  li {
+    list-style-type: none;
+    height: 30px;
+    line-height: 30px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $main-color;
+
+      a {
+        color: white;
+      }
+    }
+
+    a {
+      color: black;
+      text-decoration: none;
+    }
+  }
+
   .toc__level_h1 {
   }
 
   .toc__level_h2 {
     padding-left: 15px;
+  }
+
+  .toc__level_h3 {
+    padding-left: 30px;
   }
 }
 
@@ -265,4 +290,24 @@
   position: fixed;
   left: 20px;
   top: 200px;
+
+  ul {
+    min-width: 200px;
+    list-style-type: none;
+
+    li {
+      padding: 10px 15px;
+      background-color: $hr-color;
+      cursor: pointer;
+
+      i {
+        margin-right: 10px;
+      }
+
+      &:hover {
+        background-color: $main-color;
+        color: white;
+      }
+    }
+  }
 }

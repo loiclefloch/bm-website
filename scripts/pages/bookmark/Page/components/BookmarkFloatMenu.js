@@ -25,19 +25,28 @@ export default class BookmarkFloatMenu extends Component {
 
   renderMenuNote() {
     return (
-      <li onClick={this.onEditNotes} key="edit_note">Notes</li>
+      <li onClick={this.onEditNotes} key="edit_note">
+        <i className="fa fa-file-text" />
+        Notes
+      </li>
     );
   }
 
   renderMenuToc() {
     return (
-      <li onClick={this.onDisplayTableOfContent} key="toc">Table Of Content</li>
+      <li onClick={this.onDisplayTableOfContent} key="toc">
+        <i className="fa fa-book" />
+        Table Of Content
+      </li>
     );
   }
 
   renderMenuGoTop() {
     return (
-      <li onClick={this.onGoTop} key="go_top">Go top</li>
+      <li onClick={this.onGoTop} key="go_top">
+        <i className="fa fa-arrow-up" />
+        Go top
+      </li>
     );
   }
 

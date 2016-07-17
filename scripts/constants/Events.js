@@ -1,7 +1,13 @@
 import keyMirror from 'keymirror';
 
 const Events = keyMirror({
-  CHANGE: null,
+  CHANGE: null, // TODO: remove
+
+  LOGIN_SUCCESS: null,
+
+  LOAD_BOOKMARKS_SUCCESS: null,
+
+  RECEIVE_BOOKING_SEARCH_SUCCESS: null,
 
   LOADING: null,
 

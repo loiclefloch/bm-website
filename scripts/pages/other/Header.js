@@ -33,15 +33,7 @@ export default class Header extends Component {
   };
 
   renderLoggedInMenu() {
-    const currentRoutes = this.props.routes;
-    let currentRoute = null;
-    if (currentRoutes.length > 0) {
-      currentRoute = currentRoutes[currentRoutes.length - 1];
-      if (_.isUndefined(currentRoute)) {
-        currentRoute = null;
-      }
-//      console.log('CURRENT ROUTE:', currentRoute, currentRoutes);
-    }
+    const currentRoute = _.last(this.props.routes);
 
     return (
       <div className="collapse navbar-collapse">
@@ -107,9 +99,9 @@ export default class Header extends Component {
             <button type="button" className="navbar-toggle collapsed" data-toggle="collapse"
                     data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
               <span className="sr-only">Toggle navigation</span>
-              <span className="icon-bar"/>
-              <span className="icon-bar"/>
-              <span className="icon-bar"/>
+              <span className="icon-bar" />
+              <span className="icon-bar" />
+              <span className="icon-bar" />
             </button>
             <Link
               to={RoutingEnum.HOME}

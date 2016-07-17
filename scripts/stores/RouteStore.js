@@ -23,7 +23,8 @@ class RouteStore extends BMEventEmitter {
   }
 
   redirectTo(route:Route, params = null) {
-    if (_.isNull(params)) {
+    console.log('redirectTo', route, params);
+    if (_.isNull(params) || _.isUndefined(params)) {
       browserHistory.push(route.path);
     } else {
       // replace params. On url definition, params start with ':'
@@ -63,13 +64,11 @@ routeStoreInstance.dispatchToken = AppDispatcher.register((payload:Object) => {
     // Redirect to the bookmark page after create a bookmark.
     case ActionTypes.RECEIVE_CREATED_BOOKMARK:
       const bookmark = action.json;
-      RouteAction.redirect(); // TODO: redirect to bookmark;
-//      router.transitionTo('bookmark', {'bookmarkId': bookmark.id} );
+      RouteAction.redirectTo(RoutingEnum.BOOKMARK, {'bookmarkId': bookmark.id} );
       break;
 
     case ActionTypes.RECEIVE_REMOVED_BOOKMARK:
-      RouteAction.redirect(); // TODO: redirect to bookmarks;
-//      router.transitionTo('bookmarks');
+      routeStoreInstance.redirectTo(RoutingEnum.TAGS_LIST);
       break;
 
     default:

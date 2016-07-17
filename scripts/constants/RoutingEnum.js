@@ -23,12 +23,13 @@ class RoutingEnum {
   static LOGIN = new Route('login', '/login', LoginPage);
 
   static HOME = new Route('home', '/', BookmarkListPage);
+
   static BOOKMARKS_LIST = new Route('bookmarks', '/bookmarks', BookmarkListPage);
-  
+
   static BOOKMARK = new Route('bookmark', '/bookmarks/:bookmarkId', BookmarkPage);
-  
+
   static NEW_BOOKMARK = new Route('new-bookmark', '/bookmark/new', BookmarkNewPage);
-  
+
   static TAGS_LIST = new Route('tag-list', '/tags', TagListPage);
 
   static TAG = new Route('tag', '/tags/:tagId', TagPage);

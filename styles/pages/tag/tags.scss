@@ -1,3 +1,5 @@
+@import "../../colors";
+
 .tags__item {
   margin-bottom: 20px;
 
@@ -22,5 +24,9 @@
 
   .tags__item_title {
     font-size: 14pt;
+
+    a {
+      color: $text-color;
+    }
   }
 }

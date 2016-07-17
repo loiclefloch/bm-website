@@ -13,6 +13,10 @@ class AbstractComponent extends Component {
 
   state = {};
 
+  static contextTypes = {
+    router: React.PropTypes.object.isRequired
+  };
+
   // ---- Loading
 
   showLoading = () => {
@@ -88,6 +92,19 @@ class AbstractComponent extends Component {
   get apiError() {
     return this.state.apiError;
   }
+
+
+  // -- url
+  onChangeQueryUrl = (newQueryParams) => {
+    const routeName = _.last(this.props.routes).name;
+    const params = this.props.routeParams;
+    let query = this.props.location.query;
+
+    query = Object.assign({}, query, newQueryParams);
+
+    this.context.router.replace({ pathname: this.props.location.pathname, query });
+  };
+
 }
 
 export default AbstractComponent;

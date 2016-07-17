@@ -85,42 +85,39 @@ bookmarkStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
   switch (action.type) {
 
     case ActionTypes.RECEIVE_BOOKMARKS:
+
       _bookmarksList = _.unionWith(_bookmarksList, action.bookmarksList.bookmarks, (a, b) => {
         return a.id == b.id;
       });
       _paging = action.bookmarksList.paging;
-      bookmarkStoreInstance.emitEvent(Events.CHANGE);
+      _errors = null;
+
+      bookmarkStoreInstance.emitEvent(Events.LOAD_BOOKMARKS_SUCCESS);
       bookmarkStoreInstance.emitEvent(Events.LOADING);
       break;
 
     case ActionTypes.RECEIVE_SEARCH_BOOKMARKS:
       _searchBookmarksList = action.bookmarksList.bookmarks;
       _searchPaging = action.bookmarksList.paging;
-      bookmarkStoreInstance.emitEvent(Events.CHANGE);
+      _errors = null;
+
+      bookmarkStoreInstance.emitEvent(Events.RECEIVE_BOOKING_SEARCH_SUCCESS);
       bookmarkStoreInstance.emitEvent(Events.LOADING);
       break;
 
     case ActionTypes.RECEIVE_CREATED_BOOKMARK:
-      if (action.json) {
-        _bookmarksList.unshift(action.bookmark);
-        _errors = [];
-        bookmarkStoreInstance.emitEvent(Events.CREATE);
-      }
-      if (action.errors) {
-        _errors = action.errors;
-      }
+      _bookmarksList.unshift(action.bookmark);
+      _errors = null;
+
+      bookmarkStoreInstance.emitEvent(Events.CREATE);
       bookmarkStoreInstance.emitEvent(Events.CHANGE);
       bookmarkStoreInstance.emitEvent(Events.LOADING);
       break;
 
     case ActionTypes.RECEIVE_CREATED_BOOKMARK_FAILURE:
-      if (action.json) {
-        _errors = [];
-      }
-      if (action.errors) {
-        _errors = action.errors;
-      }
-      bookmarkStoreInstance.emitEvent(Events.CHANGE);
+      _errors = action.error;
+
+      bookmarkStoreInstance.emitEvent(Events.RECEIVE_CREATED_BOOKMARK_FAILURE);
       bookmarkStoreInstance.emitEvent(Events.LOADING);
       break;
 
@@ -164,13 +161,9 @@ bookmarkStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
       break;
 
     case ActionTypes.RECEIVE_BOOKMARK_TAGS:
-      if (action.json) {
-        _bookmark = action.bookmark;
-        _errors = [];
-      }
-      if (action.errors) {
-        _errors = action.errors;
-      }
+      _bookmark = action.bookmark;
+      _errors = [];
+      
       bookmarkStoreInstance.emitEvent(Events.TAGS_CHANGE_FOR_BOOKMARK);
       bookmarkStoreInstance.emitEvent(Events.LOADING_TAGS_CHANGE);
       break;
