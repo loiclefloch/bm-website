@@ -1,4 +1,5 @@
 import React, { PropTypes, Component } from 'react';
+import _ from 'lodash';
 
 import BookmarkStore from 'stores/BookmarkStore';
 
@@ -26,8 +27,7 @@ export default class SearchBox extends Component {
 
     if (!_.isEmpty(value) && value.length >= 3) {
       // TODO: call handleSubmit if the user didn't type for 2 seconds.
-    }
-    else if (_.isEmpty(value)) {
+    } else if (_.isEmpty(value)) {
       // reset
       BookmarkStore.clearSearch();
     }
@@ -36,7 +36,6 @@ export default class SearchBox extends Component {
   render() {
     return (
       <form onSubmit={this.onSubmit} className="form-horizontal">
-
         <div className="form-group label-floating">
           <label className="control-label">Search</label>
           <input
@@ -45,9 +44,9 @@ export default class SearchBox extends Component {
             defaultValue={this.props.search.name}
             ref="filterTextInput"
             onChange={this.onChange}
-            className="form-control empty" />
+            className="form-control empty"
+          />
           <span className="material-input" />
-
         </div>
       </form>
     );

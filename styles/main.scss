@@ -252,6 +252,8 @@ body {
 @import 'components/loading';
 @import 'components/header';
 @import 'components/highlightjs';
+@import "components/code-highlight";
+@import "components/player";
 
 // -- bookmarks
 @import 'pages/bookmark/bookmarks';

@@ -1,4 +1,5 @@
 import React, { PropTypes, Component } from 'react';
+import _ from 'lodash';
 
 // -- entities
 import Bookmark from 'entities/Bookmark';
@@ -14,8 +15,8 @@ export default class TableOfContentPopin extends Component {
 
   render() {
     let toc = (<div className="toc_popin__empty_toc"></div>);
-    if (!_.isEmpty(this.props.bookmark.content)) {
 
+    if (!_.isEmpty(this.props.bookmark.content)) {
       const jContent = $(this.props.bookmark.content);
       const nbH1 = jContent.find('h1').length;
       const nbH2 = jContent.find('h2').length;
@@ -54,8 +55,9 @@ export default class TableOfContentPopin extends Component {
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
-              <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span
-                aria-hidden="true">&times;</span></button>
+              <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
               <h4 className="modal-title">Table Of Content</h4>
             </div>
             <div className="modal-body">
@@ -67,6 +69,6 @@ export default class TableOfContentPopin extends Component {
           </div>
         </div>
       </div>
-    )
+    );
   }
 }

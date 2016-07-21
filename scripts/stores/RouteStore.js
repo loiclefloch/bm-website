@@ -16,6 +16,9 @@ import RoutingEnum from 'constants/RoutingEnum';
 import SessionStore from 'stores/SessionStore';
 import BookmarkStore from 'stores/BookmarkStore';
 
+// -- entities
+import Bookmark from 'entities/Bookmark';
+
 class RouteStore extends BMEventEmitter {
 
   redirectToHome() {
@@ -63,7 +66,7 @@ routeStoreInstance.dispatchToken = AppDispatcher.register((payload:Object) => {
 
     // Redirect to the bookmark page after create a bookmark.
     case ActionTypes.RECEIVE_CREATED_BOOKMARK:
-      const bookmark = action.json;
+      const bookmark:Bookmark = action.bookmark;
       RouteAction.redirectTo(RoutingEnum.BOOKMARK, {'bookmarkId': bookmark.id} );
       break;
 

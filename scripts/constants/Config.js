@@ -18,8 +18,10 @@ const Env = {
     }
   },
 
-  DEV: {
+  LOCAL: {
     IS_DEV: true,
+
+    HOSTNAME: 'localhost',
 
     SERVER_URL: 'http://localhost:90/bm-api/web/app_dev.php',
 
@@ -33,10 +35,34 @@ const Env = {
 
   },
 
+  DEV: {
+    IS_DEV: true,
+
+    HOSTNAME: 'bm.loiclefloch.fr',
+
+    SERVER_URL: 'http://bm_api.loiclefloch.fr/app_dev.php',
+
+    API_URL: 'http://bm_api.loiclefloch.fr/app_dev.php/api',
+
+    Auth: {
+      client_id: '1_4fpqq4qixvy84skg0oskkccc0wk84wwss48cckos48g0488g0s',
+      client_secret: '584tmbzo4ngo80gc4gss0sss0cg4wc8ss4s80s888ww4ocowks',
+      grant_type: 'password'
+    }
+
+  },
+
   PRODUCTION: {}
 
 };
 
-const currentEnv = Env.DEV;
+let currentEnv = Env.DEV;
+const hostname = window.location.hostname;
+if (hostname === Env.LOCAL.HOSTNAME) {
+  currentEnv = Env.LOCAL;
+  // currentEnv = Env.DEV;
+} else if (hostname === Env.DEV.HOSTNAME) {
+  currentEnv = Env.DEV;
+}
 
 export default assign({}, Env.COMMON, currentEnv);

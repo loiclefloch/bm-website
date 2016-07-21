@@ -12,7 +12,6 @@ export default class BookmarksList extends ApiObject {
 
   postJsonAssignation(data:JSON) {
     this.bookmarks = [];
-
     _.each(data.bookmarks, (bookmarkData:JSON) => {
       const bookmark:Bookmark = new Bookmark();
       bookmark.fromJson(bookmarkData);

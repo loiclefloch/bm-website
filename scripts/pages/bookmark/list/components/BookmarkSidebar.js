@@ -1,7 +1,10 @@
 import React, { PropTypes, Component } from 'react';
 
+// -- utils
+import classNames from 'classnames';
+
 // -- stores
-import BookmarkStore from 'stores/BookmarkStore';
+// import BookmarkStore from 'stores/BookmarkStore';
 
 // -- constants
 import ViewConstants from 'constants/ViewConstants';
@@ -59,55 +62,105 @@ export default class BookmarkSidebar extends Component {
       case ViewConstants.BookmarkListType.COMPACT:
         classToDisable = '.bookmark_sidebar__list_type__compact_btn';
         break;
+      default:
     }
     $(classToDisable).prop('disabled', true);
+  }
+
+  // -- renderers
+
+  renderSimple() {
+    const className = classNames(
+      'bookmark_sidebar__list_type__simple_btn',
+      'pointer',
+      'btn', {
+        active: this.props.bookmarkListType === ViewConstants.BookmarkListType.SIMPLE
+      }
+    );
+
+    return (
+      <button
+        className={className}
+        onClick={this.onSetSimpleListType}
+      >
+
+        <img
+          className="bookmark_sidebar__list_type__icon"
+          src="/public/img/icon_list_simple.png"
+          role="presentation"
+        />
+
+      </button>
+    );
+  }
+
+  renderBlock() {
+    const className = classNames(
+      'bookmark_sidebar__list_type__block_btn',
+      'pointer',
+      'btn', {
+        active: this.props.bookmarkListType === ViewConstants.BookmarkListType.BLOCK
+      }
+    );
+
+    return (
+      <button
+        className={className}
+        onClick={this.onSetBlockListType}
+      >
+        block
+      </button>
+    );
+  }
+
+  renderCompact() {
+    const className = classNames(
+      'bookmark_sidebar__list_type__compact_btn',
+      'pointer',
+      'btn', {
+        active: this.props.bookmarkListType === ViewConstants.BookmarkListType.COMPACT
+      }
+    );
+
+    return (
+      <button
+        className={className}
+        onClick={this.onSetCompactListType}
+      >
+        <img
+          className="bookmark_sidebar__list_type__icon"
+          src={ViewConstants.Image.ICON_LIST_COMPACT}
+          role="presentation"
+        />
+      </button>
+    );
   }
 
   render() {
     return (
       <div className="sidebar bookmark_sidebar">
 
-        <SearchBox search={this.props.search}
-                   onSearchSubmit={this.props.onSearchSubmit}
-                   onSearchInput={this.props.onSearchInput} />
+        <SearchBox
+          search={this.props.search}
+          onSearchSubmit={this.props.onSearchSubmit}
+          onSearchInput={this.props.onSearchInput}
+        />
 
         <div className="top-buffer-50"></div>
 
         <div className="bookmark_sidebar__list_type row">
 
           <div className="bookmark_sidebar__list_type__simple_btn_block col-xs-4">
-            <button
-              className={"bookmark_sidebar__list_type__simple_btn pointer btn "
-              + (this.props.bookmarkListType === ViewConstants.BookmarkListType.SIMPLE ? "active" : "") }
-              onClick={this.onSetSimpleListType}>
-
-              <img className="bookmark_sidebar__list_type__icon"
-                   src="/public/img/icon_list_simple.png" />
-
-            </button>
+            {this.renderSimple()}
           </div>
 
           <div className="bookmark_sidebar__list_type_block_block col-xs-4">
-            <button
-              className={"bookmark_sidebar__list_type__block_btn pointer btn "
-              +  (this.props.bookmarkListType == ViewConstants.BookmarkListType.BLOCK ? "active" : "") }
-              onClick={this.onSetBlockListType}>
-
-              block
-            </button>
+            {this.renderBlock()}
           </div>
 
 
           <div className="bookmark_sidebar__list_type_compact_block col-xs-4">
-            <button
-              className={"bookmark_sidebar__list_type__compact_btn pointer btn "
-              +  (this.props.bookmarkListType == ViewConstants.BookmarkListType.COMPACT ? "active" : "") }
-              onClick={this.onSetCompactListType}>
-
-              <img className="bookmark_sidebar__list_type__icon"
-                   src="/public/img/icon_list_compact.png" />
-
-            </button>
+            {this.renderCompact()}
           </div>
 
         </div>

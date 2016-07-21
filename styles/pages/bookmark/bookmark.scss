@@ -53,19 +53,22 @@
     }
 
     .tag_dropdown_menu {
-      padding: 5px;
+      padding: 0;
+      margin: 0!important;
 
       li {
         text-align: center;
         width: 50px;
         height: 40px;
-        line-height: 50px;
         font-size: 20pt;
         padding: 0;
         display: inline-block;
+        margin: auto;
+        text-align: center;
 
         &:hover {
           background: $main-color;
+          cursor: pointer;
 
           a, span {
             color: white;
@@ -75,6 +78,7 @@
         a, span {
           padding: 0;
           color: black;
+          line-height: 40px;
         }
 
       }
@@ -102,7 +106,7 @@
     margin: 0 auto;
     max-width: 800px; // 700 + 50px padding
     padding: 50px; // padding to let white border
-    background: white;
+    background: #f9f9f9;
     color: $text-color;
 
     p {
@@ -112,6 +116,8 @@
 
     code {
       cursor: pointer;
+      background-color: transparent;
+      color: black;
     }
 
     h2 {
@@ -253,7 +259,7 @@
 }
 
 .toc {
-  
+
   li {
     list-style-type: none;
     height: 30px;
@@ -309,5 +315,29 @@
         color: white;
       }
     }
+  }
+}
+
+.note_editor {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background-color: white;
+  border-top: 1px solid $hr-color;
+
+  .editor_area {
+    height: 100%;
+
+    .editor {
+      height: 100%;
+      padding: 10px 15px;
+    }
+  }
+
+  .preview {
+    padding: 15px;
+    overflow: auto;
   }
 }

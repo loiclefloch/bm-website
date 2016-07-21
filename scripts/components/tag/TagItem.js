@@ -29,12 +29,12 @@ export default class TagItem extends Component {
     $('.tag_dropdown_menu').parent().removeClass('open');
 
     if (!this.state.isOpen) {
-      $('.tag_dropdown_menu__' + this.props.tag.id).parent().addClass('open');
+      $(`.tag_dropdown_menu__${this.props.tag.id}`).parent().addClass('open');
     }
 
     this.setState({
       isOpen: !this.state.isOpen
-    })
+    });
   };
 
   render() {

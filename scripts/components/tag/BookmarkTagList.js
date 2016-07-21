@@ -1,4 +1,5 @@
 import React, { PropTypes, Component } from 'react';
+import _ from 'lodash';
 
 // -- stores
 import TagStore from 'stores/TagStore';
@@ -34,7 +35,6 @@ export default class BookmarkTagList extends Component {
     if (_.isNull(this.state.tagsList)) { // do not call if we came back on the page
       TagAction.loadTags();
     }
-
   }
 
   componentWillUnmount() {
@@ -52,7 +52,7 @@ export default class BookmarkTagList extends Component {
     const tagsListView = [];
 
     if (!_.isUndefined(this.props.bookmark.tags)) {
-      this.props.bookmark.tags.forEach(function(tag) {
+      this.props.bookmark.tags.forEach((tag) => {
         tagsListView.push(
           <TagItem
             tag={tag}
@@ -60,8 +60,9 @@ export default class BookmarkTagList extends Component {
             deleteTag={this.props.deleteTag}
           />
         );
-      }.bind(this));
+      });
     }
+
     const addTagView = (
       <AddTag
         tagsList={this.state.tagsList}
@@ -75,7 +76,7 @@ export default class BookmarkTagList extends Component {
         <div className="bookmark__tag_list bookmark__tag_list_empty">
           {addTagView}
         </div>
-      )
+      );
     }
 
     // -- List the tags

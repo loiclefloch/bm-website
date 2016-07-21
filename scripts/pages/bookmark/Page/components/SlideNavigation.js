@@ -23,25 +23,23 @@ export default class SlideNavigation extends Component {
   componentDidUpdate() {
     // -- Begin slide
     if ($('.slide').length > 0) {
-      const slideToShow = $('.slide_' + this.state.currentPage);
+      const slideToShow = $(`.slide_${this.state.currentPage}`);
 
       if (slideToShow.length > 0) {
         slideToShow.show();
-      }
-      else {
-        $('.slide_' + this.props.firstPage).show();
+      } else {
+        $(`.slide_${this.props.firstPage}`).show();
         this.updateCurrentPageNumber(this.props.firstPage);
       }
     }
     // -- End slide
-
   }
 
   onPrevious = () => {
     $('.slide').hide();
 
     const newPageNb = this.state.currentPage - 1;
-    const newSlide = $('.slide_' + newPageNb);
+    const newSlide = $(`.slide_${newPageNb}`);
 
     if (newSlide.length > 0) {
       newSlide.show();
@@ -53,7 +51,7 @@ export default class SlideNavigation extends Component {
     $('.slide').hide();
 
     const newPageNb = this.state.currentPage + 1;
-    const newSlide = $('.slide_' + newPageNb);
+    const newSlide = $(`.slide_${newPageNb}`);
 
     if (newSlide.length > 0) {
       newSlide.show();
@@ -66,7 +64,7 @@ export default class SlideNavigation extends Component {
       currentPage: newPageNb
     });
 
-    this.props.changeUrl({slide: newPageNb});
+    this.props.changeUrl({ slide: newPageNb });
   };
 
   render() {
@@ -74,10 +72,13 @@ export default class SlideNavigation extends Component {
       <div className="slide_navigation text-center">
 
         <div className="slide_navigation__nav">
-          <button className="slide_navigation__previous btn btn-default bold"
-                  onClick={this.onPrevious}>
-            <FontAwesome name="fa fa-arrow-left"
-                         size="1x"
+          <button
+            className="slide_navigation__previous btn btn-default bold"
+            onClick={this.onPrevious}
+          >
+            <FontAwesome
+              name="fa fa-arrow-left"
+              size="1x"
             />
           </button>
 
@@ -86,21 +87,22 @@ export default class SlideNavigation extends Component {
           </span>
 
           <button className="slide_navigation__next btn btn-default bold" onClick={this.onNext}>
-            <FontAwesome name="fa fa-arrow-right"
-                         size="1x"
+            <FontAwesome
+              name="fa fa-arrow-right"
+              size="1x"
             />
           </button>
         </div>
 
         <div className="text-left slide_navigation__fullscreen">
           <button className="btn btn-default bold" onClick={this.props.toggleFullScreenMode}>
-            <FontAwesome name="arrows-alt"
-                         size="2x"
+            <FontAwesome
+              name="arrows-alt"
+              size="2x"
             />
           </button>
         </div>
-
       </div>
-    )
+    );
   }
 }

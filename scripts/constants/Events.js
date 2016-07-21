@@ -19,7 +19,11 @@ const Events = keyMirror({
 
   LOADING_TAGS_CHANGE: null,
 
-  ON_LOADING_TAG: null
+  ON_LOADING_TAG: null,
+
+  // -- view bookmark
+  ON_SHOW_BOOKMARK_NOTES_EDITOR: null,
+  ON_HIDE_BOOKMARK_NOTES_EDITOR: null
 });
 
 module.exports = Events;

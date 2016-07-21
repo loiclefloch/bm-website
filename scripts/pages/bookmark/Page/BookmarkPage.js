@@ -21,17 +21,19 @@ import Bookmark from 'entities/Bookmark';
 // -- views
 import FontAwesome from 'react-fontawesome';
 import AbstractComponent from 'abstracts/AbstractComponent';
-import HtmlBlock from 'components/HtmlBlock';
 import BookmarkFloatMenu from './components/BookmarkFloatMenu';
-import BookmarkTagList from './components/BookmarkTagList';
+import BookmarkTagList from 'components/tag/BookmarkTagList';
 import BookmarkContent from './components/BookmarkContent';
 import TableOfContentPopin from './components/TableOfContentPopin';
-import BookmarkEstimatedReadingTime from 'components/Bookmark/BookmarkEstimatedReadingTime';
+import BookmarkEstimatedReadingTime from 'components/bookmark/BookmarkEstimatedReadingTime';
+import NotesEditor from './components/NotesEditor';
+import ImageLoader from 'components/ImageLoader';
 
 export default class BookmarkPage extends AbstractComponent {
 
   state = {
-    bookmark: BookmarkStore.getBookmark()
+    bookmark: BookmarkStore.getBookmark(),
+    displayEditNotes: false
   };
 
   componentDidMount() {
@@ -45,6 +47,9 @@ export default class BookmarkPage extends AbstractComponent {
     BookmarkStore.addListener(Events.LOADING, this.hideLoading);
     BookmarkStore.addListener(Events.TAGS_CHANGE_FOR_BOOKMARK, this.onBookmarkChange);
 
+    BookmarkStore.addListener(Events.ON_SHOW_BOOKMARK_NOTES_EDITOR, this.onShowBookmarkNotesEditor);
+    BookmarkStore.addListener(Events.ON_HIDE_BOOKMARK_NOTES_EDITOR, this.onHideBookmarkNotesEditor);
+
     BookmarkAction.loadBookmark(this.props.params.bookmarkId);
   }
 
@@ -53,8 +58,18 @@ export default class BookmarkPage extends AbstractComponent {
     BookmarkStore.removeListener(Events.LOADING, this.hideLoading);
     BookmarkStore.removeListener(Events.TAGS_CHANGE_FOR_BOOKMARK, this.onBookmarkChange);
 
+    BookmarkStore.removeListener(Events.ON_SHOW_BOOKMARK_NOTES_EDITOR,
+       this.onShowBookmarkNotesEditor
+    );
+
+    BookmarkStore.removeListener(Events.ON_HIDE_BOOKMARK_NOTES_EDITOR,
+       this.onHideBookmarkNotesEditor
+    );
+
     BookmarkStore.clearBookmark();
   }
+
+  // -- events functions
 
   onBookmarkChange = () => {
     this.setState({
@@ -68,18 +83,31 @@ export default class BookmarkPage extends AbstractComponent {
     e.preventDefault();
     const bookmark:Bookmark = this.state.bookmark;
     const self = this;
-    bootbox.confirm('Are you sure you want to remove the bookmark "' + bookmark.Bookmark() + '"?', function(result) {
+    bootbox.confirm('Are you sure you want to remove the bookmark "' + bookmark.getDefaultName() + '"?', function(result) {
       if (result == true) {
         self.showLoading();
         BookmarkAction.deleteBookmark(bookmark);
       }
     });
-
   };
 
   onDeleteTag = (tag) => {
     BookmarkAction.deleteTagsForBookmark([tag], this.state.bookmark);
   };
+
+  onShowBookmarkNotesEditor = () => {
+    this.setState({
+      displayEditNotes: true
+    });
+  };
+
+  onHideBookmarkNotesEditor = () => {
+    this.setState({
+      displayEditNotes: false
+    });
+  };
+
+  // -- renderers
 
   renderBody() {
     const bookmark = this.state.bookmark;
@@ -109,39 +137,42 @@ export default class BookmarkPage extends AbstractComponent {
             <BookmarkEstimatedReadingTime readingTime={bookmark.reading_time} />
 
             <span type="button" className="btn btn-primary" onClick={this.onDeleteBookmark}>
-
-              <FontAwesome name="trash-o"
-                           size="2x"
-                           style={{ textShadow: '0 1px 0 rgba(0, 0, 0, 0.1)' }}
+              <FontAwesome
+                name="trash-o"
+                size="2x"
+                style={{ textShadow: '0 1px 0 rgba(0, 0, 0, 0.1)' }}
               />
-
             </span>
           </div>
         </div>
 
         <div className="col-xs-12">
+          {bookmark.preview_picture &&
+            <div className="bookmark__preview_picture">
+              <ImageLoader
+                src={bookmark.preview_picture}
+                className="bookmark__preview_picture__img"
+              />
+            </div>}
 
-          { bookmark.preview_picture &&
-          <div className="bookmark__preview_picture">
-            <img src={bookmark.preview_picture} className="bookmark__preview_picture__img" />
-          </div>}
-
-          { bookmark.description &&
-          <div>
-            <hr />
-            <p>{bookmark.description}</p>
-          </div>}
+          {bookmark.description &&
+            <div>
+              <hr />
+              <p>{bookmark.description}</p>
+            </div>}
 
           <div className="top-buffer-30">
             <BookmarkTagList bookmark={bookmark} deleteTag={this.onDeleteTag} />
           </div>
 
           <div className="top-buffer-30">
-            { bookmark.icon &&
-            <div className="bookmark__icon"><img src={bookmark.icon} /></div>
+            {bookmark.icon &&
+              <div className="bookmark__icon">
+                <ImageLoader src={bookmark.icon} />
+              </div>
             }
-            { !bookmark.icon &&
-            <div className="bookmarks__item_no_icon"></div>
+            {!bookmark.icon &&
+              <div className="bookmarks__item_no_icon"></div>
             }
 
             <a href={bookmark.url} target="_blank">
@@ -149,11 +180,12 @@ export default class BookmarkPage extends AbstractComponent {
             </a>
           </div>
 
-          { bookmark.notes &&
-          <div>
-            <hr />
-            <div dangerouslySetInnerHTML={{__html: notesHtml}}></div>
-          </div>}
+          {bookmark.notes &&
+            <div>
+              <hr />
+              <div dangerouslySetInnerHTML={{ __html: notesHtml }}></div>
+            </div>
+          }
 
           <hr />
 
@@ -161,8 +193,7 @@ export default class BookmarkPage extends AbstractComponent {
 
         <div className="col-xs-12">
           <BookmarkContent
-            content={bookmark.content}
-            type={bookmark.type}
+            bookmark={bookmark}
             urlQueryParams={this.props.location.query}
             changeUrl={this.onChangeQueryUrl}
           />
@@ -178,14 +209,28 @@ export default class BookmarkPage extends AbstractComponent {
     );
   }
 
+  renderNotesEditor() {
+    if (this.state.displayEditNotes) {
+      return (
+        <NotesEditor
+          bookmark={this.state.bookmark}
+          onClose={this.onHideEditNotes}
+        />
+      );
+    }
+
+    return (null);
+  }
+
   render() {
     return (
       <div id="bookmark" className="row">
         {this.renderLoading()}
         {this.renderErrorView()}
         {this.renderBody()}
+        {this.renderNotesEditor()}
       </div>
-    )
+    );
   }
 
 }

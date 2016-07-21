@@ -222,7 +222,7 @@ class Api {
   }
 
   static deleteBookmark(bookmark) {
-    request.delete(ApiEndpoints.BOOKMARKS + '/' + bookmarkId)
+    request.delete(ApiEndpoints.BOOKMARKS + '/' + bookmark.id)
       .set('Accept', 'application/json')
       .set('Authorization', _getAuthorizationHeader())
       .end(function(error, res) {

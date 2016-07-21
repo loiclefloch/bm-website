@@ -1,8 +1,19 @@
 import ApiObject from 'abstracts/ApiObject';
+import _ from 'lodash';
 
 import Tag from 'entities/Tag';
 
 export default class Bookmark extends ApiObject {
+
+  static Type = {
+    WEBSITE: 0, // default
+    ARTICLE: 1,
+    VIDEO: 2,
+    MUSIC: 3,
+    CODE: 4, // for example: github code page or project
+    GAME: 5,
+    SLIDE: 6
+  };
 
   title:String;
 
@@ -30,18 +41,8 @@ export default class Bookmark extends ApiObject {
 
   tags:Array<Tag> = [];
 
-  static Type = {
-    WEBSITE: 0, // default
-    ARTICLE: 1,
-    VIDEO: 2,
-    MUSIC: 3,
-    CODE: 4, // for example: github code page or project
-    GAME: 5,
-    SLIDE: 6
-  };
-
   postJsonAssignation(data:JSON) {
-    this.reading_time = parseInt(data.reading_time);
+    this.reading_time = parseInt(data.reading_time, 10);
 
     this.tags = [];
     _.each(data.tags, (tagData) => {
@@ -61,10 +62,12 @@ export default class Bookmark extends ApiObject {
     if (_.isEmpty(url)) {
       return '';
     }
-    if (url.indexOf('https://') === 0)
+    if (url.indexOf('https://') === 0) {
       return url.slice('https://'.length);
-    if (url.indexOf('http://') === 0)
+    }
+    if (url.indexOf('http://') === 0) {
       return url.slice('http://'.length);
+    }
     return url;
   }
 
@@ -78,12 +81,11 @@ export default class Bookmark extends ApiObject {
     // find & remove protocol (http, ftp, etc.) and get domain
     if (url.indexOf('://') > -1) {
       domain = url.split('/')[2];
-    }
-    else {
+    } else {
       domain = url.split('/')[0];
     }
 
-    //find & remove port number
+    // find & remove port number
     domain = domain.split(':')[0];
 
     return domain;
@@ -98,12 +100,16 @@ export default class Bookmark extends ApiObject {
     if (_.isEmpty(name)) {
       if (!_.isEmpty(this.title)) {
         name = this.title;
-      }
-      else {
+      } else {
         name = this.getPrettyUrl();
       }
     }
 
     return name;
   }
+
+  isYouTubeVideo():Boolean {
+    return this.url.search('www.youtube.com/watch?') !== -1;
+  }
+
 }

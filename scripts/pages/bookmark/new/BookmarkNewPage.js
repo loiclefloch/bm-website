@@ -1,8 +1,8 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 
 // -- constants
 import Events from 'constants/Events';
-import RoutingsEnum from 'constants/RoutingEnum';
+import RoutingEnum from 'constants/RoutingEnum';
 
 // -- utils
 import Constraint from 'utils/Constraint';
@@ -43,16 +43,13 @@ export default class BookmarkNewPage extends AbstractComponent {
     this.handleError(BookmarkStore.getErrors());
   };
 
-  onNotesChange = ()=> {
+  onNotesChange = () => {
     const notes = this.refs.notes.value;
-    console.log(notes);
     const converter = new showdown.Converter();
-    this.state.preview_html = converter.makeHtml(notes);
-    console.log(this.state.preview_html);
-    this.forceUpdate();
+    this.setState({ preview_html: converter.makeHtml(notes) });
   };
 
-  onSubmit = (e) => {
+  onSubmit = (e:Object) => {
     e.preventDefault();
 
     const name = this.refs.name.value;
@@ -62,16 +59,15 @@ export default class BookmarkNewPage extends AbstractComponent {
 
     // add prefix to url
     if (url.indexOf('http') === -1) {
-      url = "http://" + url;
+      url = `http://${url}`;
     }
 
     if (Constraint.isEmpty(url) || !Constraint.isUrl(url)) {
       this.handleError('Please enter an url', {
         // options
-        'timeout': 3 // seconds before hide the error
+        timeout: 3 // seconds before hide the error
       });
-    }
-    else {
+    } else {
       this.showLoading();
       BookmarkAction.createBookmark(name, url, tags, notes);
     }
@@ -93,23 +89,38 @@ export default class BookmarkNewPage extends AbstractComponent {
             <div className="col-xs-12 row">
 
               <div className="new_bookmark__url form-group col-sm-12 col-md-6">
-                <input type="text"
-                       className="form-control"
-                       placeholder="Url" name="url" ref="url" required />
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Url"
+                  name="url"
+                  ref="url"
+                  required
+                />
               </div>
 
               <div className="new_bookmark__name form-group col-sm-12 col-md-6">
-                <input type="text" className="form-control" placeholder="Name" name="name"
-                       ref="name" />
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Name"
+                  name="name"
+                  ref="name"
+                />
               </div>
 
               <div className="new_bookmark__notes form-group col-sm-12 col-md-6">
-                <textarea className="form-control" onChange={this.onNotesChange}
-                          placeholder="Notes" name="notes" ref="notes" />
+                <textarea
+                  className="form-control"
+                  onChange={this.onNotesChange}
+                  placeholder="Notes"
+                  name="notes"
+                  ref="notes"
+                />
               </div>
 
               <div className="new_bookmark__preview col-sm-hidden col-md-6">
-                <div dangerouslySetInnerHTML={{__html: this.state.preview_html}}></div>
+                <div dangerouslySetInnerHTML={{ __html: this.state.preview_html }}></div>
               </div>
             </div>
 
@@ -121,7 +132,6 @@ export default class BookmarkNewPage extends AbstractComponent {
         </div>
       </div>
     );
-
   }
 
 }

@@ -38,7 +38,7 @@
     // flow type
     "flowtype/require-parameter-type": 1,
     "flowtype/require-return-type": [
-      1,
+      0,
       "always",
       {
         "annotateUndefined": "never"

@@ -1,7 +1,7 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 
 // -- actions
-import SessionAction from 'actions/SessionAction';
+// import SessionAction from 'actions/SessionAction';
 import SettingsAction from 'actions/SettingsAction';
 
 // -- stores
@@ -33,36 +33,32 @@ export default class SettingsPage extends AbstractComponent {
     ServerStore.removeListener(Events.LOADING, this.hideLoading);
   }
 
-  onEditUserSubmit(username, pwd) {
+  onEditUserSubmit = (username:String, pwd:String) => {
     console.log(username, pwd);
+    bootbox.alert('not implemented yet');
   }
 
   onChange() {
     this.handleError(ServerStore.getErrors());
   }
 
-  onExport() {
+  onExport = () => {
     this.showLoading();
     SettingsAction.exportData();
   }
 
-  onDrop(files) {
-    console.log('Received files: ', files);
-
+  onDrop = (files) => {
     this.setState({
-      files: files
+      files
     });
 
     const file = files[0];
-
-    const self = this;
-    bootbox.confirm("Upload " + file.name + "?", function(result) {
-      if (result == true) {
-        self.showLoading();
+    bootbox.confirm(`Upload ${file.name} ?`, (result) => {
+      if (result === true) {
+        this.showLoading();
         SettingsAction.importData(file);
       }
     });
-
   }
 
   render() {
@@ -86,9 +82,8 @@ export default class SettingsPage extends AbstractComponent {
                 Export data
                 <br />
                 <FontAwesome
-                  name='cloud-download'
-                  size='5x'
-                  //spin
+                  name="cloud-download"
+                  size="5x"
                   style={{ textShadow: '0 1px 0 rgba(0, 0, 0, 0.1)' }}
                 />
               </button>
@@ -100,9 +95,8 @@ export default class SettingsPage extends AbstractComponent {
                   Import data
                   <br />
                   <FontAwesome
-                    name='cloud-upload'
-                    size='5x'
-                    //spin
+                    name="cloud-upload"
+                    size="5x"
                     style={{ textShadow: '0 1px 0 rgba(0, 0, 0, 0.1)' }}
                   />
                 </button>

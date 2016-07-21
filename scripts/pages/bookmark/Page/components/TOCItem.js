@@ -1,18 +1,9 @@
-import React, { PropTypes, Component } from 'react';
+import React from 'react';
 
-export  default class TOCItem extends Component {
-
-  static propTypes = {
-    link: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    level: PropTypes.string.isRequired
-  };
-
-  render() {
-    return (
-      <li className={this.props.level}>
-        <a href={this.props.link}> {this.props.title} </a>
-      </li>
-    )
-  }
+export default function TOCItem({link, title, level}) {
+  return (
+    <li className={level}>
+      <a href={link}> {title} </a>
+    </li>
+  );
 }

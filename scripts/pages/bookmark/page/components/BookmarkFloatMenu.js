@@ -1,5 +1,8 @@
 import React, { PropTypes, Component } from 'react';
 
+// -- actions
+import BookmarkAction from 'actions/BookmarkAction';
+
 // -- entities
 import Bookmark from 'entities/Bookmark';
 
@@ -15,8 +18,12 @@ export default class BookmarkFloatMenu extends Component {
     }, 'fast');
   }
 
-  onEditNotes() {
+  onEditNotes = () => {
+    BookmarkAction.showNotesEditor();
+  }
 
+  onHideEditNotes = () => {
+    BookmarkAction.hideNotesEditor();
   }
 
   onDisplayTableOfContent() {

@@ -1,4 +1,5 @@
 import Diacritics from 'utils/Diacritics';
+import _ from 'lodash';
 
 export default {
 
@@ -41,7 +42,12 @@ export default {
   },
 
   searchStringOn(search:String, value:String) {
-    // to lower case, replace accents by the corresponding letter and then remove all non-alpha characters.
+    if (_.isEmpty(search) || _.isEmpty(value)) {
+      return false;
+    }
+
+    // to lower case, replace accents by the corresponding letter and then
+    // remove all non-alpha characters.
     const searchFormatted = Diacritics.replaceDiacritics(search.toLowerCase()).replace(/\W/g, '');
     const valueFormatted = Diacritics.replaceDiacritics(value.toLowerCase()).replace(/\W/g, '');
 

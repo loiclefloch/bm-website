@@ -5,7 +5,11 @@ export default {
   },
 
   Image: {
-    LOADING_BAR: '/public/img/loading-bars.svg'
+    LOADING_BAR: '/public/img/loading-bars.svg',
+
+    PLACEHOLDER: '/public/img/draughtboard.png', // image loader placeholder
+
+    ICON_LIST_COMPACT: '/public/img/icon_list_compact.png'
   },
 
   /**
@@ -30,7 +34,7 @@ export default {
 
   Tag: {
     DEFAULT_LIMIT: 100, // numbers of tags to display on tags page
-    DEFAULT_COLOR: "#c3c3c3",
+    DEFAULT_COLOR: '#c3c3c3',
     DEFAULT_COLORS: [
       '#468966',
       '#FFF0A5',

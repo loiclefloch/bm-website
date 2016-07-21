@@ -1,4 +1,4 @@
-import React, { PropTypes, Component } from 'react';
+import React from 'react';
 
 // -- utils
 
@@ -6,32 +6,24 @@ import React, { PropTypes, Component } from 'react';
 import RoutingEnum from 'constants/RoutingEnum';
 
 // -- entities
-import Bookmark from 'entities/Bookmark';
+// import Bookmark from 'entities/Bookmark';
 
 // -- views
 import Link from 'components/Link';
 
-export default class BookmarkItemCompact extends Component {
+export default function BookmarkItemCompact({ bookmark }) {
+  // TODO: cut default name after ~ 150 chars
+  return (
+    <div className="bookmarks__item bookmarks__item_list_type_compact bookmark col-xs-12">
 
-  static propTypes = {
-    bookmark: PropTypes.objectOf(Bookmark).isRequired
-  };
-
-  render() {
-    const bookmark:Bookmark = this.props.bookmark;
-
-    return (
-      <div className="bookmarks__item bookmarks__item_list_type_compact bookmark col-xs-12">
-
-        <div className="text-left">
-          <h3 className="bookmarks__item_title">
-            <Link to={RoutingEnum.BOOKMARK} params={ {bookmarkId: bookmark.id} }>
-              {bookmark.getDefaultName()}
-            </Link>
-          </h3>
-        </div>
-
+      <div className="text-left">
+        <h3 className="bookmarks__item_title">
+          <Link to={RoutingEnum.BOOKMARK} params={{ bookmarkId: bookmark.id }}>
+            {bookmark.getDefaultName()}
+          </Link>
+        </h3>
       </div>
-    );
-  }
+
+    </div>
+  );
 }

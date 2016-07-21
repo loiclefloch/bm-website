@@ -113,7 +113,7 @@ export default class BookmarkAction {
       bookmark
     });
 
-    Api.searchBookmarks(bookmark);
+    Api.deleteBookmark(bookmark);
   }
 
   static receiveDeletedBookmark(bookmark:Bookmark) {
@@ -156,5 +156,18 @@ export default class BookmarkAction {
     });
   }
 
+  // -- view
+
+  static showNotesEditor() {
+    AppDispatcher.handleServerAction({
+      type: ActionTypes.SHOW_BOOKMARK_NOTES_EDITOR
+    });
+  }
+
+  static hideNotesEditor() {
+    AppDispatcher.handleServerAction({
+      type: ActionTypes.HIDE_BOOKMARK_NOTES_EDITOR
+    });
+  }
 
 }

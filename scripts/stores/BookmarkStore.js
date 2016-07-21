@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import BMEventEmitter from 'abstracts/BMEventEmitter';
 
 import AppDispatcher from '../dispatcher/AppDispatcher';
@@ -67,10 +68,9 @@ class BookmarkStore extends BMEventEmitter {
 
   clearSearch() {
     if (!_.isEmpty(_searchBookmarksList)) {
-      _searchPaging = PAGING_OBJECT;
-      _searchBookmarksList = [];
-      _search = SEARCH_DEFAULT;
-      this.emitEvent(Events.CHANGE);
+      _searchPaging = new Paging();
+      _searchBookmarksList = null;
+      _search = new BookmarkSearch();
     }
   }
 
@@ -106,6 +106,9 @@ bookmarkStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
       break;
 
     case ActionTypes.RECEIVE_CREATED_BOOKMARK:
+      if (_.isNull(_bookmarksList)) {
+        _bookmarksList = new bookmarksList();
+      }
       _bookmarksList.unshift(action.bookmark);
       _errors = null;
 
@@ -163,9 +166,17 @@ bookmarkStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
     case ActionTypes.RECEIVE_BOOKMARK_TAGS:
       _bookmark = action.bookmark;
       _errors = [];
-      
+
       bookmarkStoreInstance.emitEvent(Events.TAGS_CHANGE_FOR_BOOKMARK);
       bookmarkStoreInstance.emitEvent(Events.LOADING_TAGS_CHANGE);
+      break;
+
+    case ActionTypes.SHOW_BOOKMARK_NOTES_EDITOR:
+      bookmarkStoreInstance.emitEvent(Events.ON_SHOW_BOOKMARK_NOTES_EDITOR);
+      break;
+
+    case ActionTypes.HIDE_BOOKMARK_NOTES_EDITOR:
+      bookmarkStoreInstance.emitEvent(Events.ON_HIDE_BOOKMARK_NOTES_EDITOR);
       break;
   }
 

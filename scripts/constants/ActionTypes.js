@@ -50,14 +50,18 @@ const ActionTypes = keyMirror({
   RECEIVE_CREATED_TAG_FAILURE: null,
 
   REMOVE_BOOKMARK_TAGS: null,
-  
+
   RECEIVE_REMOVED_TAG: null,
 
   EXPORT_DATA: null,
   RECEIVE_EXPORT_DATA: null,
 
   IMPORT_DATA: null,
-  RECEIVE_IMPORT_DATA: null
+  RECEIVE_IMPORT_DATA: null,
+
+  // -- view bookmark
+  SHOW_BOOKMARK_NOTES_EDITOR: null,
+  HIDE_BOOKMARK_NOTES_EDITOR: null
 });
 
 export default ActionTypes;
