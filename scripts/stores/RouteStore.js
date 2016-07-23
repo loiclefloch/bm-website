@@ -64,14 +64,8 @@ routeStoreInstance.dispatchToken = AppDispatcher.register((payload:Object) => {
       }
       break;
 
-    // Redirect to the bookmark page after create a bookmark.
-    case ActionTypes.RECEIVE_CREATED_BOOKMARK:
-      const bookmark:Bookmark = action.bookmark;
-      RouteAction.redirectTo(RoutingEnum.BOOKMARK, {'bookmarkId': bookmark.id} );
-      break;
-
     case ActionTypes.RECEIVE_REMOVED_BOOKMARK:
-      routeStoreInstance.redirectTo(RoutingEnum.TAGS_LIST);
+      routeStoreInstance.redirectTo(RoutingEnum.BOOKMARKS_LIST);
       break;
 
     default:

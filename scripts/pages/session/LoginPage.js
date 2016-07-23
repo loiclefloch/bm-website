@@ -34,7 +34,7 @@ export default class LoginPage extends AbstractComponent {
   }
 
   onChange = () => {
-    this.handleError(SessionStore.getErrors());
+    this.handleError(SessionStore.getError());
   };
 
   onSubmit = (e) => {

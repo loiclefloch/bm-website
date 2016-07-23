@@ -33,7 +33,7 @@ export default class AddTag extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!nextProps.tagsList.equals(this.props.tagsList)
+    if ((!_.isNull(nextProps.tagsList) && !nextProps.tagsList.equals(this.props.tagsList))
      || !nextProps.bookmark.equals(this.props.bookmark)) {
       this.setState({
         loading: false

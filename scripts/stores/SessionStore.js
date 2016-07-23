@@ -1,4 +1,5 @@
 import BMEventEmitter from 'abstracts/BMEventEmitter';
+import _ from 'lodash';
 
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import ApiConstants from 'constants/ApiConstants';
@@ -18,7 +19,7 @@ import User from 'entities/User';
 // Load an access token from the session storage, you might want to implement
 // a 'remember me' using localSgorage
 let _user = null;
-let _errors = [];
+let _error = [];
 let _accessToken = null;
 
 /**
@@ -67,7 +68,7 @@ class SessionStore extends BMEventEmitter {
     return user;
   }
 
-  getErrors() {
+  getError() {
     return _errors;
   }
 
@@ -103,20 +104,15 @@ sessionStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
         // Token will always live in the session, so that the API can grab it with no hassle
         SessionUtils.saveObjectToSession(SessionItemsKeys.ACCESS_TOKEN, _accessToken);
       }
-      if (action.errors) {
-        _errors = action.errors;
-      }
       sessionStoreInstance.emitEvent(Events.LOGIN_SUCCESS);
       sessionStoreInstance.emitEvent(Events.LOADING);
       break;
 
     case ActionTypes.LOGOUT:
       _accessToken = null;
-      _username = null;
       localStorage.removeItem(SessionItemsKeys.ACCESS_TOKEN);
       localStorage.removeItem(SessionItemsKeys.USER);
-      sessionStoreInstance.emitEvent(Events.CHANGE);
-
+      sessionStoreInstance.emitEvent(Events.LOGOUT);
 
 //      RouteAction.redirect( 'login' );
       break;

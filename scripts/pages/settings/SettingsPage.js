@@ -20,16 +20,22 @@ import EditUserForm from './components/EditUserForm';
 export default class SettingsPage extends AbstractComponent {
 
   componentDidMount() {
-    this.handleError(ServerStore.getErrors());
+    this.handleError(ServerStore.getError());
 
-    ServerStore.addListener(Events.CHANGE, this.onChange);
+    // ServerStore.addListener(Events.UPDATE_SETTINGS_SUCCESS, this.onChange);
+    // ServerStore.addListener(Events.LOAD_SETTINGS_SUCCESS, this.onChange);
+    // ServerStore.addListener(Events.LOAD_SETTINGS_ERROR, this.); TODO
+    // ServerStore.addListener(Events.UPDATE_SETTINGS_ERROR, this.); TODO
     ServerStore.addListener(Events.LOADING, this.hideLoading);
 
     $.material.init();
   }
 
   componentWillUnmount() {
-    ServerStore.removeListener(Events.CHANGE, this.onChange);
+    // ServerStore.removeListener(Events.UPDATE_SETTINGS_SUCCESS, this.onChange);
+    // ServerStore.removeListener(Events.LOAD_SETTINGS_SUCCESS, this.onChange);
+    // ServerStore.removeListener(Events.LOAD_SETTINGS_ERROR, this.); TODO
+    // ServerStore.removeListener(Events.UPDATE_SETTINGS_ERROR, this.); TODO
     ServerStore.removeListener(Events.LOADING, this.hideLoading);
   }
 
@@ -38,9 +44,9 @@ export default class SettingsPage extends AbstractComponent {
     bootbox.alert('not implemented yet');
   }
 
-  onChange() {
-    this.handleError(ServerStore.getErrors());
-  }
+  // onChange() {
+    // this.handleError(ServerStore.getError());
+  // }
 
   onExport = () => {
     this.showLoading();

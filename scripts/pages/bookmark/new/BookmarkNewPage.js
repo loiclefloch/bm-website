@@ -10,6 +10,7 @@ import Constraint from 'utils/Constraint';
 // -- stores
 import SessionStore from 'stores/SessionStore';
 import BookmarkStore from 'stores/BookmarkStore';
+import RouteStore from 'stores/RouteStore';
 
 // -- actions
 import BookmarkAction from 'actions/BookmarkAction';
@@ -29,18 +30,25 @@ export default class BookmarkNewPage extends AbstractComponent {
     if (!SessionStore.isLoggedIn()) {
       RouteAction.redirect(RoutingEnum.LOGIN);
     }
+
+    BookmarkStore.addListener(Events.CREATED_BOOKMARK_SUCCESS, this.onCreated);
     BookmarkStore.addListener(Events.RECEIVE_CREATED_BOOKMARK_FAILURE, this.onError);
     BookmarkStore.addListener(Events.LOADING, this.hideLoading);
   }
 
   componentWillUnmount() {
+    BookmarkStore.removeListener(Events.CREATED_BOOKMARK_SUCCESS, this.onCreated);
     BookmarkStore.removeListener(Events.RECEIVE_CREATED_BOOKMARK_FAILURE, this.onError);
     BookmarkStore.removeListener(Events.LOADING, this.hideLoading);
   }
 
+  onCreated = () => {
+    RouteStore.redirectTo(RoutingEnum.BOOKMARK, { bookmarkId: BookmarkStore.getNewBookmark().id });
+  };
+
   onError = () => {
-    console.log('onError', BookmarkStore.getErrors());
-    this.handleError(BookmarkStore.getErrors());
+    console.log('onError', BookmarkStore.getError());
+    this.handleError(BookmarkStore.getError());
   };
 
   onNotesChange = () => {

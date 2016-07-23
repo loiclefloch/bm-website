@@ -49,8 +49,8 @@ export default class BookmarkListPage extends AbstractComponent {
     }
 
     BookmarkStore.addListener(Events.LOAD_BOOKMARKS_SUCCESS, this.onChange);
-    BookmarkStore.addListener(Events.RECEIVE_BOOKING_SEARCH_SUCCESS, this.onChange);
-    BookmarkStore.addListener(Events.TAGS_CHANGE_FOR_BOOKMARK, this.onChange);
+    BookmarkStore.addListener(Events.RECEIVE_BOOKMARK_SEARCH_SUCCESS, this.onChange);
+    BookmarkStore.addListener(Events.UPDATE_BOOKMARK_SUCCESS, this.onChange);
     BookmarkStore.addListener(Events.LOADING, this.hideLoading);
 
     TagStore.addListener(Events.LOAD_TAGS_SUCCESS, this.handleLoadTagsSuccess);
@@ -58,7 +58,7 @@ export default class BookmarkListPage extends AbstractComponent {
     // do not call if we came back on the page. We need to call if there is only 1 bookmarks
     // because when we create a new bookmark, we are redirect to this page,
     // but the bookmark list is not loaded if we haven't went there before
-    if (_.isNull(this.state.bookmarksList) || this.state.bookmarks.bookmarksList === 1) {
+    if (_.isNull(this.state.bookmarksList) || this.state.bookmarksList.bookmarks.length <= 1) {
       this.showLoading();
       BookmarkAction.loadBookmarks();
     }
@@ -68,9 +68,9 @@ export default class BookmarkListPage extends AbstractComponent {
 
   componentWillUnmount() {
     BookmarkStore.removeListener(Events.LOAD_BOOKMARKS_SUCCESS, this.onChange);
-    BookmarkStore.removeListener(Events.RECEIVE_BOOKING_SEARCH_SUCCESS, this.onChange);
+    BookmarkStore.removeListener(Events.RECEIVE_BOOKMARK_SEARCH_SUCCESS, this.onChange);
     BookmarkStore.removeListener(Events.LOADING, this.hideLoading);
-    BookmarkStore.removeListener(Events.TAGS_CHANGE_FOR_BOOKMARK, this.onChange);
+    BookmarkStore.removeListener(Events.UPDATE_BOOKMARK_SUCCESS, this.onChange);
 
     TagStore.removeListener(Events.LOAD_TAGS_SUCCESS, this.handleLoadTagsSuccess);
   }

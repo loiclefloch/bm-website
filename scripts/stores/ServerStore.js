@@ -11,7 +11,7 @@ let _serverError = {};
 
 class ServerStore extends BMEventEmitter {
 
-  getErrors() {
+  getError() {
     return _errors;
   }
 
@@ -33,7 +33,7 @@ serverStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
   switch (action.type) {
 
     case ActionTypes.RECEIVE_EXPORT_DATA:
-      serverStoreInstance.emitEvent(Events.CHANGE);
+      serverStoreInstance.emitEvent(Events.LOAD_SETTINGS_SUCCESS);
       serverStoreInstance.emitEvent(Events.LOADING);
       break;
 
@@ -42,7 +42,7 @@ serverStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
         _errors = action.errors;
       }
 
-      serverStoreInstance.emitEvent(Events.CHANGE);
+      serverStoreInstance.emitEvent(Events.LOAD_SETTINGS_SUCCESS);
       serverStoreInstance.emitEvent(Events.LOADING);
       break;
 

@@ -34,7 +34,7 @@ export default class TagPage extends AbstractComponent {
       RouteAction.redirect(RoutingEnum.LOGIN);
     }
 
-    TagStore.addListener(Events.ON_LOADING_TAG, this.onChange);
+    TagStore.addListener(Events.GET_TAG_SUCCESS, this.onChange);
     TagStore.addListener(Events.LOADING, this.hideLoading);
 
     this.showLoading();
@@ -42,9 +42,8 @@ export default class TagPage extends AbstractComponent {
   }
 
   componentWillUnmount() {
-    TagStore.removeListener(Events.ON_LOADING_TAG, this.onChange);
+    TagStore.removeListener(Events.GET_TAG_SUCCESS, this.onChange);
     TagStore.removeListener(Events.LOADING, this.hideLoading);
-//    TagStore.clearTag();
   }
 
   onChange = () => {
@@ -56,13 +55,13 @@ export default class TagPage extends AbstractComponent {
   onDeleteTag = (e) => {
     e.preventDefault();
     const tag = this.state.tag;
-    const self = this;
-    bootbox.confirm("Are you sure you want to remove the tag " + tag.name + "?", function(result) {
-      if (result == true) {
-        self.showLoading();
-        TagAction.deleteTag(tag);
-      }
-    });
+    bootbox.confirm(`Are you sure you want to remove the tag ${tag.name} ?`,
+      (result) => {
+        if (result == true) {
+          this.showLoading();
+          TagAction.deleteTag(tag);
+        }
+      });
   };
 
   renderBody() {
@@ -82,15 +81,14 @@ export default class TagPage extends AbstractComponent {
           bookmarkListType={ViewConstants.BookmarkListType.SIMPLE}
         />)
       ;
-    }
-    else if (this.state.isLoading) {
+    } else if (this.state.isLoading) {
       bookmarkTable = (<NoBookmarkForTag />);
     }
 
     const separatorStyle = {
-      "height": '15px',
-      "width": '100%',
-      "background": tag.color
+      height: '15px',
+      width: '100%',
+      background: tag.color
     };
 
     return (
@@ -103,7 +101,10 @@ export default class TagPage extends AbstractComponent {
           <div className="top-buffer-20" style={separatorStyle}></div>
 
           <div className="tag__action_bar top-buffer-50">
-            <a href="#" onClick={this.onDeleteTag}>
+            <a
+              href="#"
+              onClick={this.onDeleteTag}
+            >
               <i className="fa fa-trash" />
             </a>
           </div>

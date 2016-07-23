@@ -24,7 +24,7 @@ import Tag from 'entities/Tag';
 import BookmarksList from 'entities/BookmarksList';
 import TagsList from 'entities/TagsList';
 
-function _getErrors(text) {
+function _getError(text) {
   let errorMsgs = ['Something went wrong, please try again'];
   const json = JSON.parse(text);
   if (json) {
@@ -80,12 +80,12 @@ function handleResponse(error, res, success, failure) {
     }
     else {
       console.log('get api errors');
-      const errors = _getErrors(res.text);
+      const errors = _getError(res.text);
       console.error('[API]', errors);
       console.log('js error', error);
 
       //if (error) {
-      //    const errors = _getErrors(error);
+      //    const errors = _getError(error);
       //  failure(errors);
       //}
 
@@ -111,13 +111,13 @@ class Api {
         let errors = null;
         // do not call handleResponse due to different handling of 401.
         if (error) {
-          errors = _getErrors(error);
+          errors = _getError(error);
         }
         else if (res.statusCode == 401 || res.statusCode == 400) {
           const json = JSON.parse(res.text);
           let errors = [json.error_description];
           if (!errors) {
-            errors = _getErrors(res.text);
+            errors = _getError(res.text);
           }
           ServerAction.receiveLoginError(errors);
         } else {

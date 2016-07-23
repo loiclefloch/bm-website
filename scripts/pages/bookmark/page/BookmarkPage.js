@@ -43,9 +43,10 @@ export default class BookmarkPage extends AbstractComponent {
       RouteAction.redirect(RoutingEnum.LOGIN);
     }
 
-    BookmarkStore.addListener(Events.CHANGE, this.onBookmarkChange);
+    BookmarkStore.addListener(Events.GET_BOOKMARK_SUCCESS, this.onBookmarkChange);
+    BookmarkStore.addListener(Events.UPDATE_BOOKMARK_SUCCESS, this.onBookmarkChange);
+
     BookmarkStore.addListener(Events.LOADING, this.hideLoading);
-    BookmarkStore.addListener(Events.TAGS_CHANGE_FOR_BOOKMARK, this.onBookmarkChange);
 
     BookmarkStore.addListener(Events.ON_SHOW_BOOKMARK_NOTES_EDITOR, this.onShowBookmarkNotesEditor);
     BookmarkStore.addListener(Events.ON_HIDE_BOOKMARK_NOTES_EDITOR, this.onHideBookmarkNotesEditor);
@@ -54,9 +55,10 @@ export default class BookmarkPage extends AbstractComponent {
   }
 
   componentWillUnmount() {
-    BookmarkStore.removeListener(Events.CHANGE, this.onBookmarkChange);
+    BookmarkStore.removeListener(Events.GET_BOOKMARK_SUCCESS, this.onBookmarkChange);
+    BookmarkStore.removeListener(Events.UPDATE_BOOKMARK_SUCCESS, this.onBookmarkChange);
+
     BookmarkStore.removeListener(Events.LOADING, this.hideLoading);
-    BookmarkStore.removeListener(Events.TAGS_CHANGE_FOR_BOOKMARK, this.onBookmarkChange);
 
     BookmarkStore.removeListener(Events.ON_SHOW_BOOKMARK_NOTES_EDITOR,
        this.onShowBookmarkNotesEditor
@@ -65,8 +67,6 @@ export default class BookmarkPage extends AbstractComponent {
     BookmarkStore.removeListener(Events.ON_HIDE_BOOKMARK_NOTES_EDITOR,
        this.onHideBookmarkNotesEditor
     );
-
-    BookmarkStore.clearBookmark();
   }
 
   // -- events functions
@@ -76,7 +76,7 @@ export default class BookmarkPage extends AbstractComponent {
       bookmark: BookmarkStore.getBookmark()
     });
 
-    this.handleError(BookmarkStore.getErrors());
+    this.handleError(BookmarkStore.getError());
   };
 
   onDeleteBookmark = (e) => {

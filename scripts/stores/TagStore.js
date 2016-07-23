@@ -10,7 +10,7 @@ import TagsList from 'entities/TagsList';
 import Tag from 'entities/Tag';
 
 // -- vars
-let _errors = null;
+let _error = null;
 let _tagsList:TagsList = null;
 let _tag:Tag = null;
 
@@ -20,20 +20,16 @@ class TagStore extends BMEventEmitter {
     return _tagsList;
   }
 
-  clearTag() {
-    _tag = null;
-  }
-
   getTag():Tag {
     return _tag;
   }
 
-  getErrors() {
-    return _errors;
+  getError() {
+    return _error;
   }
 
-  removeErrors() {
-    _errors = [];
+  clearError() {
+    _error = null;
   }
 
 }
@@ -61,8 +57,9 @@ tagStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
 
     case ActionTypes.RECEIVE_CREATED_TAG:
       _tagsList.unshift(action.tag);
-      _errors = [];
-      tagStoreInstance.emitEvent(Events.CREATE);
+      tagStoreInstance.clearError();
+
+      tagStoreInstance.emitEvent(Events.CREATED_TAG_SUCCESS);
       tagStoreInstance.emitEvent(Events.LOADING);
       break;
 
@@ -70,38 +67,25 @@ tagStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
       _tagsList = _.remove(_tagsList, (n) => {
         return n.id === action.tag.id;
       });
-      _errors = [];
-      tagStoreInstance.emitEvent(Events.REMOVE);
 
-      tagStoreInstance.emitEvent(Events.CHANGE);
+      tagStoreInstance.clearError();
+      tagStoreInstance.emitEvent(Events.REMOVE_TAG_SUCCESS);
+
       tagStoreInstance.emitEvent(Events.LOADING);
       break;
 
     case ActionTypes.RECEIVE_CREATED_TAG_FAILURE:
-      if (action.json) {
-        _errors = [];
-      }
-      if (action.errors) {
-        _errors = action.errors;
-      }
-      tagStoreInstance.emitEvent(Events.CHANGE);
+      _error = action.error;
+      tagStoreInstance.emitEvent(Events.CREATED_TAG_ERROR);
       tagStoreInstance.emitEvent(Events.LOADING);
       break;
 
     case ActionTypes.RECEIVE_TAG:
       _tag = action.tag;
-      _errors = [];
 
-      tagStoreInstance.emitEvent(Events.ON_LOADING_TAG);
-      tagStoreInstance.emitEvent(Events.LOADING);
-      break;
+      tagStoreInstance.clearError();
 
-    case ActionTypes.ERROR_RESPONSE:
-      const json = JSON.parse(action.json);
-      _errors = [
-        json.error
-      ];
-      tagStoreInstance.emitEvent(Events.CHANGE);
+      tagStoreInstance.emitEvent(Events.GET_TAG_SUCCESS);
       tagStoreInstance.emitEvent(Events.LOADING);
       break;
 

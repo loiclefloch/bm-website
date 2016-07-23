@@ -84,7 +84,7 @@ module.exports = {
     'react/jsx-handler-names': [
       WARNING,
       {
-        eventHandlerPrefix: 'handle',
+        eventHandlerPrefix: 'on',
         eventHandlerPropPrefix: 'on',
       }
     ],

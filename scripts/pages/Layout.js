@@ -24,15 +24,6 @@ export default class Layout extends Component {
    */
   state = getStateFromStores();
 
-
-  componentDidMount() {
-//    SessionStore.addListener(Events.CHANGE, this.onChange);
-  }
-
-  componentWillUnmount() {
-//    SessionStore.removeListener(Events.CHANGE, this.onChange);
-  }
-
   /**
    * called when the SessionStore emits a new change.
    * @private
