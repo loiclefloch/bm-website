@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const gulp = require('gulp'),
   gulpFilter = require('gulp-filter'),
   babelify = require('babelify'),
@@ -38,6 +40,15 @@ const p = {
   }
 };
 
+function handleErrors() {
+  var args = Array.prototype.slice.call(arguments);
+  notify.onError({
+    title: "Compile Error",
+    message: "<%= error.message %>"
+  }).apply(this, args);
+  this.emit('end'); // Keep gulp from hanging on this task
+}
+
 gulp.task('clean', function(cb) {
   return del(['public/dist'], cb);
 });
@@ -59,14 +70,13 @@ gulp.task('watchify', function() {
   const bundler = watchify(browserify(p.jsx, p.watchifyArgs).transform(babelify));
 
   function rebundle() {
-    const updateStart = Date.now();
     return bundler
       .bundle()
-      .on('error', notify.onError())
+      .on('error', handleErrors)
       .pipe(source(p.bundle))
       .pipe(buffer())
-      // .pipe(sourcemaps.init({loadMaps: true})) // Extract the inline sourcemaps
-      // .pipe(sourcemaps.write('./map')) // Set folder for sourcemaps to output to
+      .pipe(sourcemaps.init({ loadMaps: true })) // Extract the inline sourcemaps
+      .pipe(sourcemaps.write('./map')) // Set folder for sourcemaps to output to
       .pipe(gulp.dest(p.distJs))
       .pipe(reload({ stream: true }));
   }

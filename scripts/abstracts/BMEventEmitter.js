@@ -7,6 +7,7 @@ export default class BMEventEmitter extends EventEmitter {
   }
 
   emitEvent(event:String) {
+    console.log(`[Event]${event}`);
     this.emit(event);
   }
 

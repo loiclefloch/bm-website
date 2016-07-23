@@ -3,6 +3,9 @@ import React, { PropTypes, Component } from 'react';
 // -- constants
 import ViewConstants from 'constants/ViewConstants';
 
+// -- entities
+import Bookmark from 'entities/Bookmark';
+
 // -- views
 import BookmarkItemSimple from './BookmarkItemSimple';
 import BookmarkItemBlock from './BookmarkItemBlock';
@@ -11,7 +14,7 @@ import BookmarkItemCompact from './BookmarkItemCompact';
 export default class BookmarksTable extends Component {
 
   static propTypes = {
-    bookmarks: PropTypes.array.isRequired,
+    bookmarks: PropTypes.arrayOf(Bookmark).isRequired,
     bookmarkListType: PropTypes.number.isRequired
   };
 
@@ -22,13 +25,19 @@ export default class BookmarksTable extends Component {
     this.props.bookmarks.forEach((bookmark) => {
       switch (this.props.bookmarkListType) {
         case ViewConstants.BookmarkListType.SIMPLE:
-          rows.push(<BookmarkItemSimple bookmark={bookmark} key={bookmark.id} />);
+          rows.push(
+            <BookmarkItemSimple bookmark={bookmark} key={bookmark.id} />
+          );
           break;
         case ViewConstants.BookmarkListType.BLOCK:
-          rows.push(<BookmarkItemBlock bookmark={bookmark} key={bookmark.id} />);
+          rows.push(
+            <BookmarkItemBlock bookmark={bookmark} key={bookmark.id} />
+          );
           break;
         case ViewConstants.BookmarkListType.COMPACT:
-          rows.push(<BookmarkItemCompact bookmark={bookmark} key={bookmark.id} />);
+          rows.push(
+            <BookmarkItemCompact bookmark={bookmark} key={bookmark.id} />
+          );
           break;
         default:
       }
@@ -42,4 +51,3 @@ export default class BookmarksTable extends Component {
   }
 
 }
-

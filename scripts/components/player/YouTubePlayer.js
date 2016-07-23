@@ -32,7 +32,7 @@ import _ from 'lodash';
 * @property {Object} configuration Configuration parameters to be passed to the YouTube Player (known as `playerVars` in the YouTube Player API for iframe Embeds, https://developers.google.com/youtube/player_parameters?playerVersion=HTML5#Parameters).
 */
 class ReactYoutubePlayer extends React.Component {
-  
+
   static State = {
     UNSTARTED: 'unstarted',
     ENDED: 'ended',

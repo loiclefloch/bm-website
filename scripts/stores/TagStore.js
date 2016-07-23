@@ -1,4 +1,5 @@
 import BMEventEmitter from 'abstracts/BMEventEmitter';
+import _ from 'lodash';
 
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import Events from 'constants/Events';
@@ -35,10 +36,6 @@ class TagStore extends BMEventEmitter {
     _errors = [];
   }
 
-  getSearch():TagSearch {
-    return _search;
-  }
-
 }
 
 const tagStoreInstance = new TagStore();
@@ -52,12 +49,12 @@ tagStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
       if (_.isNull(_tagsList)) {
         _tagsList = action.tagsList;
       } else {
-        _tagsList = _.unionWith(_tagsList.tags, action.tagsList, (a, b) => {
+        _tagsList = _.unionWith(_tagsList.tags, action.tagsList, (a:Tag, b:Tag) => {
           return a.id === b.id;
         });
       }
 
-      tagStoreInstance.emitEvent(Events.CHANGE);
+      tagStoreInstance.emitEvent(Events.LOAD_TAGS_SUCCESS);
       tagStoreInstance.emitEvent(Events.LOADING);
       break;
 
@@ -70,8 +67,8 @@ tagStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
       break;
 
     case ActionTypes.RECEIVE_REMOVED_TAG:
-      _tagsList = _.remove(_tagsList, function(n) {
-        return n.id == action.tag.id;
+      _tagsList = _.remove(_tagsList, (n) => {
+        return n.id === action.tag.id;
       });
       _errors = [];
       tagStoreInstance.emitEvent(Events.REMOVE);
@@ -108,8 +105,8 @@ tagStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
       tagStoreInstance.emitEvent(Events.LOADING);
       break;
 
+    default:
   }
-
 });
 
 export default tagStoreInstance;

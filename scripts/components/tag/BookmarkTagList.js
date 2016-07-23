@@ -30,15 +30,22 @@ export default class BookmarkTagList extends Component {
   };
 
   componentDidMount() {
-    TagStore.addListener(Events.CHANGE, this.onChange);
-
+    /*
+     * Do not add the listener if we have a tags list because we add too many listeners
+     * in case of a list.
+     */
     if (_.isNull(this.state.tagsList)) { // do not call if we came back on the page
+      console.log('add listener');
+      TagStore.addListener(Events.LOAD_TAGS_SUCCESS, this.onChange);
       TagAction.loadTags();
+      this.shouldRemoveListener = true;
     }
   }
 
   componentWillUnmount() {
-    TagStore.removeListener(Events.CHANGE, this.onChange);
+    if (this.shouldRemoveListener) {
+      TagStore.removeListener(Events.LOAD_TAGS_SUCCESS, this.onChange);
+    }
   }
 
   onChange = () => {

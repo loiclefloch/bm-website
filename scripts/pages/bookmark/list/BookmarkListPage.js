@@ -4,10 +4,12 @@ import _ from 'lodash';
 // -- stores
 import BookmarkStore from 'stores/BookmarkStore';
 import SessionStore from 'stores/SessionStore';
+import TagStore from 'stores/TagStore';
 
 // -- actions
 import BookmarkAction from 'actions/BookmarkAction';
 import RouteAction from 'actions/RouteAction';
+import TagAction from 'actions/TagAction';
 
 // -- constants
 import Events from 'constants/Events';
@@ -36,7 +38,9 @@ export default class BookmarkListPage extends AbstractComponent {
     search: BookmarkStore.getSearch(),
     paging: BookmarkStore.getPaging(),
     searchPaging: BookmarkStore.getSearchPaging(),
-    bookmarkListType: SessionStore.getBookmarkListType()
+    bookmarkListType: SessionStore.getBookmarkListType(),
+
+    tagsList: null
   };
 
   componentDidMount() {
@@ -46,7 +50,10 @@ export default class BookmarkListPage extends AbstractComponent {
 
     BookmarkStore.addListener(Events.LOAD_BOOKMARKS_SUCCESS, this.onChange);
     BookmarkStore.addListener(Events.RECEIVE_BOOKING_SEARCH_SUCCESS, this.onChange);
+    BookmarkStore.addListener(Events.TAGS_CHANGE_FOR_BOOKMARK, this.onChange);
     BookmarkStore.addListener(Events.LOADING, this.hideLoading);
+
+    TagStore.addListener(Events.LOAD_TAGS_SUCCESS, this.handleLoadTagsSuccess);
 
     // do not call if we came back on the page. We need to call if there is only 1 bookmarks
     // because when we create a new bookmark, we are redirect to this page,
@@ -55,17 +62,28 @@ export default class BookmarkListPage extends AbstractComponent {
       this.showLoading();
       BookmarkAction.loadBookmarks();
     }
+
+    TagAction.loadTags();
   }
 
   componentWillUnmount() {
     BookmarkStore.removeListener(Events.LOAD_BOOKMARKS_SUCCESS, this.onChange);
     BookmarkStore.removeListener(Events.RECEIVE_BOOKING_SEARCH_SUCCESS, this.onChange);
     BookmarkStore.removeListener(Events.LOADING, this.hideLoading);
+    BookmarkStore.removeListener(Events.TAGS_CHANGE_FOR_BOOKMARK, this.onChange);
+
+    TagStore.removeListener(Events.LOAD_TAGS_SUCCESS, this.handleLoadTagsSuccess);
   }
 
   componentDidUpdate() {
     $.material.init();
   }
+
+  handleLoadTagsSuccess = () => {
+    this.setState({
+      tagsList: TagStore.getTagsList()
+    });
+  };
 
   onChange = () => {
     this.setState({
@@ -113,30 +131,30 @@ export default class BookmarkListPage extends AbstractComponent {
     let loadMoreView = (null);
     let bookmarks = [];
 
-    if (_.isNull(this.state.bookmarksList)) {
+    if (_.isNull(this.state.bookmarksList) || _.isNull(this.state.tagsList)) {
       return this.renderOnLoadingContent();
     }
 
     if (_.isEmpty(this.state.search.name)) {
-      bookmarks = this.state.bookmarksList;
+      bookmarks = this.state.bookmarksList.bookmarks;
       loadMoreView = (
         <LoadMore
           paging={this.state.paging}
-          loadMore={this.onLoadMore}
+          onLoadMore={this.onLoadMore}
         />
       );
     } else {
       // Use search Page
       if (!_.isEmpty(this.state.searchBookmarks)) {
-        bookmarks = this.state.searchBookmarks;
+        bookmarks = this.state.searchBookmarks.bookmarks;
         loadMoreView = (
           <LoadMore
             paging={this.state.searchPaging}
-            loadMore={this.onLoadMoreSearch}
+            onLoadMore={this.onLoadMoreSearch}
           />
         );
       } else { // wait for api search, manually search on displayed Page.
-        _.each(this.state.bookmarksList, (bookmark:Bookmark) => {
+        _.each(this.state.bookmarksList.bookmarks, (bookmark:Bookmark) => {
           const name = bookmark.getDefaultName();
           const filterText = this.state.search.name;
 
@@ -171,8 +189,8 @@ export default class BookmarkListPage extends AbstractComponent {
         />
 
         {/*
-         <Fab />
-         */}
+          <Fab />
+        */}
         <div className="row">
 
           <div className="col-sm-12 col-md-9 col-md-offset-2">

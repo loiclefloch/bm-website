@@ -85,10 +85,11 @@ bookmarkStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
   switch (action.type) {
 
     case ActionTypes.RECEIVE_BOOKMARKS:
-
-      _bookmarksList = _.unionWith(_bookmarksList, action.bookmarksList.bookmarks, (a, b) => {
-        return a.id == b.id;
-      });
+      if (_.isNull(_bookmarksList)) {
+        _bookmarksList = action.bookmarksList;
+      } else {
+        _bookmarksList.mergeWithBookmarksList(action.bookmarksList.bookmarks);
+      }
       _paging = action.bookmarksList.paging;
       _errors = null;
 
@@ -107,7 +108,7 @@ bookmarkStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
 
     case ActionTypes.RECEIVE_CREATED_BOOKMARK:
       if (_.isNull(_bookmarksList)) {
-        _bookmarksList = new bookmarksList();
+        _bookmarksList = new BookmarksList();
       }
       _bookmarksList.unshift(action.bookmark);
       _errors = null;
@@ -126,6 +127,7 @@ bookmarkStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
 
     case ActionTypes.RECEIVE_BOOKMARK:
       _bookmark = action.bookmark;
+      _bookmarksList.update(action.bookmark);
       _errors = [];
 
       bookmarkStoreInstance.emitEvent(Events.CHANGE);
@@ -141,14 +143,9 @@ bookmarkStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
 
     case ActionTypes.RECEIVE_REMOVED_BOOKMARK:
       if (action.bookmark) {
-        _bookmarksList = _.remove(_bookmarksList, function(n) {
-          return n.id == action.bookmark.id;
-        });
+        _bookmarksList.remove(action.bookmark.id);
         _errors = [];
         bookmarkStoreInstance.emitEvent(Events.REMOVE);
-      }
-      if (action.errors) {
-        _errors = action.errors;
       }
       bookmarkStoreInstance.emitEvent(Events.CHANGE);
       bookmarkStoreInstance.emitEvent(Events.LOADING);
@@ -165,10 +162,11 @@ bookmarkStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
 
     case ActionTypes.RECEIVE_BOOKMARK_TAGS:
       _bookmark = action.bookmark;
+      _bookmarksList.update(action.bookmark);
+
       _errors = [];
 
       bookmarkStoreInstance.emitEvent(Events.TAGS_CHANGE_FOR_BOOKMARK);
-      bookmarkStoreInstance.emitEvent(Events.LOADING_TAGS_CHANGE);
       break;
 
     case ActionTypes.SHOW_BOOKMARK_NOTES_EDITOR:
@@ -178,8 +176,9 @@ bookmarkStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
     case ActionTypes.HIDE_BOOKMARK_NOTES_EDITOR:
       bookmarkStoreInstance.emitEvent(Events.ON_HIDE_BOOKMARK_NOTES_EDITOR);
       break;
-  }
 
+    default:
+  }
 });
 
 export default bookmarkStoreInstance;

@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 
 // -- store
 import TagStore from 'stores/TagStore';
@@ -38,7 +39,7 @@ export default class TagListPage extends AbstractComponent {
       RouteAction.redirect(RoutingEnum.LOGIN);
     }
 
-    TagStore.addListener(Events.CHANGE, this.onChange);
+    TagStore.addListener(Events.LOAD_TAGS_SUCCESS, this.onChange);
     TagStore.addListener(Events.LOADING, this.hideLoading);
 
     if (_.isNull(this.state.tagsList)) { // do not call if we came back on the page
@@ -51,7 +52,7 @@ export default class TagListPage extends AbstractComponent {
 
   componentWillUnmount() {
     TagStore.removeErrors();
-    TagStore.removeListener(Events.CHANGE, this.onChange);
+    TagStore.removeListener(Events.LOAD_TAGS_SUCCESS, this.onChange);
     TagStore.removeListener(Events.LOADING, this.hideLoading);
   }
 
@@ -77,15 +78,13 @@ export default class TagListPage extends AbstractComponent {
 
     if (_.isEmpty(this.state.searchQuery)) {
       tags = this.state.tagsList.tags;
-    }
-    else {
+    } else {
       // Use searchQuery Page
       _.each(this.state.tagsList.tags, (tag) => {
         if (ViewUtils.searchStringOn(this.state.searchQuery, tag.name)) {
           tags.push(tag);
         }
       });
-
     }
 
     const tagsList:TagsList = new TagsList();
@@ -97,12 +96,9 @@ export default class TagListPage extends AbstractComponent {
           tagsList={tagsList}
         />
       );
-    }
-    else if (_.isEmpty(tags) && this.state.loading == false) {
+    } else if (_.isEmpty(tags) && this.state.loading === false) {
       tagTable = (<NoTags />);
     }
-
-    console.log('tags', tags);
 
     return (
       <div>
@@ -140,6 +136,5 @@ export default class TagListPage extends AbstractComponent {
         {this.renderBody()}
       </div>
     );
-
   }
 }

@@ -9,6 +9,8 @@ const Events = keyMirror({
 
   RECEIVE_BOOKING_SEARCH_SUCCESS: null,
 
+  LOAD_TAGS_SUCCESS: null,
+
   LOADING: null,
 
   CREATE: null,

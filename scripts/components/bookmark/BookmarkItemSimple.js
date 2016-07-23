@@ -28,7 +28,7 @@ export default class BookmarkItemSimple extends Component {
   }
 
   onDeleteTag = (tag) => {
-    BookmarkAction.deleteTagsForBookmark([tag], this.state.bookmark);
+    BookmarkAction.deleteTagsForBookmark([tag], this.props.bookmark);
   };
 
   render() {
