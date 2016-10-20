@@ -88,7 +88,7 @@ bookmarkStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
       if (_.isNull(_bookmarksList)) {
         _bookmarksList = action.bookmarksList;
       } else {
-        _bookmarksList.mergeWithBookmarksList(action.bookmarksList.bookmarks);
+        _bookmarksList.mergeWithBookmarksList(action.bookmarksList);
       }
       _paging = action.bookmarksList.paging;
 
