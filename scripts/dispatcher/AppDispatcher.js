@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 import { Dispatcher } from 'flux';
 
 import PayloadSources from 'constants/PayloadSources';
@@ -12,6 +10,11 @@ import PayloadSources from 'constants/PayloadSources';
  */
 class AppDispatcher extends Dispatcher {
 
+  /**
+   * A bridge function between the actions create by an Api call and the dispatcher, marking
+   * the action as a view action.
+   * @param  {object} action The data coming from the API.
+   */
   handleServerAction(action) {
     const payload = {
       source: PayloadSources.SERVER_ACTION,
@@ -19,13 +22,18 @@ class AppDispatcher extends Dispatcher {
     };
 
     if (this.isDispatching()) {
-      console.error('is dispatching could not dispatch', action);
+      console.error(`[ACTION] ${action.type}`, 'is dispatching could not dispatch', action);
     } else {
-      console.log('dispatch server', action);
+      console.info(`[ACTION] ${action.type}`, action);
       this.dispatch(payload);
     }
   }
 
+  /**
+   * A bridge function between the action create by views and the dispatcher, marking the action
+   * as a view action.
+   * @param  {object} action The data coming from the view.
+   */
   handleViewAction(action) {
     const payload = {
       source: PayloadSources.VIEW_ACTION,
@@ -33,9 +41,9 @@ class AppDispatcher extends Dispatcher {
     };
 
     if (this.isDispatching()) {
-      console.error('is dispatching could not dispatch', action);
+      console.error(`[${action.type}]`, 'is dispatching could not dispatch', action);
     } else {
-      console.log('dispatch view', action);
+      console.info(`[${action.type}]`, action);
       this.dispatch(payload);
     }
   }

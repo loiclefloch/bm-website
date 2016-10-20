@@ -40,7 +40,7 @@ export default class NotesEditor extends Component {
     return (
       <div className="note_editor">
 
-        <div className="col-xs-12 col-sm-6 editor_area">
+        <div className="col-xs-12 col-sm-12 editor_area">
           <textarea
             className="form-control editor"
             value={this.notes}
@@ -51,13 +51,13 @@ export default class NotesEditor extends Component {
           />
         </div>
 
-        <div className="col-xs-12 col-sm-6">
+        {/* <div className="col-xs-12 col-sm-6">
           <div
-            className="preview"
-            dangerouslySetInnerHTML={{ __html: notesHtml }}
+          className="preview"
+          dangerouslySetInnerHTML={{ __html: notesHtml }}
           >
           </div>
-        </div>
+        </div>*/}
       </div>
     );
   }

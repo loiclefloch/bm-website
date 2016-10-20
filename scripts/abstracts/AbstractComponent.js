@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import _ from 'lodash';
 
 import OnLoadingContentView from 'components/OnLoadingContentView';
@@ -9,7 +9,7 @@ import ViewConstants from 'constants/ViewConstants';
 // -- views
 import ErrorNotice from 'components/ErrorNotice';
 
-class AbstractComponent extends Component {
+export default class AbstractComponent extends Component {
 
   state = {};
 
@@ -78,10 +78,10 @@ class AbstractComponent extends Component {
   };
 
   renderErrorView() {
-    if (!_.isNull(this.state.errors)) {
+    if (!_.isNull(this.state.apiError)) {
       return (
         <ErrorNotice
-          errors={this.state.errors}
+          apiError={this.state.apiError}
           onHide={this.onHideError}
         />
       );
@@ -106,5 +106,3 @@ class AbstractComponent extends Component {
   };
 
 }
-
-export default AbstractComponent;

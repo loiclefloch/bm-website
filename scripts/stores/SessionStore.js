@@ -15,11 +15,12 @@ import ActionTypes from 'constants/ActionTypes';
 
 // -- entities
 import User from 'entities/User';
+import ApiError from 'entities/ApiError';
 
 // Load an access token from the session storage, you might want to implement
 // a 'remember me' using localSgorage
 let _user = null;
-let _error = [];
+let _apiError = [];
 let _accessToken = null;
 
 /**
@@ -68,8 +69,8 @@ class SessionStore extends BMEventEmitter {
     return user;
   }
 
-  getError() {
-    return _errors;
+  getError():ApiError {
+    return _apiError;
   }
 
   saveBookmarkListType(type:Number) {
@@ -105,7 +106,11 @@ sessionStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
         SessionUtils.saveObjectToSession(SessionItemsKeys.ACCESS_TOKEN, _accessToken);
       }
       sessionStoreInstance.emitEvent(Events.LOGIN_SUCCESS);
-      sessionStoreInstance.emitEvent(Events.LOADING);
+      break;
+
+    case ActionTypes.LOGIN_RESPONSE_FAILURE:
+      _apiError = action.apiError;
+      sessionStoreInstance.emitEvent(Events.LOGIN_FAILURE);
       break;
 
     case ActionTypes.LOGOUT:

@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 
 // -- actions
 import SessionAction from 'actions/SessionAction';
@@ -24,16 +24,21 @@ export default class LoginPage extends AbstractComponent {
       RouteAction.redirectTo(RoutingEnum.HOME);
     }
 
-    SessionStore.addListener(Events.LOGIN_SUCCESS, this.onChange);
-    SessionStore.addListener(Events.LOADING, this.hideLoading);
+    SessionStore.addListener(Events.LOGIN_SUCCESS, this.onLoginSuccess);
+    SessionStore.addListener(Events.LOGIN_FAILURE, this.onLoginError);
   }
 
   componentWillUnmount() {
-    SessionStore.removeListener(Events.LOGIN_SUCCESS, this.onChange);
-    SessionStore.removeListener(Events.LOADING, this.hideLoading);
+    SessionStore.removeListener(Events.LOGIN_SUCCESS, this.onLoginSuccess);
+    SessionStore.removeListener(Events.LOGIN_FAILURE, this.onLoginError);
   }
 
-  onChange = () => {
+  onLoginSuccess = () => {
+
+  };
+
+  onLoginError = () => {
+    this.hideLoading();
     this.handleError(SessionStore.getError());
   };
 

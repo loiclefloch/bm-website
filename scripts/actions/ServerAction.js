@@ -8,13 +8,14 @@ import Bookmark from 'entities/Bookmark';
 import BookmarksList from 'entities/BookmarksList';
 import Tag from 'entities/Tag';
 import TagsList from 'entities/TagsList';
+import ApiError from 'entities/ApiError';
 
 export default class ServerAction {
 
   static receiveError(json) {
     AppDispatcher.handleServerAction({
       type: ActionTypes.FAILURE_RESPONSE,
-      json: json,
+      json,
       errors: null
     });
   }
@@ -26,24 +27,24 @@ export default class ServerAction {
     });
   }
 
-  static receiveLoginError(error) {
+  static receiveLoginError(apiError:ApiError) {
     AppDispatcher.handleServerAction({
       type: ActionTypes.LOGIN_RESPONSE_FAILURE,
-      error
+      apiError
     });
   }
 
   static receiveExport(json) {
     AppDispatcher.handleServerAction({
       type: ActionTypes.RECEIVE_EXPORT_DATA,
-      json: json
+      json
     });
   }
 
   static receiveImport(json) {
     AppDispatcher.handleServerAction({
       type: ActionTypes.RECEIVE_IMPORT_DATA,
-      json: json
+      json
     });
   }
 

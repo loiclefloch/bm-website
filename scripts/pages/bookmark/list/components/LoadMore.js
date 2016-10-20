@@ -7,11 +7,11 @@ export default class LoadMore extends Component {
   static propTypes = {
     paging: PropTypes.objectOf(Paging).isRequired,
 
-    loadMore: PropTypes.func.isRequired
+    onLoadMore: PropTypes.func.isRequired
   };
 
   onLoadMore = () => {
-    this.props.loadMore();
+    this.props.onLoadMore();
     this.isLoading = true;
     this.forceUpdate();
   };

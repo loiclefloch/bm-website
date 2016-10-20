@@ -131,7 +131,7 @@ export default class ImageLoader extends Component {
   renderDefaultPreloader() {
     return (
       <div className="image_loader__preloader">
-        <i className="fa fa-spinner" />
+        <i className="fa fa-spinner fa-spin" />
       </div>
     );
   }

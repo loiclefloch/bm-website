@@ -88,7 +88,13 @@ module.exports = {
         eventHandlerPropPrefix: 'on',
       }
     ],
-    'no-case-declarations': OFF, // http://eslint.org/docs/rules/no-case-declarations
+    'no-case-declarations': // http://eslint.org/docs/rules/no-case-declarations
+    [
+      OFF
+    ],
+    'no-console': [
+      OFF
+    ],
     'react/sort-comp': [
       /*
        *  https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/sort-comp.md

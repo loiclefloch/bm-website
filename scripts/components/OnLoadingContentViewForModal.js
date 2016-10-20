@@ -44,7 +44,7 @@ class OnLoadingContentViewForModal extends Component {
 
   render() {
     let message = (
-      <i className="fa fa-spinner" />
+      <i className="fa fa-spinner fa-spin" />
     );
 
     if (this.props.displayMessage === false) {

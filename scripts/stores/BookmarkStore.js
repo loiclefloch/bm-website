@@ -95,7 +95,6 @@ bookmarkStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
       bookmarkStoreInstance.clearError();
 
       bookmarkStoreInstance.emitEvent(Events.LOAD_BOOKMARKS_SUCCESS);
-      bookmarkStoreInstance.emitEvent(Events.LOADING);
       break;
 
     case ActionTypes.RECEIVE_SEARCH_BOOKMARKS:
@@ -104,7 +103,6 @@ bookmarkStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
       _error = null;
 
       bookmarkStoreInstance.emitEvent(Events.RECEIVE_BOOKMARK_SEARCH_SUCCESS);
-      bookmarkStoreInstance.emitEvent(Events.LOADING);
       break;
 
     case ActionTypes.RECEIVE_CREATED_BOOKMARK:
@@ -124,7 +122,6 @@ bookmarkStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
       _error = action.error;
 
       bookmarkStoreInstance.emitEvent(Events.RECEIVE_CREATED_BOOKMARK_FAILURE);
-      bookmarkStoreInstance.emitEvent(Events.LOADING);
       break;
 
     case ActionTypes.RECEIVE_BOOKMARK:
@@ -138,14 +135,12 @@ bookmarkStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
       bookmarkStoreInstance.clearError();
 
       bookmarkStoreInstance.emitEvent(Events.GET_BOOKMARK_SUCCESS);
-      bookmarkStoreInstance.emitEvent(Events.LOADING);
       break;
 
     case ActionTypes.RECEIVE_BOOKMARK_FAILURE:
       _error = action.error;
 
       bookmarkStoreInstance.emitEvent(Events.GET_BOOKMARK_ERROR);
-      bookmarkStoreInstance.emitEvent(Events.LOADING);
       break;
 
     case ActionTypes.RECEIVE_REMOVED_BOOKMARK:
@@ -153,7 +148,6 @@ bookmarkStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
       bookmarkStoreInstance.clearError();
 
       bookmarkStoreInstance.emitEvent(Events.REMOVE_BOOKMARK_SUCCESS);
-      bookmarkStoreInstance.emitEvent(Events.LOADING);
       break;
 
     case ActionTypes.RECEIVE_BOOKMARK_TAGS:

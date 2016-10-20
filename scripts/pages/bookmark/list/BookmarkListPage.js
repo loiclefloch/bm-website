@@ -51,7 +51,6 @@ export default class BookmarkListPage extends AbstractComponent {
     BookmarkStore.addListener(Events.LOAD_BOOKMARKS_SUCCESS, this.onChange);
     BookmarkStore.addListener(Events.RECEIVE_BOOKMARK_SEARCH_SUCCESS, this.onChange);
     BookmarkStore.addListener(Events.UPDATE_BOOKMARK_SUCCESS, this.onChange);
-    BookmarkStore.addListener(Events.LOADING, this.hideLoading);
 
     TagStore.addListener(Events.LOAD_TAGS_SUCCESS, this.handleLoadTagsSuccess);
 
@@ -69,7 +68,6 @@ export default class BookmarkListPage extends AbstractComponent {
   componentWillUnmount() {
     BookmarkStore.removeListener(Events.LOAD_BOOKMARKS_SUCCESS, this.onChange);
     BookmarkStore.removeListener(Events.RECEIVE_BOOKMARK_SEARCH_SUCCESS, this.onChange);
-    BookmarkStore.removeListener(Events.LOADING, this.hideLoading);
     BookmarkStore.removeListener(Events.UPDATE_BOOKMARK_SUCCESS, this.onChange);
 
     TagStore.removeListener(Events.LOAD_TAGS_SUCCESS, this.handleLoadTagsSuccess);
@@ -91,7 +89,8 @@ export default class BookmarkListPage extends AbstractComponent {
       searchBookmarks: BookmarkStore.getSearchBookmarksList(),
       search: BookmarkStore.getSearch(),
       paging: BookmarkStore.getPaging(),
-      searchPaging: BookmarkStore.getSearchPaging()
+      searchPaging: BookmarkStore.getSearchPaging(),
+      loading: false
     });
   };
 

@@ -2,25 +2,24 @@ import React, { PropTypes, Component } from 'react';
 
 import _ from 'lodash';
 
-// TODO: Refactor: Replace TimerMixin
-//import TimerMixin from 'react-timer-mixin';
+import ApiError from 'entities/ApiError';
 
 export default class ErrorNotice extends Component {
 
   static propTypes = {
-    errors: PropTypes.array,
+    apiError: PropTypes.objectOf(ApiError),
     options: PropTypes.object,
     onHide: PropTypes.func.isRequired
   };
 
   static defaultProps = {
-    errors: [],
+    apiError: null,
     options: {},
     onHide: () => {}
   };
 
   state = {
-    _displayError: !_.isNull(this.props.errors)
+    _displayError: !_.isNull(this.props.apiError)
   };
 
 
@@ -39,6 +38,10 @@ export default class ErrorNotice extends Component {
   };
 
   render() {
+    if (_.isNull(this.props.apiError)) {
+      return (null);
+    }
+
     // handle options like timeout
     if (_.isInteger(this.props.options.timeout) && this.props.options.timeout !== 0) {
       this.setTimeout(() => {
@@ -53,16 +56,11 @@ export default class ErrorNotice extends Component {
 
     return (
       <div className="error_notice">
-        {this.props.errors.map(function(error, index) {
-          return (
-            <div
-              className="error_notice__error alert alert-danger"
-              key={"error-"+index}
-            >
-              {error}
-            </div>
-          );
-        })}
+        <div
+          className="error_notice__error alert alert-danger"
+        >
+          {this.props.apiError.message}
+        </div>
       </div>
     );
   }

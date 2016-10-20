@@ -51,7 +51,7 @@ export default class TagItem extends Component {
       >
 
         {this.state.isDeleting === true &&
-        <i className="fa fa-spinner" />
+          <i className="fa fa-spinner fa-spin" />
         }
         {tag.name}
 

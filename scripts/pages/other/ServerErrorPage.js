@@ -1,7 +1,8 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import _ from 'lodash';
 
-import SessionAction from 'actions/SessionAction';
-import SessionStore from 'stores/SessionStore';
+// import SessionAction from 'actions/SessionAction';
+// import SessionStore from 'stores/SessionStore';
 import ServerStore from 'stores/ServerStore';
 import Config from 'constants/Config';
 
@@ -35,14 +36,14 @@ export default class ServerErrorPage extends AbstractComponent {
           method: 'POST',
           header: {
             'Content-Type': 'application/json',
-            'Blah': 'application/json',
-            'Authorization': 'r9r8hf87fb321f731f347387f37gf347'
+            Blah: 'application/json',
+            Authorization: 'r9r8hf87fb321f731f347387f37gf347'
           },
           _data: {
             username: 'username',
             email: 'email',
-            'url': 'github.com',
-            'name': 'test name'
+            url: 'github.com',
+            name: 'test name'
           }
         }
       };
@@ -65,9 +66,9 @@ export default class ServerErrorPage extends AbstractComponent {
 
 
     const requestInfo = {
-      'method': errorData.req.method,
-      'url': errorData.req.url,
-      'data': [],
+      method: errorData.req.method,
+      url: errorData.req.url,
+      data: [],
       headers: []
     };
 
@@ -168,18 +169,18 @@ export default class ServerErrorPage extends AbstractComponent {
                 #Request info:<br />
                 ------------------------------------------------------------<br />
 
-                [{requestInfo['method']}] {requestInfo['url']}<br /><br />
+                [{requestInfo.method}] {requestInfo.url}<br /><br />
 
                 ------------------------------<br />
                 ## headers<br />
                 ------------------------------<br />
 
-                {requestInfo['headers']}<br />
+                {requestInfo.headers}<br />
 
                 ------------------------------<br />
                 ## data<br />
                 ------------------------------<br />
-                {requestInfo['data']}<br />
+                {requestInfo.data}<br />
               </pre>
             </div>
 

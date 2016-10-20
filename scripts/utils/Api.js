@@ -23,73 +23,75 @@ import Bookmark from 'entities/Bookmark';
 import Tag from 'entities/Tag';
 import BookmarksList from 'entities/BookmarksList';
 import TagsList from 'entities/TagsList';
+import ApiError from 'entities/ApiError';
 
-function _getError(text) {
-  let errorMsgs = ['Something went wrong, please try again'];
-  const json = JSON.parse(text);
-  if (json) {
-    if (!_.isEmpty(json['errors'])) {
-      errorMsgs = json['errors'];
-    } else if (!_.isEmpty(json['error'])) {
-      errorMsgs = [json['error']];
-    }
-    else if (!_.isEmpty(json['message'])) {
-      errorMsgs = [json['message']];
-    }
-    else {
-      errorMsgs = [
-        'Unknown error'
-      ]
+/**
+ * Parse the HTTP response body to create an ApiError object.
+ * @param responseBody The HTTP response body.
+ * @returns {ApiError} A populate ApiError object.
+ */
+function formatError(responseBody:String):ApiError {
+  const error = new ApiError(0, 'Something went wrong, please try again');
+
+  if (!_.isNull(responseBody) && !_.isUndefined(responseBody)) {
+    try {
+      const json = JSON.parse(responseBody);
+
+      if (json) {
+        if (!_.isEmpty(json.code)) {
+          error.setCode(json.code);
+          error.setMessage(json.message);
+        }
+      }
+    } catch (syntaxError) { // SyntaxError exception
+      error.setDetail(responseBody);
     }
   }
-  return errorMsgs;
+
+  return error;
 }
 
+/**
+ * @param statusCode the response status code
+ * @returns {boolean} True if the status code indicate a successful response
+ */
+function isSuccessResponse(statusCode:Number):Boolean {
+  return statusCode >= 200 && statusCode < 300;
+}
 
 function _getAuthorizationHeader() {
   return 'Bearer ' + SessionStore.getAccessToken();
 }
 
 function handleResponse(error, res, success, failure) {
-
-  if (res.statusCode >= 200 && res.statusCode < 300) {
-
+  if (_.isUndefined(res)) { // no internet connexion / no response / 500
+    failure(new ApiError(Constants.Error.NO_INTERNET, 'No internet connectivity'));
+  } else if (isSuccessResponse(res.statusCode)) {
     if (!_.isEmpty(res.text)) {
-      success(JSON.parse(res.text));
+      try {
+        success(JSON.parse(res.text));
+      } catch (e) {
+        success(res.text);
+      }
+    } else {
+      success({});
     }
-    else {
-      success([]);
-    }
-  }
-  else {
-    if (res.statusCode == 404) {
-      console.error('[API] Not found');
-      RouteAction.redirect(RoutingEnum.NOT_FOUND);
-    }
-    else if (res.statusCode == 401) {
-      BM.loading.hide();
-      console.log('[API] 401');
+  } else {
+    if (res.statusCode === 401) {
+      console.error('[API] 401, redirect to login');
       SessionStore.logout();
       // RouteAction.redirect(RoutingEnum.LOGIN);
-    }
-    else if (res.statusCode == 500) {
+    } else if (res.statusCode === 500) {
       console.log(res);
       console.error('[API] Error 500', res.text);
       ServerStore.setServerError(res); // send wall request
       RouteAction.redirect(RoutingEnum.SERVER_ERROR);
-    }
-    else {
+      if (!Config.IS_DEV) {
+        RouteAction.redirect(RoutingEnum.SERVER_ERROR);
+      }
+    } else {
       console.log('get api errors');
-      const errors = _getError(res.text);
-      console.error('[API]', errors);
-      console.log('js error', error);
-
-      //if (error) {
-      //    const errors = _getError(error);
-      //  failure(errors);
-      //}
-
-      failure(errors);
+      failure(formatError(res.text));
     }
   }
 }
@@ -98,40 +100,37 @@ class Api {
 
   static login(username, password) {
     request.post(ApiEndpoints.LOGIN)
-      .set('Accept', 'application/x-www-form-urlencoded')
-      .send(
-        {
-          grant_type: Config.Auth.grant_type,
-          client_id: Config.Auth.client_id,
-          client_secret: Config.Auth.client_secret,
-          username: username,
-          password: password
-        })
-      .end(function(error, res) {
-        let errors = null;
+    .set('Accept', 'application/x-www-form-urlencoded')
+    .send(
+      {
+        grant_type: Config.Auth.grant_type,
+        client_id: Config.Auth.client_id,
+        client_secret: Config.Auth.client_secret,
+        username,
+        password
+      })
+      .end((error, res) => {
+        console.log(error, res);
         // do not call handleResponse due to different handling of 401.
         if (error) {
-          errors = _getError(error);
-        }
-        else if (res.statusCode == 401 || res.statusCode == 400) {
-          const json = JSON.parse(res.text);
-          let errors = [json.error_description];
-          if (!errors) {
-            errors = _getError(res.text);
-          }
-          ServerAction.receiveLoginError(errors);
+          ServerAction.receiveLoginError(formatError(error));
+        } else if (res.statusCode === 401 || res.statusCode === 400) {
+          const apiError:ApiError = new ApiError();
+          apiError.message = res.data.error_description;
+          ServerAction.receiveLoginError(apiError);
         } else {
-          let json = JSON.parse(res.text);
+          const json = JSON.parse(res.text);
           SessionStore.saveUsername(username);
           ServerAction.receiveLogin(json);
         }
-      });
+      }
+    );
   }
 
   /*
-   * ==================================================================================================
+   * ===============================================================================================
    *      BOOKMARK
-   * ==================================================================================================
+   * ===============================================================================================
    */
 
   static loadBookmarks(page, limit) {

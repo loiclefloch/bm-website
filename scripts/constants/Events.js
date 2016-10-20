@@ -2,6 +2,7 @@ import keyMirror from 'keymirror';
 
 const Events = keyMirror({
   LOGIN_SUCCESS: null,
+  LOGIN_FAILURE: null,
 
   // -- bookmark
   LOAD_BOOKMARKS_SUCCESS: null,

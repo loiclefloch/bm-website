@@ -3,8 +3,8 @@ import _ from 'lodash';
 
 import Constants from 'constants/Constants';
 import WebApiUtils from 'utils/Api';
-import BookmarkStore from 'stores/BookmarkStore';
-import Events from 'constants/Events';
+// import BookmarkStore from 'stores/BookmarkStore';
+// import Events from 'constants/Events';
 
 // -- entities
 import TagsList from 'entities/TagsList';
@@ -34,11 +34,53 @@ export default class AddTag extends Component {
 
   componentWillReceiveProps(nextProps) {
     if ((!_.isNull(nextProps.tagsList) && !nextProps.tagsList.equals(this.props.tagsList))
-     || !nextProps.bookmark.equals(this.props.bookmark)) {
+    || !nextProps.bookmark.equals(this.props.bookmark)) {
       this.setState({
         loading: false
       });
     }
+  }
+
+  updateTagQuery = (query) => {
+    this.setState({
+      tagQuery: query
+    });
+  }
+
+  getTagsToPropose(tagQuery) {
+    let tagsToPropose = [];
+
+    // -- Create list of tags that can be add for the bookmark.
+    if (!_.isNull(this.props.tagsList) && !_.isEmpty(this.props.bookmark.tags)) {
+      // We propose all the tags minus the tags already set on the bookmark.
+      tagsToPropose = _.differenceWith(this.props.tagsList.tags, this.props.bookmark.tags,
+        (value, other) => {
+          return value.id === other.id;
+        }
+      );
+
+      // -- sort by name
+      tagsToPropose = _.sortBy(tagsToPropose, ['asc'], (tag) => {
+        return tag.name.toLowerCase();
+      });
+    }
+
+    // filter by tag query
+    if (tagQuery.length > 0) {
+      tagsToPropose = _.remove(tagsToPropose.slice(), (tag) => {
+        // case insensitive + remove all spaces
+        const query = tagQuery.replace(/\s+/g, '').toLowerCase();
+        const tagName = tag.name.replace(/\s+/g, '').toLowerCase();
+        return tagName.indexOf(query) !== -1;
+      });
+    } else {
+      // when the page hasn't load yet, tagsList can be undefined.
+      if (_.isUndefined(this.props.tagsList)) {
+        tagsToPropose = [];
+      }
+    }
+
+    return tagsToPropose;
   }
 
   handleHideLoading = () => {
@@ -77,9 +119,10 @@ export default class AddTag extends Component {
     if (this.state.isCreationTagMode === false) {
       this.handleShowLoading();
 
-      // Add the tags
-      WebApiUtils.postTagsToBookmark(this.state.selectedTags, this.props.bookmark);
-
+      if (!_.isEmpty(this.state.selectedTags)) {
+        // Add the tags
+        WebApiUtils.postTagsToBookmark(this.state.selectedTags, this.props.bookmark);
+      }
       this.onToggleMenu();
 
       // clear the search. TODO: remove when the selectedTags is update after the API call to
@@ -126,9 +169,9 @@ export default class AddTag extends Component {
 
   onSearchSubmit = (e) => {
     /**
-     * On enter, we toggle the first tag of the displayed list (getTagsToPropose).
-     * If there is no tag, we create it.
-     */
+    * On enter, we toggle the first tag of the displayed list (getTagsToPropose).
+    * If there is no tag, we create it.
+    */
     if (e.key === 'Enter') {
       const query = this.refs.searchTagInput.value;
 
@@ -147,7 +190,7 @@ export default class AddTag extends Component {
     const query = this.refs.searchTagInput.value;
 
     const newTag = {
-       // used for react "key" prop. It's not a valid API id (begin with __ to be clear)
+      // used for react "key" prop. It's not a valid API id (begin with __ to be clear)
       id: `__${new Date().getTime()}`,
       color: this.state.newTagColor,
       name: query // We use the current query as tag name.
@@ -160,50 +203,6 @@ export default class AddTag extends Component {
     this.updateTagQuery('');
   }
 
-  updateTagQuery = (query) => {
-    this.setState({
-      tagQuery: query
-    });
-  }
-
-  getTagsToPropose(tagQuery) {
-    let tagsToPropose = [];
-
-    // -- Create list of tags that can be add for the bookmark.
-    if (!_.isNull(this.props.tagsList) && !_.isEmpty(this.props.bookmark.tags)) {
-      // We propose all the tags minus the tags already set on the bookmark.
-      tagsToPropose = _.differenceWith(this.props.tagsList.tags, this.props.bookmark.tags,
-        (value, other) => {
-          return value.id === other.id;
-        }
-      );
-
-      // -- sort by name
-      tagsToPropose = _.sortBy(tagsToPropose, ['asc'], (tag) => {
-        return tag.name.toLowerCase();
-      });
-    }
-
-    // filter by tag query
-    if (tagQuery.length > 0) {
-      tagsToPropose = _.remove(tagsToPropose.slice(), (tag) => {
-        // case insensitive + remove all spaces
-        const query = tagQuery.replace(/\s+/g, '').toLowerCase();
-        const tagName = tag.name.replace(/\s+/g, '').toLowerCase();
-        return tagName.indexOf(query) !== -1;
-      });
-    } else {
-      // when the page hasn't load yet, tagsList can be undefined.
-      if (_.isUndefined(this.props.tagsList)) {
-        tagsToPropose = [];
-      }
-    }
-
-    return tagsToPropose;
-  }
-
-  // TODO: replace '+' by loading when add the tag(s) / loading the tags
-
   render() {
     const selectedTags = this.state.selectedTags;
 
@@ -213,9 +212,9 @@ export default class AddTag extends Component {
     let listView = [];
 
     /*
-     If we are not in creation mode, we display the tags.
-     In creation mode, we display a choice of colors
-     */
+    If we are not in creation mode, we display the tags.
+    In creation mode, we display a choice of colors
+    */
     if (this.state.isCreationTagMode === false) {
       tagsToPropose.forEach((tag) => {
         // is the tag on the selected tags list?
@@ -273,7 +272,7 @@ export default class AddTag extends Component {
     if (this.state.loading) {
       buttonView = (
         <button className="btn btn-disabled">
-          <i className="fa fa-spinner" />
+          <i className="fa fa-spinner fa-spin" />
         </button>
       );
     }

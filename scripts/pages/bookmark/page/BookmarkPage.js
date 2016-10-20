@@ -1,5 +1,6 @@
-import React, { PropTypes } from 'react';
-import moment from 'moment';
+/* global bootbox */
+import React from 'react';
+// import moment from 'moment';
 import showdown from 'showdown';
 import _ from 'lodash';
 
@@ -17,6 +18,7 @@ import RouteAction from 'actions/RouteAction';
 
 // -- entities
 import Bookmark from 'entities/Bookmark';
+import Tag from 'entities/Tag';
 
 // -- views
 import FontAwesome from 'react-fontawesome';
@@ -83,15 +85,16 @@ export default class BookmarkPage extends AbstractComponent {
     e.preventDefault();
     const bookmark:Bookmark = this.state.bookmark;
     const self = this;
-    bootbox.confirm('Are you sure you want to remove the bookmark "' + bookmark.getDefaultName() + '"?', function(result) {
-      if (result == true) {
+    bootbox.confirm(`Are you sure you want to remove the bookmark ${bookmark.getDefaultName()}?`,
+    (result:Boolean) => {
+      if (result === true) {
         self.showLoading();
         BookmarkAction.deleteBookmark(bookmark);
       }
     });
   };
 
-  onDeleteTag = (tag) => {
+  onDeleteTag = (tag:Tag) => {
     BookmarkAction.deleteTagsForBookmark([tag], this.state.bookmark);
   };
 

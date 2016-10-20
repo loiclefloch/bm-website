@@ -42,7 +42,7 @@
     code {
       cursor: pointer;
       background-color: transparent;
-      color: black;
+      // color: black;
     }
 
     h2 {
@@ -256,7 +256,7 @@
 
     li {
       padding: 10px 15px;
-      background-color: $hr-color;
+      background-color: $light-grey-color;
       cursor: pointer;
 
       i {
@@ -272,13 +272,14 @@
 }
 
 .note_editor {
+  max-width: 800px;
+  width: 100%;
+  left: 28%;
   position: fixed;
   bottom: 0;
-  left: 0;
-  right: 0;
   height: 40%;
   background-color: white;
-  border-top: 1px solid $hr-color;
+  border: 1px solid $hr-color;
 
   .editor_area {
     height: 100%;
