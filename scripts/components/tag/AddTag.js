@@ -10,6 +10,7 @@ import WebApiUtils from 'utils/Api';
 import TagsList from 'entities/TagsList';
 
 // -- views
+import { DropdownButton } from 'react-bootstrap';
 import AddTagListRow from './components/AddTagListRow';
 import AddTagColorList from './components/AddTagColorList';
 
@@ -25,7 +26,9 @@ export default class AddTag extends Component {
     tagQuery: '',
     isCreationTagMode: false,
     newTagColor: Constants.Tag.DEFAULT_COLOR,
-    loading: false
+    loading: false,
+
+    displayDropdown: false
   };
 
   componentDidMount() {
@@ -95,10 +98,6 @@ export default class AddTag extends Component {
     });
   };
 
-  onDisplayAddTagMenu = () => {
-    this.onToggleMenu();
-  };
-
   onToggleTag = (tag) => {
     let selectedTags = this.state.selectedTags;
 
@@ -115,7 +114,7 @@ export default class AddTag extends Component {
     });
   };
 
-  validateOnClick = () => {
+  onValidate = () => {
     if (this.state.isCreationTagMode === false) {
       this.handleShowLoading();
 
@@ -134,12 +133,15 @@ export default class AddTag extends Component {
   };
 
   onToggleMenu = () => {
-    $('#bookmark__tag_list__add_tag_dropdown').parent().toggleClass('open');
+    this.setState({
+      displayDropdown: !this.state.displayDropdown
+    });
+
     this.onChangeCreationTagMode(false);
   };
 
-  onSearchChange = () => {
-    const query = this.refs.searchTagInput.value;
+  onSearchChange = (event) => {
+    const query = event.target.value;
 
     // update the tag
     this.updateTagQuery(query);
@@ -148,8 +150,7 @@ export default class AddTag extends Component {
 
     if (!_.isEmpty(tagsToPropose)) {
       this.onChangeCreationTagMode(false);
-    }
-    else {
+    } else {
       // Create the tag mode
       this.onChangeCreationTagMode(true);
     }
@@ -173,7 +174,7 @@ export default class AddTag extends Component {
     * If there is no tag, we create it.
     */
     if (e.key === 'Enter') {
-      const query = this.refs.searchTagInput.value;
+      const query = this.state.tagQuery;
 
       const tagsToPropose = this.getTagsToPropose(query);
 
@@ -187,7 +188,7 @@ export default class AddTag extends Component {
   };
 
   onCreateNewTag = () => {
-    const query = this.refs.searchTagInput.value;
+    const query = this.state.tagQuery;
 
     const newTag = {
       // used for react "key" prop. It's not a valid API id (begin with __ to be clear)
@@ -203,19 +204,41 @@ export default class AddTag extends Component {
     this.updateTagQuery('');
   }
 
-  render() {
+  //
+  // Renderers
+  //
+
+  renderButtons() {
+    return (
+      <div>
+        <button
+          className="btn btn-primary"
+          onClick={this.onToggleMenu}
+        >
+          Cancel
+        </button>
+
+        <button
+          className="btn btn-primary"
+          onClick={this.onValidate}
+        >
+          Validate
+        </button>
+      </div>
+    );
+  }
+
+  renderListView() {
     const selectedTags = this.state.selectedTags;
-
     const tagQuery = this.state.tagQuery;
-
     const tagsToPropose = this.getTagsToPropose(tagQuery);
-    let listView = [];
 
     /*
     If we are not in creation mode, we display the tags.
     In creation mode, we display a choice of colors
     */
     if (this.state.isCreationTagMode === false) {
+      const listView = [];
       tagsToPropose.forEach((tag) => {
         // is the tag on the selected tags list?
         const isSelected = _.indexOf(selectedTags, tag) !== -1;
@@ -230,6 +253,7 @@ export default class AddTag extends Component {
         );
       });
 
+      return (listView);
     } else { // Setup colors list for the new bookmark
       const tagNameToFind = this.state.tagQuery.replace(/\s+/g, '').toLowerCase();
 
@@ -240,13 +264,13 @@ export default class AddTag extends Component {
       });
 
       if (!_.isUndefined(found)) { // verify that the tags is not already set to the bookmark.
-        listView = (
+        return (
           <div className="bookmark__tag_list__tag_already_exists">
             <em>Tag already set with this name.</em>
           </div>
         );
       } else {
-        listView = (
+        return (
           <AddTagColorList
             defaultSelection={this.state.newTagColor}
             onColorChosen={this.onNewTagColorChosen}
@@ -254,15 +278,14 @@ export default class AddTag extends Component {
         );
       }
     }
+  }
 
+  render() {
     // -- Setup button view
     let buttonView = (
       <button
-        id="bookmark__tag_list__add_tag_dropdown"
         className="btn"
-        onClick={this.onDisplayAddTagMenu}
-        aria-haspopup="true"
-        aria-expanded="false"
+        onClick={this.onToggleMenu}
       >
         +
       </button>
@@ -278,56 +301,41 @@ export default class AddTag extends Component {
     }
 
     return (
-      <span className="dropdown">
+      <span>
         {buttonView}
 
-        <div
-          className="row dropdown-menu bookmark__tag_list__add_tag_block"
-          aria-labelledby="bookmark__tag_list__add_tag_dropdown"
-        >
+        {this.state.displayDropdown &&
+          <div
+            className="row bookmark__tag_list__add_tag_block"
+          >
 
-          <div className="col-xs-12 col-sm-12 col-md-8 bookmark__tag_list__add_tag_list__search">
-            <div className="form-group label-placeholder">
-              <label className="control-label">Search</label>
-              <input
-                type="text"
-                placeholder=""
-                value={this.state.tagQuery}
-                ref="searchTagInput"
-                onChange={this.onSearchChange}
-                onKeyPress={this.onSearchSubmit}
-                className="form-control empty"
-              />
-              <span className="material-input" />
+            <div className="col-xs-12 col-sm-12 col-md-8 bookmark__tag_list__add_tag_list__search">
+              <div className="form-group label-placeholder">
+                <label className="control-label">Search</label>
+                <input
+                  type="text"
+                  placeholder=""
+                  value={this.state.tagQuery}
+                  onChange={this.onSearchChange}
+                  onKeyPress={this.onSearchSubmit}
+                  autoFocus
+                  className="form-control empty"
+                />
+                <span className="material-input" />
+              </div>
+            </div>
+
+            <div className="clear"></div>
+
+            <div className="row bookmark__tag_list__add_tag_list">
+              {this.renderListView()}
+            </div>
+
+            <div className="text-center col-xs-12">
+              {this.renderButtons()}
             </div>
           </div>
-
-          {/* validate btn: only on big screen */}
-          <div className="text-center hidden-sm hidden-xs col-md-3">
-            <button
-              className="btn btn-primary"
-              onClick={this.validateOnClick}
-            >
-              Validate
-            </button>
-          </div>
-
-          <div className="clear"></div>
-
-          <div className="row bookmark__tag_list__add_tag_list">
-            {listView}
-          </div>
-
-          {/* validate btn: only on small screen */}
-          <div className="text-center col-xs-12 col-sm-12 hidden-md hidden-lg">
-            <span
-              className="btn btn-primary"
-              onClick={this.validateOnClick}
-            >
-              Validate
-            </span>
-          </div>
-        </div>
+        }
       </span>
     );
   }
