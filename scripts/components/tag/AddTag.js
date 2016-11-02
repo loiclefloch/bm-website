@@ -51,10 +51,10 @@ export default class AddTag extends Component {
   }
 
   getTagsToPropose(tagQuery) {
-    let tagsToPropose = [];
+    let tagsToPropose = this.props.bookmark.tags;
 
     // -- Create list of tags that can be add for the bookmark.
-    if (!_.isNull(this.props.tagsList) && !_.isEmpty(this.props.bookmark.tags)) {
+    if (!_.isEmpty(this.props.bookmark.tags)) {
       // We propose all the tags minus the tags already set on the bookmark.
       tagsToPropose = _.differenceWith(this.props.tagsList.tags, this.props.bookmark.tags,
         (value, other) => {

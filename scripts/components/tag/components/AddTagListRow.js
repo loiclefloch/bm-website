@@ -32,7 +32,7 @@ export default class AddTagListRow extends Component {
 
     return (
       <div
-        className="bookmark__tag_list__add_tag_list__tag_row pointer col-xs-6 col-sm-4 col-md-4 col-lg-3 pointer"
+        className="bookmark__tag_list__add_tag_list__tag_row pointer col-xs-6 col-sm-4 col-md-3 col-lg-2 pointer"
         onClick={this.onTagClicked}
         key={tag.id}>
 
