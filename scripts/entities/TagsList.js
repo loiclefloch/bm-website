@@ -1,9 +1,10 @@
 import ApiObject from 'abstracts/ApiObject';
+import _ from 'lodash';
 
 import Tag from 'entities/Tag'
 
 export default class TagsList extends ApiObject {
-  
+
   tags:Array<Tag> = [];
 
   postJsonAssignation(data:JSON) {

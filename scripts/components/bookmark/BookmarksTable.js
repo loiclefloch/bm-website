@@ -5,6 +5,7 @@ import ViewConstants from 'constants/ViewConstants';
 
 // -- entities
 import Bookmark from 'entities/Bookmark';
+import TagsList from 'entities/TagsList';
 
 // -- views
 import BookmarkItemSimple from './BookmarkItemSimple';
@@ -15,8 +16,17 @@ export default class BookmarksTable extends Component {
 
   static propTypes = {
     bookmarks: PropTypes.arrayOf(Bookmark).isRequired,
-    bookmarkListType: PropTypes.number.isRequired
+
+    bookmarkListType: PropTypes.number.isRequired,
+
+    tagsList: PropTypes.objectOf(TagsList).isRequired
   };
+
+  componentDidUpdate() {
+    $(function() {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
+  }
 
   render() {
     // Contains the Page rows.
@@ -26,7 +36,11 @@ export default class BookmarksTable extends Component {
       switch (this.props.bookmarkListType) {
         case ViewConstants.BookmarkListType.SIMPLE:
           rows.push(
-            <BookmarkItemSimple bookmark={bookmark} key={bookmark.id} />
+            <BookmarkItemSimple
+              bookmark={bookmark}
+              key={bookmark.id}
+              tagsList={this.props.tagsList}
+            />
           );
           break;
         case ViewConstants.BookmarkListType.BLOCK:

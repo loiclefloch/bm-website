@@ -11,10 +11,12 @@ import Events from 'constants/Events';
 // -- stores
 import BookmarkStore from 'stores/BookmarkStore';
 import SessionStore from 'stores/SessionStore';
+import TagStore from 'stores/TagStore';
 
 // -- actions
 import BookmarkAction from 'actions/BookmarkAction';
 import RouteAction from 'actions/RouteAction';
+import TagAction from 'actions/TagAction';
 
 // -- entities
 import Bookmark from 'entities/Bookmark';
@@ -35,7 +37,10 @@ export default class BookmarkPage extends AbstractComponent {
 
   state = {
     bookmark: BookmarkStore.getBookmark(),
-    displayEditNotes: false
+
+    displayEditNotes: false,
+
+    tagsList: null
   };
 
   componentDidMount() {
@@ -48,19 +53,22 @@ export default class BookmarkPage extends AbstractComponent {
     BookmarkStore.addListener(Events.GET_BOOKMARK_SUCCESS, this.onBookmarkChange);
     BookmarkStore.addListener(Events.UPDATE_BOOKMARK_SUCCESS, this.onBookmarkChange);
 
-    BookmarkStore.addListener(Events.LOADING, this.hideLoading);
-
     BookmarkStore.addListener(Events.ON_SHOW_BOOKMARK_NOTES_EDITOR, this.onShowBookmarkNotesEditor);
     BookmarkStore.addListener(Events.ON_HIDE_BOOKMARK_NOTES_EDITOR, this.onHideBookmarkNotesEditor);
 
     BookmarkAction.loadBookmark(this.props.params.bookmarkId);
+
+    //
+    // Tags list
+    //
+
+    TagStore.addListener(Events.LOAD_TAGS_SUCCESS, this.onLoadTagsList);
+    TagAction.loadTags();
   }
 
   componentWillUnmount() {
     BookmarkStore.removeListener(Events.GET_BOOKMARK_SUCCESS, this.onBookmarkChange);
     BookmarkStore.removeListener(Events.UPDATE_BOOKMARK_SUCCESS, this.onBookmarkChange);
-
-    BookmarkStore.removeListener(Events.LOADING, this.hideLoading);
 
     BookmarkStore.removeListener(Events.ON_SHOW_BOOKMARK_NOTES_EDITOR,
        this.onShowBookmarkNotesEditor
@@ -69,13 +77,26 @@ export default class BookmarkPage extends AbstractComponent {
     BookmarkStore.removeListener(Events.ON_HIDE_BOOKMARK_NOTES_EDITOR,
        this.onHideBookmarkNotesEditor
     );
+
+    //
+    // Tags list
+    //
+
+    TagStore.removeListener(Events.LOAD_TAGS_SUCCESS, this.onLoadTagsList);
   }
+
+  onLoadTagsList = () => {
+    this.setState({
+      tagsList: TagStore.getTagsList()
+    });
+  };
 
   // -- events functions
 
   onBookmarkChange = () => {
     this.setState({
-      bookmark: BookmarkStore.getBookmark()
+      bookmark: BookmarkStore.getBookmark(),
+      loading: false
     });
 
     this.handleError(BookmarkStore.getError());
@@ -110,12 +131,14 @@ export default class BookmarkPage extends AbstractComponent {
     });
   };
 
-  // -- renderers
+  //
+  // renderers
+  //
 
   renderBody() {
     const bookmark = this.state.bookmark;
 
-    if (_.isNull(bookmark)) {
+    if (_.isNull(bookmark) || _.isNull(this.state.tagsList)) {
       return this.renderOnLoadingContent();
     }
 
@@ -165,7 +188,11 @@ export default class BookmarkPage extends AbstractComponent {
             </div>}
 
           <div className="top-buffer-30">
-            <BookmarkTagList bookmark={bookmark} deleteTag={this.onDeleteTag} />
+            <BookmarkTagList
+              bookmark={bookmark}
+              deleteTag={this.onDeleteTag}
+              tagsList={this.state.tagsList}
+            />
           </div>
 
           <div className="top-buffer-30">
@@ -229,6 +256,7 @@ export default class BookmarkPage extends AbstractComponent {
     return (
       <div id="bookmark" className="row">
         {this.renderLoading()}
+
         {this.renderErrorView()}
         {this.renderBody()}
         {this.renderNotesEditor()}

@@ -26,7 +26,7 @@ import Bookmark from 'entities/Bookmark';
 import AbstractComponent from 'abstracts/AbstractComponent';
 import LoadMore from './components/LoadMore';
 // import SearchBox from './components/SearchBox';
-import BookmarksTable from './../../../components/bookmark/BookmarksTable';
+import BookmarksTable from 'components/bookmark/BookmarksTable';
 import BookmarksSidebar from './components/BookmarkSidebar';
 import NoBookmarks from 'components/bookmark/NoBookmarks';
 
@@ -52,7 +52,7 @@ export default class BookmarkListPage extends AbstractComponent {
     BookmarkStore.addListener(Events.RECEIVE_BOOKMARK_SEARCH_SUCCESS, this.onChange);
     BookmarkStore.addListener(Events.UPDATE_BOOKMARK_SUCCESS, this.onChange);
 
-    TagStore.addListener(Events.LOAD_TAGS_SUCCESS, this.handleLoadTagsSuccess);
+    TagStore.addListener(Events.LOAD_TAGS_SUCCESS, this.onLoadTagsSuccess);
 
     // do not call if we came back on the page. We need to call if there is only 1 bookmarks
     // because when we create a new bookmark, we are redirect to this page,
@@ -70,14 +70,14 @@ export default class BookmarkListPage extends AbstractComponent {
     BookmarkStore.removeListener(Events.RECEIVE_BOOKMARK_SEARCH_SUCCESS, this.onChange);
     BookmarkStore.removeListener(Events.UPDATE_BOOKMARK_SUCCESS, this.onChange);
 
-    TagStore.removeListener(Events.LOAD_TAGS_SUCCESS, this.handleLoadTagsSuccess);
+    TagStore.removeListener(Events.LOAD_TAGS_SUCCESS, this.onLoadTagsSuccess);
   }
 
   componentDidUpdate() {
     $.material.init();
   }
 
-  handleLoadTagsSuccess = () => {
+  onLoadTagsSuccess = () => {
     this.setState({
       tagsList: TagStore.getTagsList()
     });
@@ -171,6 +171,7 @@ export default class BookmarkListPage extends AbstractComponent {
         <BookmarksTable
           bookmarks={bookmarks}
           bookmarkListType={this.state.bookmarkListType}
+          tagsList={this.state.tagsList}
         />
       );
     } else if (_.isEmpty(bookmarks) && this.state.loading === false) {
@@ -207,6 +208,7 @@ export default class BookmarkListPage extends AbstractComponent {
   }
 
   render() {
+    try {
     return (
       <div id="bookmark-list">
         {this.renderLoading()}
@@ -216,5 +218,6 @@ export default class BookmarkListPage extends AbstractComponent {
 
       </div>
     );
+  } catch (e) { console.error(e); }
   }
 }

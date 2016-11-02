@@ -1,4 +1,5 @@
 import React, { PropTypes, Component } from 'react';
+import _ from 'lodash';
 
 // -- actions
 import SessionAction from 'actions/SessionAction';

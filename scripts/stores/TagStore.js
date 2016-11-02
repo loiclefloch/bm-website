@@ -42,13 +42,7 @@ tagStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
   switch (action.type) {
 
     case ActionTypes.RECEIVE_TAGS:
-      if (_.isNull(_tagsList)) {
-        _tagsList = action.tagsList;
-      } else {
-        _tagsList = _.unionWith(_tagsList.tags, action.tagsList, (a:Tag, b:Tag) => {
-          return a.id === b.id;
-        });
-      }
+      _tagsList = action.tagsList;
 
       tagStoreInstance.emitEvent(Events.LOAD_TAGS_SUCCESS);
       tagStoreInstance.emitEvent(Events.LOADING);
@@ -76,6 +70,7 @@ tagStoreInstance.dispatchToken = AppDispatcher.register((payload) => {
 
     case ActionTypes.RECEIVE_CREATED_TAG_FAILURE:
       _error = action.error;
+      
       tagStoreInstance.emitEvent(Events.CREATED_TAG_ERROR);
       tagStoreInstance.emitEvent(Events.LOADING);
       break;

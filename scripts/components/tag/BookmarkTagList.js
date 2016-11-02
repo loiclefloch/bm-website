@@ -1,17 +1,12 @@
 import React, { PropTypes, Component } from 'react';
 import _ from 'lodash';
 
-// -- stores
-import TagStore from 'stores/TagStore';
-
-// -- actions
-import TagAction from 'actions/TagAction';
-
 // -- constants
 import Events from 'constants/Events';
 
 // -- entities
 import Bookmark from 'entities/Bookmark';
+import TagsList from 'entities/TagsList';
 
 // -- views
 import AddTag from 'components/tag/AddTag';
@@ -22,36 +17,9 @@ export default class BookmarkTagList extends Component {
   static propTypes = {
     bookmark: PropTypes.objectOf(Bookmark).isRequired,
 
+    tagsList: PropTypes.objectOf(TagsList).isRequired,
+
     deleteTag: PropTypes.func.isRequired
-  };
-
-  state = {
-    tagsList: TagStore.getTagsList()
-  };
-
-  componentDidMount() {
-    /*
-     * Do not add the listener if we have a tags list because we add too many listeners
-     * in case of a list.
-     */
-    if (_.isNull(this.state.tagsList)) { // do not call if we came back on the page
-      console.log('add listener');
-      TagStore.addListener(Events.LOAD_TAGS_SUCCESS, this.onChange);
-      TagAction.loadTags();
-      this.shouldRemoveListener = true;
-    }
-  }
-
-  componentWillUnmount() {
-    if (this.shouldRemoveListener) {
-      TagStore.removeListener(Events.LOAD_TAGS_SUCCESS, this.onChange);
-    }
-  }
-
-  onChange = () => {
-    this.setState({
-      tagsList: TagStore.getTagsList()
-    });
   };
 
   render() {
@@ -72,7 +40,7 @@ export default class BookmarkTagList extends Component {
 
     const addTagView = (
       <AddTag
-        tagsList={this.state.tagsList}
+        tagsList={this.props.tagsList}
         bookmark={this.props.bookmark}
       />
     );

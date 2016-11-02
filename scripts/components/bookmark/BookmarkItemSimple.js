@@ -8,6 +8,7 @@ import BookmarkAction from 'actions/BookmarkAction';
 
 // -- entities
 import Bookmark from 'entities/Bookmark';
+import TagsList from 'entities/TagsList';
 
 // -- views
 import Link from 'components/Link';
@@ -18,13 +19,12 @@ import BookmarkTagList from 'components/tag/BookmarkTagList';
 export default class BookmarkItemSimple extends Component {
 
   static propTypes = {
-    bookmark: PropTypes.any.isRequired
+    bookmark: PropTypes.objectOf(Bookmark).isRequired,
+
+    tagsList: PropTypes.objectOf(TagsList).isRequired
   };
 
   componentDidUpdate() {
-    $(function() {
-      $('[data-toggle="tooltip"]').tooltip()
-    })
   }
 
   onDeleteTag = (tag) => {
@@ -56,6 +56,7 @@ export default class BookmarkItemSimple extends Component {
           <BookmarkTagList
             bookmark={bookmark}
             deleteTag={this.onDeleteTag}
+            tagsList={this.props.tagsList}
           />
         </div>
         <div className="bookmarks__item_footer">
@@ -67,7 +68,7 @@ export default class BookmarkItemSimple extends Component {
                     src={bookmark.icon}
                   />
                 </div>
-                }
+              }
               {!bookmark.icon &&
                 <div className="bookmarks__item_no_icon"></div>
               }

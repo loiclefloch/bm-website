@@ -26,7 +26,9 @@ import NoBookmarkForTag from './components/NoBookmarkForTag';
 export default class TagPage extends AbstractComponent {
 
   state = {
-    tag: null
+    tag: null,
+
+    tagsList: null
   };
 
   componentDidMount() {
@@ -36,19 +38,29 @@ export default class TagPage extends AbstractComponent {
 
     TagStore.addListener(Events.GET_TAG_SUCCESS, this.onChange);
     TagStore.addListener(Events.LOADING, this.hideLoading);
+    TagStore.addListener(Events.LOAD_TAGS_SUCCESS, this.onLoadTagsSuccess);
 
     this.showLoading();
     TagAction.loadTag(this.props.params.tagId);
+    TagAction.loadTags();
   }
 
   componentWillUnmount() {
     TagStore.removeListener(Events.GET_TAG_SUCCESS, this.onChange);
     TagStore.removeListener(Events.LOADING, this.hideLoading);
+    TagStore.removeListener(Events.LOAD_TAGS_SUCCESS, this.onLoadTagsSuccess);
   }
 
   onChange = () => {
     this.setState({
       tag: TagStore.getTag()
+    });
+  };
+
+  onLoadTagsSuccess = () => {
+    console.log('onLoadTagsSuccess');
+    this.setState({
+      tagsList: TagStore.getTagsList()
     });
   };
 
@@ -67,7 +79,7 @@ export default class TagPage extends AbstractComponent {
   renderBody() {
     const tag = this.state.tag;
 
-    if (_.isNull(tag)) {
+    if (_.isNull(tag) || _.isNull(this.state.tagsList)) {
       return this.renderOnLoadingContent();
     }
 
@@ -79,8 +91,9 @@ export default class TagPage extends AbstractComponent {
         <BookmarksTable
           bookmarks={tag.bookmarks}
           bookmarkListType={ViewConstants.BookmarkListType.SIMPLE}
-        />)
-      ;
+          tagsList={this.state.tagsList}
+        />
+      );
     } else if (this.state.isLoading) {
       bookmarkTable = (<NoBookmarkForTag />);
     }
@@ -121,6 +134,7 @@ export default class TagPage extends AbstractComponent {
   }
 
   render() {
+    try {
     return (
       <div className="tag_page">
         {this.renderLoading()}
@@ -129,6 +143,7 @@ export default class TagPage extends AbstractComponent {
         {this.renderBody()}
       </div>
     );
+  } catch (e) { console.error(e); }
   }
 
 }

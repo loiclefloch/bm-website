@@ -51,7 +51,6 @@ export default class TagListPage extends AbstractComponent {
   }
 
   componentWillUnmount() {
-    TagStore.removeErrors();
     TagStore.removeListener(Events.LOAD_TAGS_SUCCESS, this.onChange);
     TagStore.removeListener(Events.LOADING, this.hideLoading);
   }
