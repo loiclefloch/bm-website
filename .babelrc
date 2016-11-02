@@ -1,20 +1,26 @@
 {
-    "plugins": [
-        "transform-class-properties",
-        "syntax-flow",
-        ["module-alias", [
-              { "src": "./scripts/utils", "expose": "utils" },
-              { "src": "./scripts/pages", "expose": "pages" },
-              { "src": "./scripts/entities", "expose": "entities" },
-              { "src": "./scripts/actions", "expose": "actions" },
-              { "src": "./scripts/stores", "expose": "stores" },
-              { "src": "./scripts/components", "expose": "components" },
-              { "src": "./scripts/objects", "expose": "objects" },
-              { "src": "./scripts/constants", "expose": "constants" },
-              { "src": "./scripts/abstracts/", "expose": "abstracts" },
-              { "src": "./scripts/api", "expose": "api" },
-              { "src": "./tests/", "expose": "tests" }
-            ]]
-    ],
-    "presets": [ "es2015","react"]
+  "plugins": [
+    "add-module-exports",
+    "transform-class-properties",
+    "transform-decorators-legacy",
+    "syntax-flow",
+    [
+      "module-alias",
+      [
+        { "src": "./scripts/utils", "expose": "utils" },
+        { "src": "./scripts/pages", "expose": "pages" },
+        { "src": "./scripts/entities", "expose": "entities" },
+        { "src": "./scripts/actions", "expose": "actions" },
+        { "src": "./scripts/stores", "expose": "stores" },
+        { "src": "./scripts/components", "expose": "components" },
+        { "src": "./scripts/objects", "expose": "objects" },
+        { "src": "./scripts/constants", "expose": "constants" },
+        { "src": "./scripts/abstracts/", "expose": "abstracts" },
+        { "src": "./scripts/api", "expose": "api" },
+        { "src": "./scripts/decorators", "expose": "decorators" },
+        { "src": "./tests/", "expose": "tests" }
+      ]
+    ]
+  ],
+  "presets": [ "es2015", "react",  "stage-1" ]
 }
